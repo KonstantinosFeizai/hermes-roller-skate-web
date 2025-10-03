@@ -1,0 +1,277 @@
+/* policies.css */
+
+:root {
+  --accent: #5b8cff;
+  --accent-soft: #eaf0ff;
+
+  --shadow: 0 10px 24px rgba(18, 22, 33, .08);
+  --shadow-hover: 0 14px 30px rgba(18, 22, 33, .12);
+  --container: 1020px;
+
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.25rem;
+  --space-5: 3rem;
+}
+
+body {
+  margin-top: 50px;
+}
+
+/* Sections */
+.policy-section {
+  padding: var(--space-5) var(--space-2);
+}
+
+
+
+/* Card/container */
+.policy-container {
+  max-width: var(--container);
+  margin: 0 auto;
+  background: var(--dark-bg);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: var(--space-4);
+  transition: box-shadow .25s ease;
+}
+
+#intro .policy-container {
+  text-align: center;
+}
+
+#intro h1 {
+  font-size: clamp(1.6rem, 2.2vw + 1rem, 2.2rem);
+  margin: 0 0 var(--space-2);
+  color: var(--primary-color);
+}
+
+.policy-container h2 {
+  font-size: clamp(1.35rem, 1.4vw + 1rem, 1.8rem);
+  margin: 0 0 var(--space-2);
+  line-height: 1.2;
+  scroll-margin-top: 90px;
+  color: var(--primary-color);
+}
+
+.policy-container p {
+  color: var(--primary-color);
+  margin: 0 0 var(--space-3);
+}
+
+/* Bulleted policy list */
+.policy-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-3);
+}
+
+.policy-list li {
+  position: relative;
+  padding: .85rem 1rem .85rem 2.5rem;
+  background: var(--accent-soft);
+  border-radius: var(--border-radius);
+  margin-bottom: .75rem;
+}
+
+.policy-list li::before {
+  content: "•";
+  position: absolute;
+  left: .95rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-weight: 900;
+  font-size: 1.25rem;
+}
+
+/* FAQ */
+.faq-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.faq-list dt {
+  background: #fcfcfe;
+  border: 1px solid #eceef6;
+  border-radius: var(--border-radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.2rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #1e1f24;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.faq-list dd {
+  margin-bottom: .85rem;
+  color: var(--primary-color);
+  background: var(--light-bg);
+  border: 1px solid #eceef6;
+  border-radius: var(--border-radius);
+  padding: 1rem 1.25rem;
+  margin-left: 0;
+}
+
+
+.policy-container a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.policy-container a:hover {
+  text-decoration: underline;
+}
+
+
+.is-danger {
+  color: #c0392b;
+}
+
+.is-ok {
+  color: #2ecc71;
+}
+
+.policy-container:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.faq-list dt:hover {
+  color: var(--secondary-color);
+}
+
+/* RESPONSIVE ENHANCEMENTS */
+@media (max-width: 1200px) {
+  :root {
+    --container: 880px;
+  }
+}
+
+
+@media (max-width: 992px) {
+  :root {
+    --container: 820px;
+  }
+
+  .policy-section {
+    padding: var(--space-4) var(--space-2);
+  }
+
+  .policy-container {
+    padding: 1.75rem;
+    box-shadow: 0 8px 20px rgba(18, 22, 33, .07);
+  }
+
+  .policy-container h2 {
+    scroll-margin-top: 80px;
+  }
+}
+
+
+@media (max-width: 768px) {
+  :root {
+    --container: 680px;
+  }
+
+
+  .policy-section {
+    padding: 1.75rem 1rem;
+  }
+
+  .policy-container {
+    padding: 1.4rem 1.1rem;
+    border-radius: 14px;
+    box-shadow: 0 6px 16px rgba(18, 22, 33, .06);
+  }
+
+  .policy-container h2 {
+    font-size: clamp(1.2rem, 1.2vw + 1rem, 1.5rem);
+  }
+
+  .policy-container p {
+    font-size: .95rem;
+  }
+
+  .policy-list li {
+    padding-left: 2.2rem;
+  }
+
+  .faq-list dt {
+    font-size: 1.1rem;
+  }
+}
+
+
+@media (max-width: 425px) {
+  :root {
+    --container: 380px;
+    --space-5: 2.25rem;
+    --space-4: 1.6rem;
+    --space-3: 1.1rem;
+  }
+
+
+  #intro h1 {
+    font-size: clamp(1.25rem, 2.5vw + .9rem, 1.6rem);
+  }
+
+  .policy-container {
+    padding: var(--space-3);
+    border-radius: 12px;
+  }
+
+  .policy-container h2 {
+    scroll-margin-top: 72px;
+  }
+
+  .policy-container p,
+  .policy-list li,
+  .faq-list dd {
+    font-size: .9rem;
+  }
+
+  .faq-list dt {
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+  }
+
+  .faq-list dd {
+    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+@media (hover: hover) {
+  .policy-list li:hover {
+    background: #e4ebff;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .policy-section {
+    padding: 1rem 0;
+  }
+
+  .policy-container {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+}

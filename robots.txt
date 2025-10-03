@@ -1,0 +1,4 @@
+# robots.txt for hermesrollerskate
+# Prevents all web crawlers from accessing the /admin/ directory
+User-agent: *
+Disallow: /admin/

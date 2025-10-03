@@ -1,0 +1,26 @@
+# Απενεργοποιεί την εμφάνιση των σφαλμάτων της PHP
+# Options -Indexes
+
+# Διόρθωση για το index.php στον κύριο φάκελο
+RewriteEngine On
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.php\ HTTP/
+RewriteRule ^index\.php$ https://%{HTTP_HOST}/ [R=301,L]
+
+# Διόρθωση για το index.php στον φάκελο gr
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /gr/index\.php\ HTTP/
+RewriteRule ^gr/index\.php$ https://%{HTTP_HOST}/gr/ [R=301,L]
+
+# Αφαίρεση του .php από όλες τις σελίδες στον κύριο φάκελο
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^\.]+)/$ $1.php [NC,L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Αφαίρεση του .php από όλες τις σελίδες στον φάκελο gr
+RewriteCond %{REQUEST_URI} ^/gr/
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^gr/([^\.]+)/?$ gr/$1.php [NC,L]
