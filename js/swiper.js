@@ -1,32 +1,32 @@
-const swiper = new Swiper('.card-wrapper', {
-    // Optional parameters
-    centeredSlides: true,
-    slidesPerView: 3,
-    loop: true,
-    spaceBetween: 30,
+const swiper = new Swiper(".card-wrapper", {
+  // Optional parameters
+  centeredSlides: true,
+  slidesPerView: 2,
+  loop: true,
+  spaceBetween: 30,
 
-    // If we need pagination
-    pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-        dynamicBullets: true
+  // If we need pagination
+  pagination: {
+    el: ".swiper-pagination",
+    clickable: true,
+    dynamicBullets: true,
+  },
+
+  // Navigation arrows
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+
+  breakpoints: {
+    0: {
+      slidesPerView: 1,
     },
-
-    // Navigation arrows
-    navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
+    768: {
+      slidesPerView: 2,
     },
-
-    breakpoints: {
-        0: {
-            slidesPerView: 1,
-        },
-        768: {
-            slidesPerView: 2,
-        },
-        1024: {
-            slidesPerView: 3,
-        },
-    }
+    1024: {
+      slidesPerView: 3,
+    },
+  },
 });
