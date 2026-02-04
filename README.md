@@ -20,3 +20,9 @@ Database: Designed and implemented a database structure for dynamic content mana
 Design: Fully Responsive Design (Desktop, Tablet, Mobile).
 
 Version Control: Git & GitHub.
+
+Setup
+
+Install PHP dependencies (vendor module) with Composer:
+
+- Run: composer install
