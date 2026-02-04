@@ -9,8 +9,8 @@
   --dark-bg: #fff;
   --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   --border-radius: 10px;
-  --font-heading: 'Playfair Display', serif;
-  --font-body: 'Manrope', sans-serif;
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Manrope", sans-serif;
 }
 
 * {
@@ -65,7 +65,6 @@ body {
 
 .nav-left .nav-button:hover {
   transform: scale(1.2);
-
 }
 
 .nav-center {
@@ -91,13 +90,60 @@ body {
 
 .nav-right {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
+.auth-section {
+  display: flex;
+  align-items: center;
+}
+
+/* auth button */
+.nav-button.login-button,
+.nav-button.logout-button {
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    border 0.3s;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  /* Θέτουμε διαφορετικά στυλ για τα κουμπιά */
+  border: 2px solid var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: #fff; /* Λευκό κείμενο */
+}
+
+.nav-button.login-button i,
+.nav-button.user-button i {
+  font-size: 14px;
+}
+
+.nav-button.login-button:hover,
+.nav-button.logout-button:hover {
+  background-color: transparent; /* Γίνεται περίγραμμα */
+  color: var(
+    --secondary-color
+  ); /* Το κείμενο παίρνει το χρώμα του περιγράμματος */
+}
+
+.user-greeting {
+  color: var(--dark-bg);
+  font-weight: 500;
+  font-size: 14px;
+}
 
 .language-selector {
   position: relative;
   display: inline-block;
-  margin-right: 15px;
 }
 
 .language-button {
@@ -121,8 +167,7 @@ body {
   background-color: var(--primary-color);
   min-width: 120px;
   z-index: 1000;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
 
@@ -149,6 +194,46 @@ body {
   margin-left: 5px;
 }
 
+/* user dropdown styling */
+.user-dropdown {
+  position: relative; /* Σημαντικό: Ορίζει το σημείο αναφοράς για το dropdown-content */
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none; /* Αρχικά κρυφό */
+  position: fixed; /* Fixed για να ευθυγραμμιστεί με το navbar */
+  top: 70px; /* Ακριβώς κάτω από το navbar */
+  right: 0px; /* Ευθυγράμμιση με το padding του navbar */
+  background-color: var(--primary-color);
+  min-width: 180px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* Για να είναι πάνω από άλλα στοιχεία */
+  /* border-radius: 4px; */
+}
+
+.dropdown-content a,
+.dropdown-content button {
+  color: #fff;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  width: 100%; /* Γεμίζει το dropdown */
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.dropdown-content a:hover,
+.dropdown-content button:hover {
+  background-color: #9b7a45;
+}
+
+/* Class που προστίθεται με JavaScript για να εμφανιστεί το dropdown */
+.show {
+  display: block;
+}
 
 /* Hide/Show on Scroll CSS */
 
@@ -157,7 +242,6 @@ body {
   transform: translateY(-100%);
   /* Slides the navbar up and out of view */
 }
-
 
 /* Mobile Specific Styling */
 .hamburger {
@@ -223,7 +307,6 @@ body {
   width: 90%;
 }
 
-
 .help-links {
   display: flex;
   align-items: center;
@@ -251,7 +334,6 @@ body {
   opacity: 1;
 }
 
-
 @media (max-width: 768px) {
   .nav-center {
     display: none;
@@ -260,6 +342,7 @@ body {
   .hamburger {
     display: flex;
     order: -1;
+    flex-shrink: 0;
   }
 
   .nav-left {
@@ -267,10 +350,47 @@ body {
     flex-grow: 1;
     display: flex;
     justify-content: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+  }
+
+  .nav-left a {
+    pointer-events: auto;
   }
 
   .nav-right {
     order: 1;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  /* Κρύβουμε το text των login/user buttons σε mobile, μόνο icon */
+  .login-text,
+  .username-text {
+    display: none;
+  }
+
+  .nav-button.login-button,
+  .nav-button.user-button {
+    padding: 8px;
+    min-width: auto;
+    background: transparent;
+    border: none;
+    color: #fff;
+  }
+
+  .nav-button.login-button:hover,
+  .nav-button.user-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--secondary-color);
+  }
+
+  .nav-button.login-button i,
+  .nav-button.user-button i {
+    font-size: 20px;
+    margin: 0;
   }
 
   .mobile-menu {

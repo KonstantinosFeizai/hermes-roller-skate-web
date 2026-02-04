@@ -1,0 +1,427 @@
+/* profile.css - User Profile Page Styles */
+
+/* ============================================
+   GLOBAL STYLES
+   ============================================ */
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 20px 20px;
+  min-height: 100vh;
+  background-color: #ecf0f1;
+}
+
+.profile-card {
+  background: #fff;
+  width: 100%;
+  max-width: 550px;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-card h2 {
+  margin: 0 0 20px 0;
+  font-size: 1.6rem;
+  color: #2c3e50;
+  text-align: center;
+  font-weight: 700;
+}
+
+.profile-card h3 {
+  margin: 15px 0 12px 0;
+  font-size: 1.15rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* ============================================
+   TABS NAVIGATION
+   ============================================ */
+.tabs-header {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  background: #f8f9fa;
+  padding: 6px;
+  border-radius: 12px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #6c757d;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  position: relative;
+}
+
+.tab-btn:hover {
+  color: #f39c12;
+  background: rgba(243, 156, 18, 0.1);
+}
+
+.tab-btn.active {
+  color: #fff;
+  background: #f39c12;
+  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+}
+
+/* ============================================
+   TAB CONTENT
+   ============================================ */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+.profile-info-group {
+  margin-bottom: 15px;
+}
+
+.profile-info-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.profile-info-group label {
+  font-weight: 600;
+  color: #495057;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.profile-info-group input,
+.profile-info-group select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: #fff;
+}
+
+.profile-info-group input:focus,
+.profile-info-group select:focus {
+  outline: none;
+  border-color: #f39c12;
+  box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
+}
+
+.profile-info-group input::placeholder {
+  color: #adb5bd;
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-user {
+  background: #2c3e50;
+  color: #fff;
+}
+
+.badge-admin {
+  background: #f39c12;
+  color: #fff;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.profile-submit-btn {
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #f39c12;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+  margin-top: 12px;
+}
+
+.profile-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+  background: #e67e22;
+}
+
+.profile-submit-btn:active {
+  transform: translateY(0);
+}
+
+.profile-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Button variant για Profile Info tab - σκούρο χρώμα */
+#profile .profile-submit-btn {
+  background: #2c3e50;
+  box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+}
+
+#profile .profile-submit-btn:hover {
+  background: #34495e;
+  box-shadow: 0 6px 20px rgba(44, 62, 80, 0.4);
+}
+
+/* ============================================
+   MESSAGES
+   ============================================ */
+#profileUpdateMessage,
+#passwordChangeMessage,
+#personalInfoMessage {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 15px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   DIVIDER
+   ============================================ */
+hr {
+  margin: 20px 0;
+  border: 0;
+  border-top: 2px solid #e9ecef;
+  opacity: 0.5;
+}
+
+/* ============================================
+   HELPER TEXT
+   ============================================ */
+#profile p[style*="color: #888"] {
+  color: #6c757d !important;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - MOBILE (425px)
+   ============================================ */
+@media (max-width: 425px) {
+  .profile-container {
+    padding: 70px 15px 15px;
+    align-items: center;
+  }
+
+  .profile-card {
+    padding: 18px;
+    border-radius: 12px;
+    max-width: 100%;
+  }
+
+  .profile-card h2 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+
+  .profile-card h3 {
+    font-size: 1rem;
+    margin: 12px 0 10px 0;
+  }
+
+  .tabs-header {
+    gap: 5px;
+    padding: 5px;
+    margin-bottom: 15px;
+  }
+
+  .tab-btn {
+    padding: 9px 10px;
+    font-size: 0.8rem;
+  }
+
+  .profile-info-group {
+    margin-bottom: 12px;
+  }
+
+  .profile-info-group label {
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+  }
+
+  .profile-info-group input,
+  .profile-info-group select {
+    padding: 9px 12px;
+    font-size: 0.9rem;
+  }
+
+  .profile-submit-btn {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    margin-top: 10px;
+  }
+
+  hr {
+    margin: 15px 0;
+  }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - TABLET (768px)
+   ============================================ */
+@media (min-width: 426px) and (max-width: 768px) {
+  .profile-container {
+    padding: 75px 20px 20px;
+    align-items: center;
+  }
+
+  .profile-card {
+    padding: 22px;
+    max-width: 520px;
+  }
+
+  .profile-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 18px;
+  }
+
+  .profile-card h3 {
+    font-size: 1.1rem;
+    margin: 14px 0 11px 0;
+  }
+
+  .tabs-header {
+    margin-bottom: 18px;
+  }
+
+  .tab-btn {
+    padding: 10px 14px;
+    font-size: 0.88rem;
+  }
+
+  .profile-info-group {
+    margin-bottom: 14px;
+  }
+
+  .profile-info-group input,
+  .profile-info-group select {
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+
+  .profile-submit-btn {
+    padding: 11px 19px;
+    font-size: 0.9rem;
+    margin-top: 11px;
+  }
+
+  hr {
+    margin: 18px 0;
+  }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - DESKTOP (769px+)
+   ============================================ */
+@media (min-width: 769px) {
+  .profile-container {
+    padding: 80px 20px 20px;
+    align-items: center;
+  }
+
+  .profile-card {
+    padding: 25px;
+    max-width: 550px;
+  }
+
+  .profile-card h2 {
+    margin-bottom: 18px;
+  }
+
+  .profile-card:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+.tab-btn:focus-visible,
+.profile-submit-btn:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #f39c12;
+  outline-offset: 2px;
+}

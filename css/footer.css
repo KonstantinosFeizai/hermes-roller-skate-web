@@ -74,7 +74,7 @@ footer ul {
 }
 
 .newsletter-form button:hover {
-  background-color: #E08C00;
+  background-color: #e08c00;
 }
 
 #newsletter-message {
@@ -100,19 +100,12 @@ footer ul {
   transform: scale(1.1);
 }
 
-/* Partners Carousel */
-.footer-partners-carousel {
-  overflow: hidden;
-  position: relative;
-  padding: 20px 0;
-}
-
-
-/* Partners Carousel */
+/* Partners Carousel Container */
 .footer-partners-carousel {
   width: 100%;
-  padding: 30px 0 0 0;
+  padding: 30px 0;
   background: transparent;
+  overflow: hidden;
 }
 
 .carousel-wrapper {
@@ -122,30 +115,27 @@ footer ul {
   padding: 10px 0;
 }
 
-
 .carousel-track {
   display: flex;
+  align-items: center;
   will-change: transform;
-  transform: translateX(0);
 }
 
-
 .carousel-item {
-  flex: none;
-  margin-right: 30px;
+  flex: 0 0 auto;
+  margin-right: 40px;
 }
 
 .carousel-item img {
-  width: 110px;
-  height: auto;
-  object-fit: cover;
+  height: 100px;
+  width: auto;
+  object-fit: contain;
   border-radius: 10px;
   transition: transform 0.2s ease;
 }
 
-.carousel-item img:hover,
-.carousel-item img:focus {
-  transform: scale(1.05);
+.carousel-item img:hover {
+  transform: scale(1.1);
 }
 
 /* Bottom Section */
@@ -184,22 +174,25 @@ footer ul {
     max-width: 300px;
   }
 
-  .carousel-item {
-    margin-right: 20px;
-  }
-
   .carousel-item img {
-    width: 90px;
+    height: 75px;
   }
-
+  .carousel-item {
+    margin-right: 35px;
+  }
+  .footer-partners-carousel {
+    padding: 20px 0;
+  }
 }
 
 @media (max-width: 425px) {
-  .carousel-item {
-    margin-right: 15px;
-  }
-
   .carousel-item img {
-    width: 70px;
+    height: 60px;
+  }
+  .carousel-item {
+    margin-right: 25px;
+  }
+  .carousel-wrapper {
+    padding: 5px 0;
   }
 }

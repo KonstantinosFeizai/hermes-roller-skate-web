@@ -1,0 +1,261 @@
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-family: inherit;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+  /* Χρησιμοποιούμε !important για να παρακάμψουμε τυχόν συγκρούσεις στυλ,
+       αν και καλύτερα να αποφεύγεται, εδώ είναι ένας γρήγορος τρόπος επιβεβαίωσης. */
+}
+
+/* Ή, αν θέλετε animations, μπορεί να είναι κάτι σε opacity/visibility */
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+}
+
+.auth-form input {
+  padding: 0.75rem;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.auth-form button {
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(1px);
+  z-index: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+
+  color: #1a1a1a;
+}
+
+.close {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content input[type="email"],
+.modal-content input[type="password"] {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.login-submit {
+  background-color: #eaeaea;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.login-submit:hover {
+  background-color: #d4d4d4;
+}
+
+.login-links {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.login-links a {
+  font-size: 14px;
+  text-decoration: none;
+  color: #0077cc;
+}
+
+.login-links a:hover {
+  text-decoration: underline;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: #ddd;
+  margin: 0 10px;
+}
+
+.login-bottom {
+  font-size: 14px;
+  text-align: center;
+}
+
+.login-bottom a {
+  color: #0077cc;
+  text-decoration: none;
+}
+
+.login-bottom a:hover {
+  text-decoration: underline;
+}
+
+.admin-toggle {
+  font-size: 14px;
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+}
+
+.admin-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.admin-toggle input[type="checkbox"] {
+  accent-color: #0077cc;
+  /* μπλε check */
+  width: 16px;
+  height: 16px;
+}
+
+.modal-links {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.modal-links a {
+  display: block;
+  margin: 0.5rem 0;
+  color: #0077cc;
+  text-decoration: none;
+}
+
+.modal-links a:hover {
+  text-decoration: underline;
+}
+
+.signup-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #0077cc;
+  cursor: pointer;
+  padding: 0;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
+}
+
+#signupSuccess {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+}
+
+#signupSuccess p {
+  font-size: 1rem;
+  color: #444;
+}
+
+#signupSuccess .login-submit {
+  background-color: var(--nav-bg);
+  color: #fff;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#signupSuccess .login-submit:hover {
+  background-color: var(--nav-hover);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.login-submit:disabled {
+  background-color: #e0e0e0;
+  color: #888;
+  cursor: not-allowed;
+  text-align: center;
+}
+
+.error-msg {
+  text-align: left;
+  color: red;
+  font-size: 13px;
+  display: none;
+}
+
+/* Κόκκινο περίγραμμα */
+input.invalid {
+  border: 1px solid red;
+}
