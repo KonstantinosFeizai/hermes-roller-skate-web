@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hermes Rollerskate Academy - Configuration (Sample)
  */
@@ -48,8 +49,8 @@ if (file_exists(__DIR__ . '/.env')) {
     // This is for DEVELOPMENT (local) environment - Use standard XAMPP/MAMP settings
     // whoever clones the project will use these default settings.
     $host = '127.0.0.1';
-    $port = '3306'; // the most common port is 3306, but you can change it to 3307 if that's what you use.
-    $db = 'hermes_rollers_db';
+    $port = 'your_db_port'; // the most common port is 3306, but you can change it to 3307 if that's what you use.
+    $db = 'your_database_name'; // Change this to your local database name
     $user = 'root';
     $pass = ''; // Empty password for local installation
 }
