@@ -1,12 +1,18 @@
 <?php
 // index.php (Home)
 
-$pageTitle = 'Welcome to Hermes Rollerskate Academy | Learn to Skate in Athens';
-$pageDescription = "Hermes Rollerskate Academy - Learn, practice, and enjoy roller skating with expert guidance";
-$pageKeywords = "Roller skate lessons Athens, roller skating classes, Hermes Rollerskate Academy, skating school Zografou, learn to skate, skating for kids Athens, adult skating classes";
+// Core config + language helper
+require_once __DIR__ . '/config.php';
+require_once PROJECT_ROOT . 'includes/lang.php';
+
+// Page metadata
+$pageTitle = t('home.meta.title');
+$pageDescription = t('home.meta.description');
+$pageKeywords = t('home.meta.keywords');
 $pageCss = [
   'css/homepage.css',
 ];
+// Page scripts
 $pageScripts = [
   "https://code.jquery.com/jquery-3.6.0.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js",
@@ -17,30 +23,59 @@ $pageScripts = [
 
 
   "js/welcome-overlay.js",
+  "js/alerts.js",
   'js/swiper.js'
 ];
+// Active nav item
 $activePage = 'Home';
 
 
-require_once __DIR__ . '/partials/header.php';
+// Shared header
+require_once PROJECT_ROOT . 'partials/header.php';
+// One-time alert message (from previous request)
+$alert_message = null;
+$alert_type = null;
+
+// Check if there is an alert message from a previous page
+if (isset($_SESSION['alert_message'])) {
+  $alert_message = $_SESSION['alert_message'];
+  $alert_type = $_SESSION['alert_type'] ?? 'info'; // default info
+
+  // Clear session so the message is not shown again
+  unset($_SESSION['alert_message']);
+  unset($_SESSION['alert_type']);
+}
 ?>
 
+
+
+<!-- HOME PAGE CONTENT -->
 <header class="home-hero">
   <div id="welcome-overlay" class="animate__animated">
     <h1 class="animate__animated animate__backInDown" id="welcome-text">
-      Welcome to Hermes Rollerskate
+      <?= htmlspecialchars(t('home.hero.title')) ?>
     </h1>
     <h2 class="animate__animated animate__bounceInUp">
-      Learn, roll, evolve – at Hermes Rollerskate Academy.
+      <?= htmlspecialchars(t('home.hero.subtitle')) ?>
     </h2>
   </div>
 </header>
+
+<!-- One-time alert message -->
+<?php if ($alert_message): ?>
+  <div class="alert alert-<?php echo htmlspecialchars($alert_type); ?>" role="alert">
+    <?php echo htmlspecialchars($alert_message); ?>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<?php endif; ?>
 
 <main>
   <!-- Announcement Section -->
   <section class="announcement">
     <h2>
-      Start Your Roller Skating Journey in Athens
+      <?= htmlspecialchars(t('home.announcement.title')) ?>
     </h2>
 
     <div class="announcement-images">
@@ -54,43 +89,37 @@ require_once __DIR__ . '/partials/header.php';
 
     <div class="homepageinfo">
       <p class="info-paragraph">
-        Welcome to Hermes Rollerskate Academy, where children and adults learn to skate in a safe and fun
-        environment
-        in Zografou, Athens.
+        <?= htmlspecialchars(t('home.announcement.p1')) ?>
       </p>
 
       <p class="info-paragraph">
-        Join our roller skating classes in Athens and discover the joy of skating with us!
+        <?= htmlspecialchars(t('home.announcement.p2')) ?>
       </p>
 
       <p class="info-paragraph">
-        Are you a complete beginner? Book a private roller skating lesson to build confidence and master the
-        basics—rolling, balance, and safe stops.
+        <?= htmlspecialchars(t('home.announcement.p3')) ?>
       </p>
 
       <p class="info-paragraph">
-        Already know how to skate? Join our group roller skating classes in Athens and develop your freestyle,
-        speed,
-        or dance skills.
+        <?= htmlspecialchars(t('home.announcement.p4')) ?>
       </p>
 
       <p class="info-paragraph">
-        Don't have your own roller skates or protection? No problem—just let us know your size and we’ll provide
-        everything you need.
+        <?= htmlspecialchars(t('home.announcement.p5')) ?>
       </p>
 
       <a class="button-link"        
         href="https://docs.google.com/forms/d/e/1FAIpQLSeAawGRiqE58WiY_K6jB6JIRDhrlj6ZxK-g9eXLRipInN01IA/viewform"      
         target="_blank" rel="noopener">
-        📝 Sign up to the team
+        <?= htmlspecialchars(t('home.announcement.cta_team')) ?>
       </a>
       <br>
       <a class="button-link" href="https://calendly.com/hermesrollerskate/private-lesson-zografou?month=2025-09"  
         target="_blank" rel="noopener">
-        📝 Book your private lesson!
+        <?= htmlspecialchars(t('home.announcement.cta_private')) ?>
       </a>
       <p class="info-paragraph bold-highlight">
-        Roll with confidence. Learn with joy.
+        <?= htmlspecialchars(t('home.announcement.highlight')) ?>
       </p>
     </div>
   </section>
@@ -100,63 +129,63 @@ require_once __DIR__ . '/partials/header.php';
   <section class="grid-container">
     <!-- Tuesday -->
     <div class="grid-item">
-      <h3>Tuesday</h3>
+      <h3><?= htmlspecialchars(t('home.schedule.days.tuesday')) ?></h3>
       <ul class="class-list">
-        <li><span class="time">16:30–18:00</span> <strong class="level-private">Private</strong></li>
-        <li><span class="time">18:00–19:00</span> <strong class="level-l1">Beginners L1</strong></li>
-        <li><span class="time">19:00–20:00</span> <strong class="level-l2">Basic L2</strong></li>
+        <li><span class="time">16:30–18:00</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
+        <li><span class="time">18:00–19:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">19:00–20:00</span> <strong class="level-l2"><?= htmlspecialchars(t('home.schedule.levels.l2')) ?></strong></li>
       </ul>
       <div class="location">
-        📍 Location: <a href="https://maps.app.goo.gl/Qo2WeKKUf23oGLKi7" target="_blank">ΟΑΚΑ/Marousi &amp; Gerakas</a>
+        <?= htmlspecialchars(t('home.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/Qo2WeKKUf23oGLKi7" target="_blank"><?= htmlspecialchars(t('home.schedule.locations.marousi')) ?></a>
       </div>
     </div>
 
     <!-- Wednesday -->
     <div class="grid-item">
-      <h3>Wednesday</h3>
+      <h3><?= htmlspecialchars(t('home.schedule.days.wednesday')) ?></h3>
       <ul class="class-list">
-        <li><span class="time">16:30–17:30</span> <strong class="level-private">Private</strong></li>
-        <li><span class="time">17:30–18:30</span> <strong class="level-l1">Beginners L1</strong></li>
-        <li><span class="time">18:30–19:30</span> <strong class="level-l2">Basic L2</strong></li>
+        <li><span class="time">16:30–17:30</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
+        <li><span class="time">17:30–18:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">18:30–19:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.schedule.levels.l2')) ?></strong></li>
       </ul>
       <div class="location">
-        📍 Location: <a href="https://maps.app.goo.gl/P8GLY5GFSRkJiXFv9" target="_blank">Gerakas</a>
+        <?= htmlspecialchars(t('home.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/P8GLY5GFSRkJiXFv9" target="_blank"><?= htmlspecialchars(t('home.schedule.locations.gerakas')) ?></a>
       </div>
     </div>
 
     <!-- Saturday -->
     <div class="grid-item">
-      <h3>Saturday</h3>
+      <h3><?= htmlspecialchars(t('home.schedule.days.saturday')) ?></h3>
       <ul class="class-list">
-        <li><span class="time">09:30–10:30</span> <strong class="level-l1">Begginers L1</strong></li>
-        <li><span class="time">10:30–11:30</span> <strong class="level-l2">Basic L2</strong></li>
-        <li><span class="time">11:30–12:30</span> <strong class="level-l3">Advanced L3</strong></li>
-        <li><span class="time">12:30–13:30</span> <strong class="level-private">Private</strong></li>
-        <li><span class="time">17:00–18:00</span> <strong class="level-l1">Begginers L1</strong></li>
-        <li><span class="time">18:00–19:00</span> <strong class="level-l4">Basic-Advanced L2+L3</strong></li>
-        <li><span class="time">19:00–20:00</span> <strong class="level-mixed">Mix Adults</strong></li>
-        <li><span class="time">20:00–21:00</span> <strong class="level-private">Private</strong></li>
+        <li><span class="time">09:30–10:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">10:30–11:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.schedule.levels.l2')) ?></strong></li>
+        <li><span class="time">11:30–12:30</span> <strong class="level-l3"><?= htmlspecialchars(t('home.schedule.levels.l3')) ?></strong></li>
+        <li><span class="time">12:30–13:30</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
+        <li><span class="time">17:00–18:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">18:00–19:00</span> <strong class="level-l4"><?= htmlspecialchars(t('home.schedule.levels.l4')) ?></strong></li>
+        <li><span class="time">19:00–20:00</span> <strong class="level-mixed"><?= htmlspecialchars(t('home.schedule.levels.mixed')) ?></strong></li>
+        <li><span class="time">20:00–21:00</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
       </ul>
       <div class="location">
-        📍 Location: <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank">Zografou/Athens</a>
+        <?= htmlspecialchars(t('home.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank"><?= htmlspecialchars(t('home.schedule.locations.zografou_athens')) ?></a>
       </div>
     </div>
 
     <!-- Sunday -->
     <div class="grid-item">
-      <h3>Sunday</h3>
+      <h3><?= htmlspecialchars(t('home.schedule.days.sunday')) ?></h3>
       <ul class="class-list">
-        <li><span class="time">09:30–10:30</span> <strong class="level-l1">Begginers L1</strong></li>
-        <li><span class="time">10:30–11:30</span> <strong class="level-l2">Basic L2</strong></li>
-        <li><span class="time">11:30–12:30</span> <strong class="level-l3">Advanced L3</strong></li>
-        <li><span class="time">12:30–13:30</span> <strong class="level-private">Private</strong></li>
-        <li><span class="time">17:00–18:00</span> <strong class="level-l1">Begginers L1</strong></li>
-        <li><span class="time">18:00–19:00</span> <strong class="level-l4">Basic-Advanced L2+L3</strong></li>
-        <li><span class="time">19:00–20:00</span> <strong class="level-mixed">Mix Adults</strong></li>
-        <li><span class="time">20:00–21:00</span> <strong class="level-private">Private</strong></li>
+        <li><span class="time">09:30–10:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">10:30–11:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.schedule.levels.l2')) ?></strong></li>
+        <li><span class="time">11:30–12:30</span> <strong class="level-l3"><?= htmlspecialchars(t('home.schedule.levels.l3')) ?></strong></li>
+        <li><span class="time">12:30–13:30</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
+        <li><span class="time">17:00–18:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">18:00–19:00</span> <strong class="level-l4"><?= htmlspecialchars(t('home.schedule.levels.l4')) ?></strong></li>
+        <li><span class="time">19:00–20:00</span> <strong class="level-mixed"><?= htmlspecialchars(t('home.schedule.levels.mixed')) ?></strong></li>
+        <li><span class="time">20:00–21:00</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
       </ul>
       <div class="location">
-        📍 Location: <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank">Zografou</a>
+        <?= htmlspecialchars(t('home.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank"><?= htmlspecialchars(t('home.schedule.locations.zografou')) ?></a>
       </div>
     </div>
   </section>
@@ -164,17 +193,17 @@ require_once __DIR__ . '/partials/header.php';
   <!-- Latest News -->
   <section class="news-section">
     <div class="news-inner">
-      <h2>Latest News</h2>
+      <h2><?= htmlspecialchars(t('home.news.title')) ?></h2>
 
       <p class="news-sub">
-        Stay updated with our latest events and announcements!
+        <?= htmlspecialchars(t('home.news.subtitle')) ?>
       </p>
 
       <a class="btn-gradient-pill" href="https://www.instagram.com/hermes_rollerskate/" target="_blank" rel="noopener"  
         aria-label="Open Hermes Rollerskate Instagram">
         <i class="fa-brands fa-instagram" aria-hidden="true"></i>
         <span>
-          View latest on Instagram
+          <?= htmlspecialchars(t('home.news.cta')) ?>
         </span>
       </a>
     </div>
@@ -251,11 +280,12 @@ require_once __DIR__ . '/partials/header.php';
 
 
   <a href="https://powerskate.eu/skates" class="button-link" target="_blank" rel="noopener">
-    🛍️ View all merchandise
+    <?= htmlspecialchars(t('home.merch.cta')) ?>
   </a>
 
 </main>
 
 <?php
-require_once __DIR__ . '/partials/footer.php';
+// Shared footer
+require_once PROJECT_ROOT . 'partials/footer.php';
 ?>

@@ -1,35 +1,40 @@
 <?php
 // benefits.php
 
-$pageTitle = " Roller Skating Benefits & Lifestyle | Hermes Rollerskate Academy ";
-$pageDescription = "Discover the numerous benefits of roller skating as a lifestyle choice. From health and fitness to community and travel, learn how Hermes Rollerskate Academy promotes skating as a fun, inclusive, and enriching activity for all ages.";
-$pageKeywords = "roller skating benefits, skating lifestyle, health benefits of skating, skating community, skating travel, Hermes Rollerskate Academy, inclusive skating, skating fitness, urban skating culture";
-$pageCss = "css/benefits.css";
+// Core config + language helper
+require_once __DIR__ . '/config.php';
+require_once PROJECT_ROOT . 'includes/lang.php';
+
+// Page metadata
+$pageTitle = t('benefits.meta.title');
+$pageDescription = t('benefits.meta.description');
+$pageKeywords = t('benefits.meta.keywords');
+$pageCss = ["css/benefits.css"];
 $activePage = "benefits";
 
-require_once __DIR__ . '/partials/header.php';
+// Shared header
+require_once PROJECT_ROOT . 'partials/header.php';
 ?>
 
+<!-- BENEFITS PAGE CONTENT -->
 <main>
   <!-- 1. European RollerSkate Culture & Sports Tourism -->
   <section class="lifestyle-section">
     <div class="container">
       <h3>
-        🌍 Explore Europe on Roller Skates: Culture & Adventure
+        <?= htmlspecialchars(t('benefits.sections.europe.title')) ?>
       </h3>
 
       <p>
-        Discover iconic cities like Nice and Barcelona from a new perspective—on wheels. Roller skating combines
-        sightseeing with fitness, letting you roll past landmarks, coastal promenades, and cultural gems.
+        <?= htmlspecialchars(t('benefits.sections.europe.p1')) ?>
       </p>
 
       <p>
-        Join guided tours with local skate communities, meet international skaters, and make unforgettable memories
-        along the most famous skating boulevards in Europe.
+        <?= htmlspecialchars(t('benefits.sections.europe.p2')) ?>
       </p>
 
       <p>
-        Roller tourism is growing—be part of it with Hermes and turn every trip into an adventure.
+        <?= htmlspecialchars(t('benefits.sections.europe.p3')) ?>
       </p>
 
       <!-- Image Gallery -->
@@ -37,13 +42,13 @@ require_once __DIR__ . '/partials/header.php';
         <figure>
           <img src="<?= asset('photo/nice france.webp') ?>" alt="Roller ride in Nice, France">
           <figcaption>
-            Promenade des Anglais, Nice, France
+            <?= htmlspecialchars(t('benefits.sections.europe.fig1')) ?>
           </figcaption>
         </figure>
         <figure>
           <img src="<?= asset('photo/barchelona.webp') ?>" alt="Skating along Barcelona beach">
           <figcaption>
-            Barceloneta Beach, Barcelona
+            <?= htmlspecialchars(t('benefits.sections.europe.fig2')) ?>
           </figcaption>
         </figure>
       </div>
@@ -54,27 +59,25 @@ require_once __DIR__ . '/partials/header.php';
   <section id="family-activity" class="lifestyle-section">
     <div class="container">
       <h3>
-        👨‍👩‍👧‍👦 RollerSkating for the whole Family
+        <?= htmlspecialchars(t('benefits.sections.family.title')) ?>
       </h3>
 
       <p>
-        Spend quality time with your loved ones while staying active! Our family roller skate sessions offer something
-        for everyone—whether it’s your child’s first roll or a nostalgic glide for parents and grandparents.
+        <?= htmlspecialchars(t('benefits.sections.family.p1')) ?>
       </p>
 
       <p>
-        Skating together builds trust, balance, and beautiful shared moments. Perfect for birthdays, weekend outings,
-        and active holidays.
+        <?= htmlspecialchars(t('benefits.sections.family.p2')) ?>
       </p>
 
       <p>
-        No gear? No problem—we provide everything. Just bring your smile.
+        <?= htmlspecialchars(t('benefits.sections.family.p3')) ?>
       </p>
 
       <div class="lifestyle-images">
         <figure>
           <img src="<?= asset('photo/family activity.webp') ?>" alt="Family roller skating fun">
-          <figcaption>Family Skate Fun</figcaption>
+          <figcaption><?= htmlspecialchars(t('benefits.sections.family.fig1')) ?></figcaption>
         </figure>
       </div>
     </div>
@@ -83,39 +86,36 @@ require_once __DIR__ . '/partials/header.php';
   <!-- 3. Learn One, Master Two More -->
   <section id="learn-more" class="lifestyle-section">
     <div class="container">
-      <h3> One Skill, Endless Possibilities</h3>
+      <h3><?= htmlspecialchars(t('benefits.sections.learn.title')) ?></h3>
 
       <p>
-        Start with roller skating and unlock new worlds—ice skating and snow skiing become easier when you already
-        master balance, control, and movement on wheels.
+        <?= htmlspecialchars(t('benefits.sections.learn.p1')) ?>
       </p>
 
       <p>
-        Our method connects skills across disciplines. You’ll progress faster and feel safer on every surface—pavement,
-        ice or snow.
+        <?= htmlspecialchars(t('benefits.sections.learn.p2')) ?>
       </p>
 
       <p>
-        Interested in more than just basics? Try dance skating, freestyle, racing or aggressive skating and develop
-        high-level abilities that impress.
+        <?= htmlspecialchars(t('benefits.sections.learn.p3')) ?>
       </p>
 
       <p>
-        With every lesson, you’re not just skating—you’re building a foundation for lifelong mobility and confidence.
+        <?= htmlspecialchars(t('benefits.sections.learn.p4')) ?>
       </p>
 
       <div class="lifestyle-images">
         <figure>
           <img src="<?= asset('photo/family activityy.webp') ?>" alt="RollerSkating">
-          <figcaption>Roller Foundations</figcaption>
+          <figcaption><?= htmlspecialchars(t('benefits.sections.learn.fig1')) ?></figcaption>
         </figure>
         <figure>
           <img src="<?= asset('photo/snowski.webp') ?>" alt="SnowSki">
-          <figcaption>Snow Transition</figcaption>
+          <figcaption><?= htmlspecialchars(t('benefits.sections.learn.fig2')) ?></figcaption>
         </figure>
         <figure>
           <img src="<?= asset('photo/iceskate2.webp') ?>" alt="IceSkating">
-          <figcaption>Ice Transition</figcaption>
+          <figcaption><?= htmlspecialchars(t('benefits.sections.learn.fig3')) ?></figcaption>
         </figure>
       </div>
     </div>
@@ -125,36 +125,33 @@ require_once __DIR__ . '/partials/header.php';
   <section id="competition" class="lifestyle-section">
     <div class="container">
       <h3>
-        🏆 Friendly Competitions & Local Skate Races
+        <?= htmlspecialchars(t('benefits.sections.competition.title')) ?>
       </h3>
 
       <p>
-        Our events are more than just races—they’re celebrations of personal growth and community spirit. Whether you're
-        4 or 104, there's a place for you on the starting line.
+        <?= htmlspecialchars(t('benefits.sections.competition.p1')) ?>
       </p>
 
       <p>
-        Join time trials, mini-marathons and skill challenges designed for all levels—from first-timers to seasoned
-        skaters.
+        <?= htmlspecialchars(t('benefits.sections.competition.p2')) ?>
       </p>
 
       <p>
-        Compete with friends, classmates or family members and earn medals, certificates, and confidence.
+        <?= htmlspecialchars(t('benefits.sections.competition.p3')) ?>
       </p>
 
       <p>
-        Roller skating events help you set goals, train with purpose and have fun while improving your fitness and
-        focus.
+        <?= htmlspecialchars(t('benefits.sections.competition.p4')) ?>
       </p>
 
       <div class="lifestyle-images">
         <figure>
           <img src="<?= asset('photo/racee.webp') ?>" alt="Local Roller Skate Race">
-          <figcaption>Community Race Day</figcaption>
+          <figcaption><?= htmlspecialchars(t('benefits.sections.competition.fig1')) ?></figcaption>
         </figure>
         <figure>
           <img src="<?= asset('photo/aponomes.webp') ?>" alt="Awards Ceremony">
-          <figcaption>Awards</figcaption>
+          <figcaption><?= htmlspecialchars(t('benefits.sections.competition.fig2')) ?></figcaption>
         </figure>
       </div>
     </div>
@@ -164,37 +161,34 @@ require_once __DIR__ . '/partials/header.php';
   <section id="pathways" class="lifestyle-section">
     <div class="container">
       <h3>
-        🎓 Coaching & Career Development through RollerSkating
+        <?= htmlspecialchars(t('benefits.sections.pathways.title')) ?>
       </h3>
 
       <p>
-        Do you dream of coaching others, joining performances or becoming a certified athlete? Our structured programs
-        guide you step-by-step through skill mastery and professional opportunities.
+        <?= htmlspecialchars(t('benefits.sections.pathways.p1')) ?>
       </p>
 
       <p>
-        Train with experienced instructors in roller skating, ice skating and skiing. Learn how to teach, lead, and
-        inspire others—both kids and adults.
+        <?= htmlspecialchars(t('benefits.sections.pathways.p2')) ?>
       </p>
 
       <p>
-        Get access to coaching certifications, workshops, event organizing know-how, and real-life mentoring from
-        professionals in the field.
+        <?= htmlspecialchars(t('benefits.sections.pathways.p3')) ?>
       </p>
 
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSfDa7gGuJDpYOI3_pESB5l4OiF7iAnOBsAQYrINmD19tabiUQ/viewform"
         target="_blank" rel="noopener" class="button-link">
-        📩 Coach's application
+        <?= htmlspecialchars(t('benefits.sections.pathways.cta')) ?>
       </a>
 
       <div class="lifestyle-images">
         <figure>
           <img src="<?= asset('photo/instractor.webp') ?>" alt="RollerSkate Coach/Instructor">
-          <figcaption>Rollerskate Coach/instructor</figcaption>
+          <figcaption><?= htmlspecialchars(t('benefits.sections.pathways.fig1')) ?></figcaption>
         </figure>
         <figure>
           <img src="<?= asset('photo/modela.webp') ?>" alt="RollerSkate Models">
-          <figcaption>Rollerskate Model</figcaption>
+          <figcaption><?= htmlspecialchars(t('benefits.sections.pathways.fig2')) ?></figcaption>
         </figure>
       </div>
     </div>
@@ -204,22 +198,19 @@ require_once __DIR__ . '/partials/header.php';
   <section id="community" class="lifestyle-section">
     <div class="container">
       <h3>
-        🤝 Find Your Skate Community Near You
+        <?= htmlspecialchars(t('benefits.sections.community.title')) ?>
       </h3>
 
       <p>
-        You’re never alone on wheels. Across Athens and Greece, small skate communities welcome beginners, families, and
-        advanced skaters with open arms.
+        <?= htmlspecialchars(t('benefits.sections.community.p1')) ?>
       </p>
 
       <p>
-        Join weekly meetups, night rides, social events, or just train together in a park. You'll improve faster, make
-        friends and stay motivated.
+        <?= htmlspecialchars(t('benefits.sections.community.p2')) ?>
       </p>
 
       <p>
-        We collaborate with some of the best local teams to help you find your skating family—right in your
-        neighborhood.
+        <?= htmlspecialchars(t('benefits.sections.community.p3')) ?>
       </p>
 
       <div class="microcommunities">
@@ -230,7 +221,7 @@ require_once __DIR__ . '/partials/header.php';
             <h3>City Skaters Athens</h3>
           </a>
           <p>
-            Weekly rides, sessions freestyle and aggressive
+            <?= htmlspecialchars(t('benefits.sections.community.c1_p')) ?>
           </p>
         </div>
 
@@ -241,8 +232,7 @@ require_once __DIR__ . '/partials/header.php';
             <h3>Patinia Community</h3>
           </a>
           <p>
-            Patinia is the biggest roller skating community in Greece and Cyprus. They rolling around the streets, park
-            skating, and dancing
+            <?= htmlspecialchars(t('benefits.sections.community.c2_p')) ?>
           </p>
         </div>
 
@@ -251,11 +241,10 @@ require_once __DIR__ . '/partials/header.php';
           <a href="https://linktr.ee/zoepatini?fbclid=PAZXh0bgNhZW0CMTEAAac56C1Fqan6f3URctJhYhLQ5Wk2q_jXSYiZwVbMMBvVbwZGCEehrdpPoOGTug_aem_Z3TUDktI_a0xBFl9eTetSg"
             target="_blank" rel="noopener">
             <img src="<?= asset('photo/zoepatini.webp') ?>" alt="Zoe Patini">
-            <h3>Zoe Patini</h3>
+            <h3><?= htmlspecialchars(t('benefits.sections.community.c3_title')) ?></h3>
           </a>
           <p>
-            The team Zoi Patini, inspired by the Greek phrase -you’ve turned my life into a roller skate-, brings the
-            high-energy rollerdancing class Oh my quad to Thessaloniki and Athens!
+            <?= htmlspecialchars(t('benefits.sections.community.c3_p')) ?>
           </p>
         </div>
       </div>
@@ -264,5 +253,6 @@ require_once __DIR__ . '/partials/header.php';
 </main>
 
 <?php
-require_once __DIR__ . '/partials/footer.php';
+// Shared footer
+require_once PROJECT_ROOT . 'partials/footer.php';
 ?>
