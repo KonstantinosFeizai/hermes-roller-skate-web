@@ -57,8 +57,9 @@ try {
         $mail = getMailer();
         $mail->addAddress($email, $user['username']);
 
-        // Build reset URL (update to production domain if needed)
-        $reset_link = "http://localhost/hermesrollerskate/auth/reset_password.php?token=" . $raw_token;
+        // Build reset URL using APP_URL from config
+        $base_url = rtrim($APP_URL, '/');
+        $reset_link = $base_url . "/auth/reset_password.php?token=" . $raw_token;
 
         $mail->isHTML(true);
         $mail->Subject = 'Ανάκτηση Κωδικού Hermes Roller Skate';

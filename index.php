@@ -60,7 +60,6 @@ if (isset($_SESSION['alert_message'])) {
     </h2>
   </div>
 </header>
-
 <!-- One-time alert message -->
 <?php if ($alert_message): ?>
   <div class="alert alert-<?php echo htmlspecialchars($alert_type); ?>" role="alert">

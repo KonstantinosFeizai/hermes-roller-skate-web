@@ -68,8 +68,9 @@ try {
         // Προς ποιον στέλνουμε
         $mail->addAddress($email, $username);
 
-        // Build verification link (update base URL for production)
-        $verification_link = "http://localhost/hermesrollerskate/auth/verify.php?token=" . $confirmation_token;
+        // Build verification link using APP_URL from config
+        $base_url = rtrim($APP_URL, '/');
+        $verification_link = $base_url . "/auth/verify.php?token=" . $confirmation_token;
 
         $mail->isHTML(true);
         $mail->Subject = 'Επιβεβαίωση Λογαριασμού Hermes Roller Skate';

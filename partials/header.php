@@ -99,6 +99,19 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
     <!-- Favicon -->
     <link rel="icon" href="<?= asset('photo/logo.webp') ?>">
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17685814149"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'AW-17685814149');
+    </script>
+
     <!-- Global styles -->
     <!--  getVersionedAssetUrl() -->
     <link rel="stylesheet" href="<?= getVersionedAssetUrl('css/navigation.css') ?>">

@@ -2,3 +2,4 @@
 # Prevents all web crawlers from accessing the /admin/ directory
 User-agent: *
 Disallow: /admin/
+Sitemap: https://hermesrollerskate.com/sitemap.xml
