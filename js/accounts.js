@@ -12,7 +12,7 @@ async function changeRole(userId, currentRole) {
     return;
 
   try {
-    const response = await fetch(BASE_URL + "admin_change_role.php", {
+    const response = await fetch(BASE_URL + "admin/admin_change_role.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId, new_role: newRole }),
@@ -37,7 +37,7 @@ async function deleteUser(userId) {
     return;
 
   try {
-    const response = await fetch(BASE_URL + "admin_delete_user.php", {
+    const response = await fetch(BASE_URL + "admin/admin_delete_user.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId }),
