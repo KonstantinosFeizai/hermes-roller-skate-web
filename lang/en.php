@@ -379,66 +379,69 @@ return [
         ],
         'cards' => [
             'lesson' => [
-                'title' => 'Lesson Pricing',
+                'title' => 'Group Lessons Price List',
                 'head_category' => 'Category',
                 'head_discount' => 'Discount',
-                'head_price' => 'Price per 4 Courses',
-                'head_details' => 'Details',
+                'head_price' => 'Price / 4 Lessons',
+                'head_details' => 'Price / Person',
                 'row_individual' => 'Individual',
                 'row_student' => 'Student',
                 'row_family2' => '2nd Family Member',
                 'row_family3' => '3rd Family Member',
+                'row_family4' => '4th Family Member',
                 'row_referral' => 'Referral Discount',
-                'price_referral' => 'One-time',
-                'detail_individual' => 'One person, all ages',
-                'detail_student' => 'Students 18-24',
-                'detail_family' => '1st-degree relative',
-                'detail_referral' => 'Active referral only',
-                'note' => 'Note: All 4 courses must be prepaid; 3 no-shows deduct 1 course.'
+                'note_title' => 'Note 1:',
+                'note' => 'All 4 lessons must be prepaid. 3 absences deduct 1 lesson.'
             ],
             'private' => [
-                'title' => 'Private Lessons Pricing',
+                'title' => 'Open Private Lessons Price List',
                 'head_participants' => 'Participants',
                 'head_price' => 'Price / Lesson',
-                'head_discount' => 'Discount',
-                'discount_none' => 'None',
-                'note' => 'Note : Equipment rental is €8 (rollerskates, helmet, protective gear) per person and reservations can be made by phone. Payment is due after the lesson.'
+                'head_person' => 'Price / Person',
+                'varies' => 'Depends',
+                'note_title' => 'Note 1:',
+                'note' => 'Equipment rental is 8€ per person (skates, helmet, protective gear). Scheduling is done by phone. Payment after the lesson.'
             ],
             'workshops' => [
-                'title' => 'Special Workshops Pricing',
+                'title' => 'Special Workshop Pricing',
                 'head_participants' => 'Participants',
-                'head_price' => 'Price per Lesson',
+                'head_price' => 'Price / Lesson',
                 'head_refund' => 'Refund Rate',
                 'head_details' => 'Details',
                 'row_active' => 'Active Member',
                 'row_inactive' => 'Inactive Member',
                 'row_external' => 'External',
-                'detail_active' => '≥1 lesson left',
-                'detail_inactive' => 'No lessons left',
-                'detail_external' => 'Outside team',
-                'note' => 'Seat booking is prepaid. 75% refund up to 4 days before; 50% up to 2 days. No refund within 48 hours.'
+                'detail_active' => '>= One Remaining Lesson',
+                'detail_inactive' => 'No Remaining Lessons',
+                'detail_external' => '-',
+                'note_title' => 'Note 1:',
+                'note' => 'Booking is prepaid. 75% refund up to 4 days before. 50% refund up to 2 days before. No refund within 48 hours.'
             ],
             'schools' => [
-                'title' => 'Schools Pricing',
-                'head_kids' => 'Number of Kids',
-                'head_price' => 'Price per Child',
-                'head_min' => 'Min Fee per month',
-                'note' => 'Note: The attendance record is shared with our team to ensure accurate costing.'
+                'title' => 'School Pricing',
+                'head_kids' => 'Number of Children',
+                'head_price' => 'Price / 4 Lessons',
+                'head_min' => 'Minimum Monthly Charge',
+                'note_title' => 'Note 1:',
+                'note' => 'Attendance records are shared with our team for accurate pricing.'
             ],
             'rental' => [
                 'title' => 'Equipment Rental Pricing',
                 'head_duration' => 'Rental Duration',
                 'head_cost' => 'Equipment Cost (incl. VAT)',
-                'head_advance' => 'Advance Fee',
-                'note1' => 'Note 1: The rental package includes 50 pairs of rollerskates, protective gear for wrists, elbows, and knees, helmets, 4–5 shoe storage racks, and 6 artificial grass mats (2m x 1m each).',
-                'note2' => 'Note 2: Optional personnel service — Coach/Supervisor +150€/day, Manager +250€/day. A service agreement will be signed, including detailed equipment descriptions and potential compensation clauses for damage or loss.'
+                'head_advance' => 'Prepayment Percentage',
+                'days' => 'days',
+                'note1_title' => 'Note 1:',
+                'note1' => 'Rental includes 50 pairs of skates, wrist/elbow/knee pads, helmets, 4–5 shoe storage bins, and 6 artificial turf mats (2m x 1m).',
+                'note2_title' => 'Note 2:',
+                'note2' => 'Optional staff — Coach/Supervisor +150€/day, Manager +250€/day. A service agreement will be signed, including detailed reports and potential compensation for equipment damage or loss.'
             ],
             'weather' => [
                 'title' => '🌦️ Weather & Cancellations ❌',
                 'rain' => 'Rainy or wet courts',
-                'cold' => 'Below 5°C',
+                'cold' => 'Below 10°C',
                 'hot' => 'Above 35°C',
-                'coach' => 'Coach emergency unavailability',
+                'coach' => 'Coach unable to attend',
                 'note' => 'Updates are posted in the Viber group chat.'
             ]
         ]
