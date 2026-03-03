@@ -466,7 +466,7 @@ return [
                 'head_price' => 'Τιμή / 4 Μαθήματα',
                 'head_details' => 'Τιμή / Άτομο',
                 'row_individual' => 'Ατομικό',
-                'row_student' => 'Φοιτητής/Μαθητής',
+                'row_student' => 'Φοιτητής',
                 'row_family2' => '2ο Μέλος Οικογένειας',
                 'row_family3' => '3ο Μέλος Οικογένειας',
                 'row_family4' => '4ο Μέλος Οικογένειας',
@@ -502,7 +502,8 @@ return [
                 'title' => 'Τιμοκατάλογος Σχολείων',
                 'head_kids' => 'Αριθμός Παιδιών',
                 'head_price' => 'Τιμή / 4 Μαθήματα',
-                'head_min' => 'Ελάχιστη Χρέωση/Μήνα',
+                'head_min' => 'Χρέωση ανά παιδί',
+                'price_per_kid' => 'Χρέωση ανά παιδί',
                 'note_title' => 'Σημείωση 1:',
                 'note' => 'Τα παρουσιολόγια κοινοποιούνται στην ομάδα μας για ακριβή κοστολόγηση.'
             ],
@@ -578,6 +579,72 @@ return [
         ],
         'merch' => [
             'cta' => '🛍️ Δείτε όλα τα προϊόντα'
+        ],
+        'index' => [
+            'announcement' => [
+                'title' => 'Ξεκινήστε το ταξίδι σας με τα πατίνια στην Αθήνα',
+                'alts' => [
+                    'img1' => 'Μάθημα roller skating αρχαρίων στον Ζωγράφο, Αθήνα',
+                    'img2' => 'Roller skating για παιδιά και οικογένειες στην Αθήνα',
+                    'img3' => 'Υπαίθρια ομαδική προπόνηση της Hermes Rollerskate Academy'
+                ],
+                'p1' => 'Καλώς ήρθατε στην Hermes Rollerskate Academy, όπου παιδιά και ενήλικες μαθαίνουν πατίνια σε ασφαλές και διασκεδαστικό περιβάλλον στον Ζωγράφο/Αθήνα, στο ΟΑΚΑ/Μαρούσι, στον Γέρακα και στο Αιγάλεω.',
+                'p2' => 'Ελάτε στα μαθήματα roller skating στην Αθήνα και ανακαλύψτε τη χαρά του πατινιού μαζί μας!',
+                'p3' => 'Είστε τελείως αρχάριος; Κλείστε ένα ιδιαίτερο μάθημα roller skating για να χτίσετε αυτοπεποίθηση και να μάθετε τα βασικά — ρολάρισμα, ισορροπία και ασφαλή φρεναρίσματα.',
+                'p4' => 'Ξέρετε ήδη να κάνετε πατίνια; Ελάτε στα ομαδικά μαθήματα roller skating στην Αθήνα και εξελίξτε freestyle, ταχύτητα ή dance δεξιότητες.',
+                'p5' => 'Δεν έχετε δικά σας πατίνια ή προστατευτικό εξοπλισμό; Κανένα πρόβλημα — πείτε μας το νούμερό σας και θα σας παρέχουμε ό,τι χρειάζεστε.',
+                'cta_team' => '📝 Εγγραφή στην ομάδα',
+                'cta_private' => '📝 Κλείσε το ιδιαίτερο μάθημά σου!',
+                'winter_schedule' => 'Χειμερινό Πρόγραμμα 24/10-24/3'
+            ],
+            'schedule' => [
+                'days' => [
+                    'tuesday' => 'Τρίτη',
+                    'wednesday' => 'Τετάρτη',
+                    'monday_thursday' => 'Δευτέρα & Πέμπτη',
+                    'weekends' => 'Σαββατοκύριακα'
+                ],
+                'levels' => [
+                    'private' => 'Ιδιαίτερο',
+                    'l1' => 'Αρχαρίων L1',
+                    'l2' => 'Βασικό L2',
+                    'l3' => 'Προχωρημένο L3',
+                    'l4' => 'Βασικό-Προχωρημένο L2+L3'
+                ],
+                'location_label' => '📍 Τοποθεσία:',
+                'locations' => [
+                    'oaka_marousi' => 'ΟΑΚΑ/Μαρούσι',
+                    'gerakas' => 'Γέρακας',
+                    'egaleo' => 'Αιγάλεω',
+                    'zografou_athens' => 'Ζωγράφου/Αθήνα'
+                ]
+            ],
+            'news' => [
+                'title' => 'Στιγμιότυπα',
+                'subtitle' => 'Δείτε τα πιο πρόσφατα στιγμιότυπα από αγώνες και προπονήσεις μας!',
+                'highlight1' => [
+                    'title' => 'Στιγμιότυπα από το Patra Rollerskate Festival Δεκεμβρίου',
+                    'desc' => 'Στιγμιότυπα από το Patra Rollerskate Festival Δεκεμβρίου'
+                ],
+                'highlight2' => [
+                    'title' => 'Στιγμιότυπα προπόνησης',
+                    'desc' => 'Στιγμιότυπα προπόνησης'
+                ],
+                'instagram_aria' => 'Άνοιγμα Instagram Hermes Rollerskate',
+                'instagram_cta' => 'Δείτε περισσότερα στιγμιότυπα στο Instagram'
+            ],
+            'merch' => [
+                'badge' => 'Merch',
+                'price_label' => 'Τιμή:',
+                'card1' => [
+                    'alt' => 'Μπλουζάκι ακαδημίας Hermes',
+                    'title' => 'Μπλουζάκι Ακαδημίας Hermes'
+                ],
+                'card2' => [
+                    'alt' => 'Μπλουζάκι ακαδημίας Hermida',
+                    'title' => 'Μπλουζάκι Ακαδημίας Hermida'
+                ]
+            ]
         ]
     ],
     'policies' => [
@@ -709,15 +776,21 @@ return [
         'email_label' => '📧 Email:',
         'location_label' => '📍 Τοποθεσία:',
         'phone_label' => '📞 Τηλέφωνο:',
+        'group_icon' => '📢 Κοινότητα Viber',
         'send_message' => '💬 Στείλε Μήνυμα',
         'locations' => [
             'zografou_1' => 'Ζωγράφου, Αθήνα',
             'zografou_2' => 'Ζωγράφου 2, Αθήνα',
             'gerakas' => 'Γέρακας',
             'oaka' => 'ΟΑΚΑ, Μαρούσι',
-            'egaleo' => 'Αιγάλεω'
+            'egaleo' => 'Αιγάλεω',
+            'vrilissia' => 'Βριλήσσια',
+            'megalopoli' => 'Μεγαλόπολη',
+            'kalamata' => 'Καλαμάτα'
         ],
-        'copyright' => '© 2025 Hermes Rollerskate Academy. Όλα τα δικαιώματα διατηρούνται.',
+        'copyright' => '© 2026 Hermes Rollerskate Academy. Όλα τα δικαιώματα διατηρούνται.',
+        'payments' => 'Αγίου Νικολάου 2, Μεγαλόπολη 22200, ΑΦΜ 164455490',
+        'payments2' => 'Eurobank IBAN GR3802601030000410201927836',
         'social_labels' => [
             'facebook' => 'Ακολούθησέ μας στο Facebook',
             'instagram' => 'Ακολούθησέ μας στο Instagram',
@@ -727,10 +800,9 @@ return [
         ],
         'partner_alts' => [
             'kifisia' => 'Δήμος Κηφισιάς',
-            'powerskate' => 'PowerSkate',
-            'prisma' => 'Prisma Consulting',
+            'ark' => 'Ark Incubator',
             'ivoluntry' => 'Ivoluntry',
-            'bewell' => 'BeWell Movement',
+            'mykidact' => 'My Kid act',
             'futureskate' => 'Future Skate',
             'kidot' => 'kidot',
             'inaction' => 'InAction',

@@ -38,36 +38,36 @@ require_once PROJECT_ROOT . 'partials/header.php';
 
         <div class="table-row" role="row">
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_category')) ?>"><?= htmlspecialchars(t('prices.cards.lesson.row_student')) ?></span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_discount')) ?>">18%</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_price')) ?>">23€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_discount')) ?>">11%</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_price')) ?>">25€</span>
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_details')) ?>">-</span>
         </div>
 
         <div class="table-row" role="row">
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_category')) ?>"><?= htmlspecialchars(t('prices.cards.lesson.row_family2')) ?></span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_discount')) ?>">18%</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_price')) ?>">46€</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_details')) ?>">23€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_discount')) ?>">11%</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_price')) ?>">50€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_details')) ?>">25€</span>
         </div>
 
         <div class="table-row" role="row">
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_category')) ?>"><?= htmlspecialchars(t('prices.cards.lesson.row_family3')) ?></span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_discount')) ?>">25%</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_price')) ?>">63€</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_details')) ?>">21€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_discount')) ?>">18%</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_price')) ?>">69€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_details')) ?>">23€</span>
         </div>
 
         <div class="table-row" role="row">
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_category')) ?>"><?= htmlspecialchars(t('prices.cards.lesson.row_family4')) ?></span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_discount')) ?>">32%</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_price')) ?>">76€</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_details')) ?>">19€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_discount')) ?>">25%</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_price')) ?>">84€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_details')) ?>">21€</span>
         </div>
 
         <div class="table-row" role="row">
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_category')) ?>"><?= htmlspecialchars(t('prices.cards.lesson.row_referral')) ?></span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_discount')) ?>">-5€</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_price')) ?>">23€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_discount')) ?>">-3€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_price')) ?>">25€</span>
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.lesson.head_details')) ?>">-</span>
         </div>
 
@@ -162,28 +162,28 @@ require_once PROJECT_ROOT . 'partials/header.php';
         <div class="table-header" role="row">
           <span><?= htmlspecialchars(t('prices.cards.schools.head_kids')) ?></span>
           <span><?= htmlspecialchars(t('prices.cards.schools.head_price')) ?></span>
-          <span><?= htmlspecialchars(t('prices.cards.schools.head_min')) ?></span>
+          <span><?= htmlspecialchars(t('prices.cards.schools.price_per_kid')) ?></span>
         </div>
 
         <div class="table-row" role="row">
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_kids')) ?>">5</span>
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_price')) ?>">120€</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_min')) ?>">100€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_min')) ?>">24€</span>
         </div>
         <div class="table-row" role="row">
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_kids')) ?>">10</span>
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_price')) ?>">220€</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_min')) ?>">190€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_min')) ?>">22€</span>
         </div>
         <div class="table-row" role="row">
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_kids')) ?>">15</span>
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_price')) ?>">300€</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_min')) ?>">270€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_min')) ?>">20€</span>
         </div>
         <div class="table-row" role="row">
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_kids')) ?>">20</span>
           <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_price')) ?>">360€</span>
-          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_min')) ?>">300€</span>
+          <span class="cell" data-label="<?= htmlspecialchars(t('prices.cards.schools.head_min')) ?>">18€</span>
         </div>
       </div>
 

@@ -57,6 +57,7 @@ body {
   height: 60px;
   width: 50px;
   object-fit: contain;
+  margin-top: 4px;
 }
 
 .nav-left .nav-button {
@@ -64,7 +65,7 @@ body {
 }
 
 .nav-left .nav-button:hover {
-  transform: scale(1.2);
+  transform: scale(1.12);
 }
 
 .nav-center {

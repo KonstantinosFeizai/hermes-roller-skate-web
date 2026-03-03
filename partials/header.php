@@ -97,7 +97,7 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
     <meta property="og:type" content="website" />
 
     <!-- Favicon -->
-    <link rel="icon" href="<?= asset('photo/logo.webp') ?>">
+    <link rel="icon" href="<?= asset('photo/hermes_logo.png') ?>">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17685814149"></script>
@@ -165,7 +165,7 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
     <nav class="navbar" id="navbar">
         <div class="nav-left">
             <a href="<?= asset('') ?>">
-                <img src="<?= asset('photo/logo.webp') ?>" alt="Hermes Logo" class="nav-button" />
+                <img src="<?= asset('photo/hermes_logo.png') ?>" alt="Hermes Logo" class="nav-button" />
             </a>
         </div>
 

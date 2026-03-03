@@ -47,8 +47,6 @@ if (isset($_SESSION['alert_message'])) {
 }
 ?>
 
-
-
 <!-- HOME PAGE CONTENT -->
 <header class="home-hero">
   <div id="welcome-overlay" class="animate__animated">
@@ -74,51 +72,51 @@ if (isset($_SESSION['alert_message'])) {
   <!-- Announcement Section -->
   <section class="announcement">
     <h2>
-      <?= htmlspecialchars(t('home.announcement.title')) ?>
+      <?= htmlspecialchars(t('home.index.announcement.title')) ?>
     </h2>
 
     <div class="announcement-images">
-      <img src="<?= asset('photo/spot3.webp') ?>" alt="Beginner roller skating class in Zografou, Athens"
+      <img src="<?= asset('photo/hallowed.webp') ?>" alt="<?= htmlspecialchars(t('home.index.announcement.alts.img1')) ?>"
         loading="lazy">
-      <img src="<?= asset('photo/spot2.webp') ?>" alt="Roller skating for children and families in Athens"
+      <img src="<?= asset('photo/rollerskate.webp') ?>" alt="<?= htmlspecialchars(t('home.index.announcement.alts.img2')) ?>"
         loading="lazy">
-      <img src="<?= asset('photo/whoweare.webp') ?>" alt="Hermes Rollerskate Academy outdoor group session"
+      <img src="<?= asset('photo/hallowed2.webp') ?>" alt="<?= htmlspecialchars(t('home.index.announcement.alts.img3')) ?>"
         loading="lazy">
     </div>
 
     <div class="homepageinfo">
       <p class="info-paragraph">
-        <?= htmlspecialchars(t('home.announcement.p1')) ?>
+        <?= htmlspecialchars(t('home.index.announcement.p1')) ?>
       </p>
 
       <p class="info-paragraph">
-        <?= htmlspecialchars(t('home.announcement.p2')) ?>
+        <?= htmlspecialchars(t('home.index.announcement.p2')) ?>
       </p>
 
       <p class="info-paragraph">
-        <?= htmlspecialchars(t('home.announcement.p3')) ?>
+        <?= htmlspecialchars(t('home.index.announcement.p3')) ?>
       </p>
 
       <p class="info-paragraph">
-        <?= htmlspecialchars(t('home.announcement.p4')) ?>
+        <?= htmlspecialchars(t('home.index.announcement.p4')) ?>
       </p>
 
       <p class="info-paragraph">
-        <?= htmlspecialchars(t('home.announcement.p5')) ?>
+        <?= htmlspecialchars(t('home.index.announcement.p5')) ?>
       </p>
 
       <a class="button-link"        
         href="https://docs.google.com/forms/d/e/1FAIpQLSeAawGRiqE58WiY_K6jB6JIRDhrlj6ZxK-g9eXLRipInN01IA/viewform"      
         target="_blank" rel="noopener">
-        <?= htmlspecialchars(t('home.announcement.cta_team')) ?>
+        <?= htmlspecialchars(t('home.index.announcement.cta_team')) ?>
       </a>
       <br>
       <a class="button-link" href="https://calendly.com/hermesrollerskate/private-lesson-zografou?month=2025-09"  
         target="_blank" rel="noopener">
-        <?= htmlspecialchars(t('home.announcement.cta_private')) ?>
+        <?= htmlspecialchars(t('home.index.announcement.cta_private')) ?>
       </a>
       <p class="info-paragraph bold-highlight">
-        <?= htmlspecialchars(t('home.announcement.highlight')) ?>
+        <?= htmlspecialchars(t('home.index.announcement.winter_schedule')) ?>
       </p>
     </div>
   </section>
@@ -128,85 +126,107 @@ if (isset($_SESSION['alert_message'])) {
   <section class="grid-container">
     <!-- Tuesday -->
     <div class="grid-item">
-      <h3><?= htmlspecialchars(t('home.schedule.days.tuesday')) ?></h3>
+      <h3><?= htmlspecialchars(t('home.index.schedule.days.tuesday')) ?></h3>
       <ul class="class-list">
-        <li><span class="time">16:30–18:00</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
-        <li><span class="time">18:00–19:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">19:00–20:00</span> <strong class="level-l2"><?= htmlspecialchars(t('home.schedule.levels.l2')) ?></strong></li>
+        <li><span class="time">16:30–18:00</span> <strong class="level-private"><?= htmlspecialchars(t('home.index.schedule.levels.private')) ?></strong></li>
+        <li><span class="time">18:00–19:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">19:00–20:00</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
       </ul>
       <div class="location">
-        <?= htmlspecialchars(t('home.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/Qo2WeKKUf23oGLKi7" target="_blank"><?= htmlspecialchars(t('home.schedule.locations.marousi')) ?></a>
+        <?= htmlspecialchars(t('home.index.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/iwtuXZvQoZDqqgUy9" target="_blank"><?= htmlspecialchars(t('home.index.schedule.locations.oaka_marousi')) ?></a>
       </div>
     </div>
 
     <!-- Wednesday -->
     <div class="grid-item">
-      <h3><?= htmlspecialchars(t('home.schedule.days.wednesday')) ?></h3>
+      <h3><?= htmlspecialchars(t('home.index.schedule.days.wednesday')) ?></h3>
       <ul class="class-list">
-        <li><span class="time">16:30–17:30</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
-        <li><span class="time">17:30–18:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">18:30–19:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.schedule.levels.l2')) ?></strong></li>
+        <li><span class="time">16:30–17:30</span> <strong class="level-private"><?= htmlspecialchars(t('home.index.schedule.levels.private')) ?></strong></li>
+        <li><span class="time">17:30–18:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">18:30–19:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
       </ul>
       <div class="location">
-        <?= htmlspecialchars(t('home.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/P8GLY5GFSRkJiXFv9" target="_blank"><?= htmlspecialchars(t('home.schedule.locations.gerakas')) ?></a>
+        <?= htmlspecialchars(t('home.index.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/Hdjvv418PZGE3nQU8" target="_blank"><?= htmlspecialchars(t('home.index.schedule.locations.gerakas')) ?></a> <a> & </a> <a href="https://maps.app.goo.gl/DYMoGFQhHgmn7oKb7" target="_blank"><?= htmlspecialchars(t('home.index.schedule.locations.egaleo')) ?></a>
       </div>
     </div>
 
-    <!-- Saturday -->
+    <!-- Monday & Thursday -->
     <div class="grid-item">
-      <h3><?= htmlspecialchars(t('home.schedule.days.saturday')) ?></h3>
+      <h3><?= htmlspecialchars(t('home.index.schedule.days.monday_thursday')) ?></h3>
       <ul class="class-list">
-        <li><span class="time">09:30–10:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">10:30–11:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.schedule.levels.l2')) ?></strong></li>
-        <li><span class="time">11:30–12:30</span> <strong class="level-l3"><?= htmlspecialchars(t('home.schedule.levels.l3')) ?></strong></li>
-        <li><span class="time">12:30–13:30</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
-        <li><span class="time">17:00–18:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">18:00–19:00</span> <strong class="level-l4"><?= htmlspecialchars(t('home.schedule.levels.l4')) ?></strong></li>
-        <li><span class="time">19:00–20:00</span> <strong class="level-mixed"><?= htmlspecialchars(t('home.schedule.levels.mixed')) ?></strong></li>
-        <li><span class="time">20:00–21:00</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
+        <li><span class="time">16:00–16:50</span> <strong class="level-private"><?= htmlspecialchars(t('home.index.schedule.levels.private')) ?></strong></li>
+        <li><span class="time">16:50–17:50</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
+
       </ul>
       <div class="location">
-        <?= htmlspecialchars(t('home.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank"><?= htmlspecialchars(t('home.schedule.locations.zografou_athens')) ?></a>
+        <?= htmlspecialchars(t('home.index.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank"><?= htmlspecialchars(t('home.index.schedule.locations.zografou_athens')) ?></a>
       </div>
     </div>
 
     <!-- Sunday -->
     <div class="grid-item">
-      <h3><?= htmlspecialchars(t('home.schedule.days.sunday')) ?></h3>
+      <h3><?= htmlspecialchars(t('home.index.schedule.days.weekends')) ?></h3>
       <ul class="class-list">
-        <li><span class="time">09:30–10:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">10:30–11:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.schedule.levels.l2')) ?></strong></li>
-        <li><span class="time">11:30–12:30</span> <strong class="level-l3"><?= htmlspecialchars(t('home.schedule.levels.l3')) ?></strong></li>
-        <li><span class="time">12:30–13:30</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
-        <li><span class="time">17:00–18:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">18:00–19:00</span> <strong class="level-l4"><?= htmlspecialchars(t('home.schedule.levels.l4')) ?></strong></li>
-        <li><span class="time">19:00–20:00</span> <strong class="level-mixed"><?= htmlspecialchars(t('home.schedule.levels.mixed')) ?></strong></li>
-        <li><span class="time">20:00–21:00</span> <strong class="level-private"><?= htmlspecialchars(t('home.schedule.levels.private')) ?></strong></li>
+        <li><span class="time">09:30–10:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">10:30–11:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
+        <li><span class="time">11:30–12:30</span> <strong class="level-l3"><?= htmlspecialchars(t('home.index.schedule.levels.l3')) ?></strong></li>
+        <li><span class="time">12:30–14:30</span> <strong class="level-private"><?= htmlspecialchars(t('home.index.schedule.levels.private')) ?></strong></li>
+        <li><span class="time">16:00–17:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">17:00–18:00</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
+
+
       </ul>
       <div class="location">
-        <?= htmlspecialchars(t('home.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank"><?= htmlspecialchars(t('home.schedule.locations.zografou')) ?></a>
+        <?= htmlspecialchars(t('home.index.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank"><?= htmlspecialchars(t('home.index.schedule.locations.zografou_athens')) ?></a>
       </div>
     </div>
   </section>
 
-  <!-- Latest News -->
+  <!-- Latest News / Highlights Section -->
   <section class="news-section">
     <div class="news-inner">
-      <h2><?= htmlspecialchars(t('home.news.title')) ?></h2>
+      <h2><?= htmlspecialchars(t('home.index.news.title')) ?></h2>
+      <p class="news-sub"><?= htmlspecialchars(t('home.index.news.subtitle')) ?></p>
 
-      <p class="news-sub">
-        <?= htmlspecialchars(t('home.news.subtitle')) ?>
-      </p>
+      <div class="highlights">
+        <!-- Highlight 1 -->
+        <div class="highlight-item">
+          <iframe width="560" height="315"
+            src="https://www.youtube.com/embed/nECR502WJB8"
+            title="<?= htmlspecialchars(t('home.index.news.highlight1.title')) ?>"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+          <p class="highlight-desc">
+            <?= htmlspecialchars(t('home.index.news.highlight1.desc')) ?>
+          </p>
+        </div>
 
-      <a class="btn-gradient-pill" href="https://www.instagram.com/hermes_rollerskate/" target="_blank" rel="noopener"  
-        aria-label="Open Hermes Rollerskate Instagram">
+        <!-- Highlight 2 -->
+        <div class="highlight-item">
+          <iframe width="560" height="315"
+            src="https://www.youtube.com/embed/inaj73_UV0M"
+            title="<?= htmlspecialchars(t('home.index.news.highlight2.title')) ?>"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+          <p class="highlight-desc">
+            <?= htmlspecialchars(t('home.index.news.highlight2.desc')) ?>
+          </p>
+        </div>
+      </div>
+
+      <a class="btn-gradient-pill" href="https://www.instagram.com/hermes_rollerskate_academy/" target="_blank" rel="noopener" aria-label="<?= htmlspecialchars(t('home.index.news.instagram_aria')) ?>">
         <i class="fa-brands fa-instagram" aria-hidden="true"></i>
         <span>
-          <?= htmlspecialchars(t('home.news.cta')) ?>
+          <?= htmlspecialchars(t('home.index.news.instagram_cta')) ?>
         </span>
       </a>
     </div>
   </section>
+
 
   <!-- Suggested Products Section -->
   <div class="container swiper">
@@ -214,58 +234,19 @@ if (isset($_SESSION['alert_message'])) {
       <ul class="card-list swiper-wrapper">
         <li class="card-item swiper-slide">
           <a href="https://www.instagram.com/direct/t/17843521326338523/" class="card-link">
-            <img src="photo/TshirtHermes.webp" alt="Card Image" class="card-image">
-            <p class="badge">Merch</p>
-            <h2>Academy's T-Shirt Hermes</h2>
-            <p class="badge price">Price : €15</p>
-            <button class="card-button material-symbols-rounded">arrow_forward</button>
-          </a>
-        </li>
-        <li class="card-item swiper-slide">
-          <a href="https://powerskate.eu/prostateutika/krani/athlopaidia-kranos-agnistiko-afxomeioumeno-mavro-003.10015/m-p"
-            class="card-link">
-            <img src="photo/helmet.webp" alt="Card Image" class="card-image">
-            <p class="badge">Protection</p>
-            <h2>Helmet Auto-reduction - Black</h2>
-            <p class="badge price">Price : €20</p>
+            <img src="photo/TshirtHermes.webp" alt="<?= htmlspecialchars(t('home.index.merch.card1.alt')) ?>" class="card-image">
+            <p class="badge"><?= htmlspecialchars(t('home.index.merch.badge')) ?></p>
+            <h2><?= htmlspecialchars(t('home.index.merch.card1.title')) ?></h2>
+            <p class="badge price"><?= htmlspecialchars(t('home.index.merch.price_label')) ?> €15</p>
             <button class="card-button material-symbols-rounded">arrow_forward</button>
           </a>
         </li>
         <li class="card-item swiper-slide">
           <a href="https://www.instagram.com/direct/t/17843521326338523" class="card-link">
-            <img src="photo/TshirtHermida.webp" alt="Card Image" class="card-image">
-            <p class="badge">Merch</p>
-            <h2>Academy's T-Shirt Hermida</h2>
-            <p class="badge price">Price : €15</p>
-            <button class="card-button material-symbols-rounded">arrow_forward</button>
-          </a>
-        </li>
-        <li class="card-item swiper-slide">
-          <a href="https://powerskate.eu/skates/paidika-skates/fitness-paidika/blade-runner-phoenix-g-patinia-lefko-fouxia-43.0t1011-p"
-            class="card-link">
-            <img src="photo/roller2.webp" alt="Card Image" class="card-image">
-            <p class="badge">Skates</p>
-            <h2>Blade Runner Phoenix G Skates - Fuchsia</h2>
-            <p class="badge price">Price : €100</p>
-            <button class="card-button material-symbols-rounded">arrow_forward</button>
-          </a>
-        </li>
-        <li class="card-item swiper-slide">
-          <a href="https://powerskate.eu/prostateutika/prostateftika/athlopaidia-paidika-prostateftika-003.11359-p"    
-            class="card-link">
-            <img src="photo/protection.webp" alt="Card Image" class="card-image">
-            <p class="badge">Protection</p>
-            <h2>Kids Protective Knee & Wrist Pads</h2>
-            <p class="badge price">Price : €20</p>
-            <button class="card-button material-symbols-rounded">arrow_forward</button>
-          </a>
-        </li>
-        <li class="card-item swiper-slide">
-          <a href="https://powerskate.eu/skates/exoplismos/tsantes-skates" class="card-link">
-            <img src="photo/bag.webp" alt="Card Image" class="card-image">
-            <p class="badge">Accessory</p>
-            <h2>Skate Bag - Black </h2>
-            <p class="badge price">Price : €13</p>
+            <img src="photo/TshirtHermida.webp" alt="<?= htmlspecialchars(t('home.index.merch.card2.alt')) ?>" class="card-image">
+            <p class="badge"><?= htmlspecialchars(t('home.index.merch.badge')) ?></p>
+            <h2><?= htmlspecialchars(t('home.index.merch.card2.title')) ?></h2>
+            <p class="badge price"><?= htmlspecialchars(t('home.index.merch.price_label')) ?> €15</p>
             <button class="card-button material-symbols-rounded">arrow_forward</button>
           </a>
         </li>
@@ -278,7 +259,7 @@ if (isset($_SESSION['alert_message'])) {
   </div>
 
 
-  <a href="https://powerskate.eu/skates" class="button-link" target="_blank" rel="noopener">
+  <a href="https://www.instagram.com/hermes_rollerskate_academy/" class="button-link" target="_blank" rel="noopener">
     <?= htmlspecialchars(t('home.merch.cta')) ?>
   </a>
 

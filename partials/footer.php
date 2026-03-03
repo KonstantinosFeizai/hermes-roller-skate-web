@@ -85,74 +85,82 @@ require_once __DIR__ . '/../includes/lang.php';
                     rel="noopener noreferrer"> <?= t('footer.locations.oaka') ?></a></p>
             <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/4EZwXij5o2mXq1Lc8" target="_blank"
                     rel="noopener noreferrer"> <?= t('footer.locations.egaleo') ?></a></p>
+            <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/iaxSuiDQV3zieoQV7" target="_blank"
+                    rel="noopener noreferrer"> <?= t('footer.locations.vrilissia') ?></a></p>
+            <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/gyHxkCWqP5NURGv78" target="_blank"
+                    rel="noopener noreferrer"> <?= t('footer.locations.megalopoli') ?></a></p>
+            <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/AbqNkvtueDurwayW8" target="_blank"
+                    rel="noopener noreferrer"> <?= t('footer.locations.kalamata') ?></a></p>
+            <p><a href="https://invite.viber.com/?g2=AQBS3PE%2F4oOrfFYZRJaZ8xfa0fLzCwLaS2hFFNNrB9pbkKMaWDQInXOHLHcN50Dc" target="_blank"
+                    rel="noopener noreferrer"> <?= t('footer.group_icon') ?></a></p>
             <p><strong><?= t('footer.phone_label') ?></strong><a href="tel:+306955655189"> +30 6955655189</a></p>
-            <p><a href="<?= asset('contact.php') ?>"><?= t('footer.send_message') ?></a></p>
+
         </div>
-    </div>
 
-    <!-- Partners Carousel -->
-    <div class="footer-partners-carousel" aria-label="Partners carousel">
-        <div class="carousel-wrapper">
-            <div class="carousel-track">
-                <div class="carousel-item">
-                    <a href="https://www.kifissia.gr/" target="_blank" rel="noopener noreferrer">
-                        <img src="<?= asset('photo/diimoskifisias.webp') ?>" alt="<?= t('footer.partner_alts.kifisia') ?>">
-                    </a>
-                </div>
-                <div class="carousel-item">
-                    <a href="https://powerskate.eu/" target="_blank" rel="noopener noreferrer">
-                        <img src="<?= asset('photo/powerskate.webp') ?>" alt="<?= t('footer.partner_alts.powerskate') ?>">
-                    </a>
-                </div>
-                <div class="carousel-item">
-                    <a href="https://prismaconsulting.gr/" target="_blank" rel="noopener noreferrer">
-                        <img src="<?= asset('photo/prisma.webp') ?>" alt="<?= t('footer.partner_alts.prisma') ?>">
-                    </a>
-                </div>
-                <div class="carousel-item">
-                    <a href="https://ivoluntry.com/" target="_blank" rel="noopener noreferrer">
-                        <img src="<?= asset('photo/ivoluntryy.webp') ?>" alt="<?= t('footer.partner_alts.ivoluntry') ?>">
-                    </a>
-                </div>
-                <div class="carousel-item">
-                    <a href="https://bewellmovement.com/" target="_blank" rel="noopener noreferrer">
-                        <img src="<?= asset('photo/bewell.png') ?>" alt="<?= t('footer.partner_alts.bewell') ?>">
-                    </a>
-                </div>
-                <div class="carousel-item">
-                    <a href="https://www.futureskate.gr/el/" target="_blank" rel="noopener noreferrer">
-                        <img src="<?= asset('photo/futureskate.jpg') ?>" alt="<?= t('footer.partner_alts.futureskate') ?>">
-                    </a>
-                </div>
-                <div class="carousel-item">
-                    <a href="https://kidot.gr/" target="_blank" rel="noopener noreferrer">
-                        <img src="<?= asset('photo/kidot.webp') ?>" alt="<?= t('footer.partner_alts.kidot') ?>">
-                    </a>
-                </div>
-                <div class="carousel-item">
-                    <a href="https://kidot.gr/" target="_blank" rel="noopener noreferrer">
-                        <img src="<?= asset('photo/inaction.png') ?>" alt="<?= t('footer.partner_alts.inaction') ?>">
-                    </a>
-                </div>
-                <div class="carousel-item">
-                    <a href="https://www.vamvakourevival.org/" target="_blank" rel="noopener noreferrer">
-                        <img src="<?= asset('photo/revival.png') ?>" alt="<?= t('footer.partner_alts.revival') ?>">
-                    </a>
-                </div>
+        <!-- Partners Carousel -->
+        <div class="footer-partners-carousel" aria-label="Partners carousel">
+            <div class="carousel-wrapper">
+                <div class="carousel-track">
+                    <div class="carousel-item">
+                        <a href="https://www.kifissia.gr/" target="_blank" rel="noopener noreferrer">
+                            <img src="<?= asset('photo/diimoskifisias.webp') ?>" alt="<?= t('footer.partner_alts.kifisia') ?>">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="https://www.arkincubator.gr/" target="_blank" rel="noopener noreferrer">
+                            <img src="<?= asset('photo/ark.webp') ?>" alt="<?= t('footer.partner_alts.ark') ?>">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="https://ivoluntry.com/" target="_blank" rel="noopener noreferrer">
+                            <img src="<?= asset('photo/ivoluntryy.webp') ?>" alt="<?= t('footer.partner_alts.ivoluntry') ?>">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="https://mykidact.gr/" target="_blank" rel="noopener noreferrer">
+                            <img src="<?= asset('photo/mykidact.webp') ?>" alt="<?= t('footer.partner_alts.mykidact') ?>">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="https://www.futureskate.gr/el/" target="_blank" rel="noopener noreferrer">
+                            <img src="<?= asset('photo/futureskate.jpg') ?>" alt="<?= t('footer.partner_alts.futureskate') ?>">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="https://kidot.gr/" target="_blank" rel="noopener noreferrer">
+                            <img src="<?= asset('photo/kidot.webp') ?>" alt="<?= t('footer.partner_alts.kidot') ?>">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="https://www.inaction.gr/el" target="_blank" rel="noopener noreferrer">
+                            <img src="<?= asset('photo/inaction.png') ?>" alt="<?= t('footer.partner_alts.inaction') ?>">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="https://www.vamvakourevival.org/" target="_blank" rel="noopener noreferrer">
+                            <img src="<?= asset('photo/revival.png') ?>" alt="<?= t('footer.partner_alts.revival') ?>">
+                        </a>
+                    </div>
 
+                </div>
             </div>
         </div>
-    </div>
 
 
-    <hr class="footer-separator">
+        <hr class="footer-separator">
 
-    <!-- Copyright -->
-    <div class="footer-bottom">
-        <p>
-            <?= t('footer.copyright') ?>
-        </p>
-    </div>
+        <!-- Copyright -->
+        <div class="footer-bottom">
+            <p>
+                <?= t('footer.payments') ?>
+            </p>
+            <p>
+                <?= t('footer.payments2') ?>
+            </p>
+            <p>
+                <?= t('footer.copyright') ?>
+            </p>
+        </div>
 </footer>
 
 </body>

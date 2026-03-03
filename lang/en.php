@@ -503,6 +503,7 @@ return [
                 'head_kids' => 'Number of Children',
                 'head_price' => 'Price / 4 Lessons',
                 'head_min' => 'Minimum Monthly Charge',
+                'price_per_kid' => 'Charge per child',
                 'note_title' => 'Note 1:',
                 'note' => 'Attendance records are shared with our team for accurate pricing.'
             ],
@@ -578,6 +579,72 @@ return [
         ],
         'merch' => [
             'cta' => '🛍️ View all merchandise'
+        ],
+        'index' => [
+            'announcement' => [
+                'title' => 'Start your journey with rollerskates in Athens',
+                'alts' => [
+                    'img1' => 'Beginner roller skating class in Zografou, Athens',
+                    'img2' => 'Roller skating for children and families in Athens',
+                    'img3' => 'Hermes Rollerskate Academy outdoor group session'
+                ],
+                'p1' => 'Welcome to Hermes Rollerskate Academy, where children and adults learn to skate in a safe and fun environment in Zografou/Athens, OAKA/Marousi, Geraka & Egaleo.',
+                'p2' => 'Join our roller skating classes in Athens and discover the joy of skating with us!',
+                'p3' => 'Are you a complete beginner? Book a private roller skating lesson to build confidence and master the basics—rolling, balance, and safe stops.',
+                'p4' => 'Already know how to skate? Join our group roller skating classes in Athens and develop your freestyle, speed, or dance skills.',
+                'p5' => 'Don\'t have your own roller skates or protection? No problem—just let us know your size and we’ll provide everything you need.',
+                'cta_team' => '📝 Sign up to the team',
+                'cta_private' => '📝 Book your private lesson!',
+                'winter_schedule' => 'Winter Schedule 24/10-24/3'
+            ],
+            'schedule' => [
+                'days' => [
+                    'tuesday' => 'Tuesday',
+                    'wednesday' => 'Wednesday',
+                    'monday_thursday' => 'Monday & Thursday',
+                    'weekends' => 'Weekends'
+                ],
+                'levels' => [
+                    'private' => 'Private',
+                    'l1' => 'Beginners L1',
+                    'l2' => 'Basic L2',
+                    'l3' => 'Advanced L3',
+                    'l4' => 'Basic-Advanced L2+L3'
+                ],
+                'location_label' => '📍 Location:',
+                'locations' => [
+                    'oaka_marousi' => 'OAKA/Marousi',
+                    'gerakas' => 'Gerakas',
+                    'egaleo' => 'Egaleo',
+                    'zografou_athens' => 'Zografou/Athens'
+                ]
+            ],
+            'news' => [
+                'title' => 'Highlights',
+                'subtitle' => 'See the latest highlights from our matches and training sessions!',
+                'highlight1' => [
+                    'title' => 'Highlights from Patra Rollerskate Festival December',
+                    'desc' => 'Highlights from Patra Rollerskate Festival December'
+                ],
+                'highlight2' => [
+                    'title' => 'Training highlights',
+                    'desc' => 'Training highlights'
+                ],
+                'instagram_aria' => 'Open Hermes Rollerskate Instagram',
+                'instagram_cta' => 'See more highlights on Instagram'
+            ],
+            'merch' => [
+                'badge' => 'Merch',
+                'price_label' => 'Price:',
+                'card1' => [
+                    'alt' => 'Academy T-shirt Hermes',
+                    'title' => 'Academy\'s T-Shirt Hermes'
+                ],
+                'card2' => [
+                    'alt' => 'Academy T-shirt Hermida',
+                    'title' => 'Academy\'s T-Shirt Hermida'
+                ]
+            ]
         ]
     ],
     'policies' => [
@@ -709,15 +776,21 @@ return [
         'email_label' => '📧 Email:',
         'location_label' => '📍 Location:',
         'phone_label' => '📞 Phone:',
+        'group_icon' => '📢 Viber Community',
         'send_message' => '💬 Send a Message',
         'locations' => [
             'zografou_1' => 'Zografou, Athens',
             'zografou_2' => 'Zografou 2, Athens',
             'gerakas' => 'Gerakas',
             'oaka' => 'OAKA, Marousi',
-            'egaleo' => 'Egaleo'
+            'egaleo' => 'Egaleo',
+            'vrilissia' => 'Vrilissia',
+            'megalopoli' => 'Megalopoli',
+            'kalamata' => 'Kalamata'
         ],
-        'copyright' => '© 2025 Hermes Rollerskate Academy. All Rights Reserved.',
+        'copyright' => '© 2026 Hermes Rollerskate Academy. All Rights Reserved.',
+        'payments' => 'Agiou Nikolaou 2, Megalopoli 22200, VAT ID 164455490',
+        'payments2' => 'Eurobank IBAN GR3802601030000410201927836',
         'social_labels' => [
             'facebook' => 'Follow us on Facebook',
             'instagram' => 'Follow us on Instagram',
@@ -727,10 +800,9 @@ return [
         ],
         'partner_alts' => [
             'kifisia' => 'Municipality of Kifisia',
-            'powerskate' => 'PowerSkate',
-            'prisma' => 'Prisma Consulting',
+            'ark' => 'Ark Incubator',
             'ivoluntry' => 'Ivoluntry',
-            'bewell' => 'BeWell Movement',
+            'mykidact' => 'My Kid act',
             'futureskate' => 'Future Skate',
             'kidot' => 'kidot',
             'inaction' => 'InAction',
