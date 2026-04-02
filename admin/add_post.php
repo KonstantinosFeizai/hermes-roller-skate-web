@@ -174,7 +174,7 @@ try {
 </div>
 
 <!-- TinyMCE (basic) -->
-<script src="https://cdn.tiny.cloud/1/jyzktm8rvkyv9jrwyo03lez9b9siop6pf1q4qi4m8m5jaqjz/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="<?= getVersionedAssetUrl('assets/tinymce/tinymce.min.js') ?>" referrerpolicy="origin"></script>
 <script>
     const useDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const isSmallScreen = window.matchMedia('(max-width: 1023.5px)').matches;
@@ -382,13 +382,14 @@ try {
 
     // --- TINYMCE INIT ---
     tinymce.init({
+        license_key: 'gpl',
         selector: 'textarea#open-source-plugins',
         plugins: [
             'accordion', 'advlist', 'anchor', 'autolink', 'autosave', 'charmap', 'code',
             'codesample', 'directionality', 'emoticons', 'fullscreen', 'help', 'image',
             'importcss', 'insertdatetime', 'link', 'lists', 'media',
             'nonbreaking', 'pagebreak', 'preview', 'quickbars', 'save', 'searchreplace',
-            'table', 'visualblocks', 'visualchars', 'wordcount', 'mediaembed'
+            'table', 'visualblocks', 'visualchars', 'wordcount'
         ],
         toolbar: "undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | code fullscreen preview | save print | pagebreak anchor codesample | ltr rtl",
         autosave_ask_before_unload: true,

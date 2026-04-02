@@ -227,7 +227,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
 </div>
 
 <!-- TinyMCE (matches add_post) -->
-<script src="https://cdn.tiny.cloud/1/y99q2rlgoyirop1t1e4941qnsnr6m1yes00bcc1mzps8x3en/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="<?= getVersionedAssetUrl('assets/tinymce/tinymce.min.js') ?>" referrerpolicy="origin"></script>
 <script>
     const useDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const isSmallScreen = window.matchMedia('(max-width: 1023.5px)').matches;
@@ -467,13 +467,14 @@ require_once PROJECT_ROOT . 'partials/header.php';
     });
 
     tinymce.init({
+        license_key: 'gpl',
         selector: 'textarea#open-source-plugins',
         plugins: [
             'accordion', 'advlist', 'anchor', 'autolink', 'autosave', 'charmap', 'code',
             'codesample', 'directionality', 'emoticons', 'fullscreen', 'help', 'image',
             'importcss', 'insertdatetime', 'link', 'lists', 'media',
             'nonbreaking', 'pagebreak', 'preview', 'quickbars', 'save', 'searchreplace',
-            'table', 'visualblocks', 'visualchars', 'wordcount', 'mediaembed',
+            'table', 'visualblocks', 'visualchars', 'wordcount',
         ],
         editimage_cors_hosts: ['picsum.photos'],
         menubar: 'file edit view insert format tools table help',
