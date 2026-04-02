@@ -1,5 +1,37 @@
 <?php
 return [
+    'blog' => [
+        'meta' => [
+            'title' => 'Blog - Hermes Rollerskate Academy',
+            'description' => 'Read the latest news, updates, and useful articles from Hermes Rollerskate Academy.',
+            'keywords' => 'blog, news, skating, Hermes Rollerskate, articles, academy',
+        ],
+        'hero' => [
+            'title' => 'Welcome to the Hermes Rollerskate Academy Blog',
+            'lead' => 'Here you will find the latest news, updates, and useful articles about our Academy.'
+        ],
+        'filters' => [
+            'all' => 'All',
+            'search_placeholder' => 'Search title...'
+        ],
+        'empty' => 'No articles yet. Check back soon.',
+        'read_more' => 'Read more ',
+    ],
+    'post' => [
+        'meta' => [
+            'description' => 'Read the article: :title at Hermes Rollerskate Academy.',
+            'keywords' => 'blog, post, skating, Hermes Rollerskate, article, academy, :title',
+        ],
+        'read_time_1min' => '~1 min',
+        'read_time_nmin' => '~:minutes min',
+        'author' => 'Author',
+        'date' => 'Date',
+        'read_time' => 'Reading time',
+        'back_to_blog' => 'Back to Blog',
+        'back_to_top_aria' => 'Back to top',
+        'back_to_top_title' => 'Back to top',
+        'recommended_heading' => 'Recommended Articles',
+    ],
     'profile' => [
         'title' => 'My Account',
         'tabs' => [
@@ -25,7 +57,16 @@ return [
             'phone' => 'Contact Phone:',
             'region' => 'Training Area:',
             'select_region' => 'Select Area',
-            'save_profile' => 'Save Profile'
+            'save_profile' => 'Save Profile',
+            'calendar' => '📅 Every',
+            'monday' => 'Monday',
+            'tuesday' => 'Tuesday',
+            'wednesday' => 'Wednesday',
+            'thursday' => 'Thursday',
+            'friday' => 'Friday',
+            'saturday' => 'Saturday',
+            'sunday' => 'Sunday'
+
         ]
     ],
     'contact' => [
@@ -271,7 +312,7 @@ return [
             'title' => 'Meet Our Team',
             'intro' => 'Our dedicated team consists of passionate professionals who make skating safe, fun, and educational. Our team consists of trainers and educators with teaching experience on rollerskates, ensuring that learning remains safe, fun, and educational.',
             'member1_title' => 'Instructor: Andreas Kountouras',
-            'member1_text' => 'Graduate of Sport Science (UoA), snowski instructor L1/L2, and certified in first aid.',
+            'member1_text' => 'Graduate of the Department of Physical Education and Sports Science, roller skating instructor with 8 years of experience, Level L1/L2 snow skiing instructor, and certified in first aid.',
             'member2_title' => 'Instructor: Georgia Papazoglou',
             'member2_text' => 'Graduate in English Literature, experienced in teaching children, actively involved with rollerskating since 2020.'
         ],
@@ -292,29 +333,56 @@ return [
             'intro' => 'Join Hermes Rollerskate Academy in Zografou, Athens and discover the joy of rollerskating. We offer structured group lessons and flexible private sessions for all ages and levels.'
         ],
         'private' => [
-            'title' => 'Private Roller Skating Lessons',
-            'text' => 'Perfect for complete beginners or those who want to fast-track progress. Private lessons are tailored to your pace and needs.',
-            'slots_title' => 'Suggested Time Slots',
-            'slots_sat' => 'Saturday: 12:30–13:30 & 20:00-20:50',
-            'slots_sun' => 'Sunday: 12:30–13:30 & 20:00-20:50',
-            'included_title' => 'What’s Included',
-            'included_text' => 'Learn how to fall safely, get up, start rolling and stop. After 1–3 sessions, you’ll be ready for a group class.',
-            'alt' => 'Private roller skate coaching in Zografou, Athens'
+            'title' => 'Open Private Roller Skating Lessons',
+            'text' => 'Designed for rapid progress and total independence. Our Open Private sessions (up to 4 students) focus on the core foundations of skating before joining our group classes.',
+            'included_title' => 'The Road to Independence',
+            'included_text' => 'We focus on theory, safety rules, and proper gear placement. Our goal is for the student to roll independently using the "penguin style" technique, while the coach maintains a safe distance to build the student\'s confidence.',
+            'milestones' => [
+                'title' => 'Estimated Preparation for Group Classes',
+                'age_6_12' => 'Ages 6–12: Usually 1 private session',
+                'age_5_6' => 'Ages 5–6: Approximately 2 private sessions',
+                'age_3_5' => 'Ages 3.5–5: Approximately 3 private sessions',
+                'note' => '*Estimates based on experience; individual progress may vary.'
+            ],
+            'alt' => 'Open private roller skating coaching for beginners in Athens'
         ],
         'group' => [
-            'title' => 'Group Roller Skating Lessons',
-            'text' => 'Our group lessons are ideal for both beginners and intermediate skaters. Each class includes skill-building activities, games, and teamwork.',
-            'schedule_title' => 'Weekly Schedule',
-            'schedule_sat' => 'Saturday: 09:30–10:30, 10:30–11:30, 11:30–12:30, 17:00–18:00 & 18:00–19:00',
-            'schedule_sun' => 'Sunday: 09:30–10:30, 10:30–11:30, 11:30–12:30, 17:00–18:00 & 18:00–19:00',
-            'learn_title' => "What You'll Learn",
-            'learn_beginner' => 'Beginner: balance, rolling, safe falls, braking',
-            'learn_advanced' => 'Advanced: cross-step, T-stop, jumps, fish, snake, speed drills',
-            'learn_all' => 'All levels: creative games, rhythm & dance elements',
-            'structure_title' => 'Class Structure',
-            'structure_text' => 'First warm-up together , then split into beginner and advanced based on experience.',
-            'alt' => 'Group rollerskating lesson for children and teens in Athens'
-        ]
+            'title' => 'Beginner Group Roller Skating Classes',
+            'text' => 'Our beginner group sessions (1-15 students) provide the essential technical foundation for students to safely transition to the Basic Level. We focus on motor skills development and building confidence on wheels.',
+            'learn_title' => 'Beginner Goals & Skill-Building',
+            'learn_beginner' => 'Developing rolling comfort, balance drills, "lemons" technique, introductory jumps, and mastering high-speed braking control.',
+            'milestones' => [
+                'title' => 'Progression to Basic Level',
+                'duration' => 'Estimated timeframe: 2–4 months (applicable to all ages).',
+                'criteria' => 'Requirements: Students must demonstrate discipline and follow safety etiquette to ensure a secure environment for themselves and their fellow athletes.',
+                'note' => '*Individual progress speed depends on attendance consistency and the student’s level of focus during practice.'
+            ],
+            'structure_title' => 'Class Methodology',
+            'structure_text' => 'Through a structured program of technical drills and games, students build the solid foundation and self-assurance required for higher skating levels.',
+            'alt' => 'Beginner group roller skating lessons for kids and teens in Athens'
+        ],
+        'basic' => [
+            'title' => 'Basic Level Group Classes',
+            'text' => 'For skaters who have mastered the fundamentals and are ready to evolve. We combine technical excellence with an athletic mindset for advanced maneuvers.',
+            'learn_title' => 'Basic Goals & Skills',
+            'learn_text' => 'Entry in T-stops, slalom techniques, introduction to competitive racing, and entry jumps. Skaters challenge themselves through struggle games and mid drills.',
+            'opportunities_title' => 'Community & Events',
+            'opportunities_text' => 'Basic level skaters are eligible for group urban rides, local races, and exclusive Academy performances/events.',
+            'structure_title' => 'Methodology & Development',
+            'structure_text' => 'We focus on goal-setting and preparatory drills. Our coaches provide personalized feedback to eliminate weaknesses and professional advice on upgrading your gear.',
+            'alt' => 'Basic level roller skating classes in Athens'
+        ],
+        'advanced' => [
+            'title' => 'Advanced Level Group Classes',
+            'text' => 'Our Advanced sessions (1-20 skaters) are designed for those with solid foundations looking to master various disciplines. Our seasonal curriculum rotates: Freestyle in Winter, Racing in Spring, and Mixed Techniques during Summer and Autumn.',
+            'learn_title' => 'Mastery & Specialized Skills',
+            'learn_text' => 'We perfect dual-foot T-stops, outside-edge turns, 180° jumps, and single-leg slaloms. Advanced balance (toe-toe, toe-heel), Power Slides, and high-altitude jumps are introduced alongside foundations for Aggressive skating and Inline Hockey.',
+            'opportunities_title' => 'Global Rides & Events',
+            'opportunities_text' => 'Advanced skaters join high-intensity contact games, urban rides, and international skate trips. Children aged 8+ can participate in supervised excursions even without a legal guardian.',
+            'structure_title' => 'Holistic Training & Development',
+            'structure_text' => 'We adopt a holistic approach across multiple disciplines (Racing, Freestyle, Aggressive, Jumps, Dancing). We empower skaters to explore their interests and find their niche, paving the way for future specialized competitive teams.',
+            'alt' => 'Advanced roller skating, freestyle and aggressive inline lessons in Athens'
+        ],
     ],
     'equipment' => [
         'meta' => [
@@ -337,58 +405,149 @@ return [
             ],
             'premium' => [
                 'label' => '🔹 Upgrades',
-                'title' => 'Premium Skates (€80+)',
+                'title' => 'Advanced Rollerskates (€80-€160)',
                 'desc' => 'Perfect for skaters who want to continue consistently'
             ]
         ],
         'products' => [
             'play3' => [
-                'subtitle' => 'Kids Rollerskates',
+                'subtitle' => 'Sizes: 28–30, 30–32, 32–34',
                 'color_pink' => 'Pink',
                 'color_blue' => 'Blue'
             ],
+            'skado_84' => [
+                'name' => 'Funactio Skado 84',
+                'subtitle' => 'Sizes: 37, 38, 39, 40, 41, 42',
+                'color_blue' => 'Black / Blue',
+                'color_pink' => 'Black / Pink (Lady)',
+            ],
             'play5' => [
                 'badge' => '⭐ Our Recommendation',
-                'subtitle' => 'Kids Roller',
+                'subtitle' => 'Sizes: 28–30, 30–32, 32–34, 34–36',
                 'color_light_blue' => 'Light Blue',
                 'color_blue_lemon' => 'Blue/Lemon'
             ],
             'fit3' => [
-                'subtitle' => 'Kids Fitness Skates',
+                'subtitle' => 'Sizes: 29–32, 32–35, 35–38',
                 'color_gray' => 'Gray',
                 'color_black_olive' => 'Black/Olive',
                 'color_gray_red' => 'Gray/Red'
             ],
             'fit100' => [
-                'subtitle' => 'Adults Rollerblades',
+                'subtitle' => 'Sizes: 36 to 47',
                 'color_black' => 'Black'
             ],
+
+            'firefly_c70' => [
+                'subtitle' => 'Sizes: 30–33, 34–37, 38–41',
+                'color_blue' => 'Black/Light Blue',
+                'color_red' => 'Black/Red'
+            ],
+            'gokid' => [
+                'subtitle' => 'Sizes: 29–32',
+                'color_blue' => 'Blue / Yellow',
+                'color_pink' => 'Pink / White',
+            ],
             'cosmo_candy' => [
-                'subtitle' => 'Sizes 28–36',
+                'subtitle' => 'Sizes: 28–32, 32–36',
                 'color_blue_white' => 'Blue/White',
                 'color_pink_white' => 'Pink/White',
                 'color_white_purple' => 'White/Purple'
             ],
             'cosmo_joy' => [
-                'subtitle' => 'Sizes 31–38',
+                'subtitle' => 'Sizes: 31–34, 35–38',
                 'color_red_white' => 'Red/White',
-                'color_blue_white' => 'Blue/White',
+                'color_blue_white' => 'Blue/Yellow',
                 'color_light_blue' => 'Light Blue'
             ],
             'discovery' => [
-                'subtitle' => 'Sizes 29–40',
+                'subtitle' => 'Sizes: 29–32, 33–36, 37–40',
                 'color_black' => 'Black',
                 'color_blue_black' => 'Blue/Black',
                 'color_pink' => 'Pink'
             ],
-            'futureskate' => [
-                'title' => 'Full Collection',
-                'subtitle' => 'Discover all models, wheels, and spare parts.',
-                'button' => 'futureskate.gr →'
-            ]
+            'sr_pro' => [
+                'name' => 'Tempish S.R.PRO',
+                'subtitle' => 'Sizes: 37, 38, 39, 40, 41, 42, 43, 44, 45, 46',
+                'color_white' => 'White / Black',
+            ],
+            'exon' => [
+                'subtitle' => 'Sizes: 28–31, 32–35, 36–39',
+                'color_black' => 'Black / Blue',
+            ],
+            'fe_nt2' => [
+                'subtitle' => 'Sizes: 28–32, 33–37, 38–42',
+                'color_blue' => 'Blue',
+                'color_black' => 'Black',
+                'color_pink' => 'Pink',
+                'color_pink_purple' => 'Pink/Purple'
+            ],
+            'micro_cosmo_id' => [
+                'subtitle' => 'Sizes: 37-38, 39-40, 41-42, 43-44', // Ή ανάλογα με το τι ισχύει για το καθένα
+                'color_pink_white' => 'White/Pink',
+                'color_white' => 'White',
+                'color_beige_brown' => 'Beige/Brown',
+                'color_black_white' => 'Black/White',
+                'color_blue_pink' => 'Blue/Pink',
+            ],
+            'ezza_90' => [
+                'name' => 'Tempish Ezza 90',
+                'subtitle' => 'Sizes: 38, 39, 40, 41, 42, 43, 44, 45',
+                'color_black_red' => 'Black / Red',
+                'color_white_red' => 'White / Red (Ezza Uni)',
+            ],
+            'micro_mt4' => [
+                'subtitle' => 'Sizes: 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47',
+                'color_yellow' => 'Yellow',
+                'color_yellow_blue' => 'Firefly Yellow/Blue',
+                'color_black' => 'Black',
+                'color_blue' => 'Blue',
+                'color_blue_white' => 'Firefly Blue/White',
+                'color_cherry' => 'Cherry',
+                'color_emerald' => 'Emerald',
+                'color_red' => 'Red',
+                'color_sand' => 'Sand White',
+                'color_violet' => 'Violet',
+            ],
+            'khaan_junior' => [
+                'subtitle' => 'Sizes: 27–30, 31–34, 35–38',
+                'color_black' => 'Black',
+                'color_pink' => 'Pink',
+                'color_magic' => 'Magic (White/Purple)',
+            ],
+            'stargaze' => [
+                'subtitle' => 'Sizes: 29–32, 33–36, 37–40',
+                'color_pink' => 'Pink',
+                'color_aqua' => 'Aqua / Light Blue',
+                'color_black_blue' => 'Black / Blue',
+                'color_dusk' => 'Dusk / Grey-Yellow',
+            ],
+            'zoom' => [
+                'subtitle' => 'Sizes: 37-38, 39-40, 41-42, 43-44, 45-47',
+                'color_black' => 'Black',
+                'color_pink' => 'Cotton Candy Pink',
+                'color_yellow' => 'Neon Yellow',
+            ],
+            'jet' => [
+                'subtitle' => 'Sizes: 27–30, 31–34, 35–38',
+                'color_black_red' => 'Black / Red',
+                'color_lavender' => 'Lavender / Pink',
+            ],
+            'viber_le' => [
+                'name' => 'Tempish Viber L.E.',
+                'subtitle' => 'Sizes: 37, 38, 39, 40, 41, 42, 43, 44, 45',
+                'color_black_blue' => 'Black / Blue (Viber L.E. 80)',
+                'color_white_lady' => 'White / Mint (Viber L.E. 90 Lady)',
+                'color_black_yellow' => 'Black / Yellow (Viber L.E. 90)',
+            ],
+            'viber_90' => [
+                'name' => 'Tempish Viber 90',
+                'subtitle' => 'Size: 40',
+                'color_black_white' => 'Black / White',
+            ],
         ],
         'discount' => [
-            'text' => '💬 <strong>Athlete Discount:</strong> Our team skaters receive a <span class="eq-discount-highlight">10% discount</span> at the store.'
+            'text' => '💬 <strong>Expert Advice:</strong> Contact us today, and let us help you find the perfect rollerskates that suit your needs.'
         ],
         'faq' => [
             'title' => 'Useful Information',
@@ -535,7 +694,7 @@ return [
             'keywords' => 'Roller skate lessons Athens, roller skating classes, Hermes Rollerskate Academy, skating school Zografou, learn to skate, skating for kids Athens, adult skating classes'
         ],
         'hero' => [
-            'title' => 'Welcome to Hermes Rollerskate',
+            'title' => 'Welcome to Hermes Rollerskate Academy.',
             'subtitle' => 'Learn, roll, evolve – at Hermes Rollerskate Academy.'
         ],
         'announcement' => [
@@ -546,7 +705,7 @@ return [
             'p4' => 'Already know how to skate? Join our group roller skating classes in Athens and develop your freestyle, speed, or dance skills.',
             'p5' => 'Don\'t have your own roller skates or protection? No problem—just let us know your size and we’ll provide everything you need.',
             'cta_team' => '📝 Sign up to the team',
-            'cta_private' => '📝 Book your private lesson!',
+            'cta_private' => '📝 Book your private lesson at Zografou!',
             'highlight' => 'Roll with confidence. Learn with joy.'
         ],
         'schedule' => [
@@ -568,8 +727,8 @@ return [
             'locations' => [
                 'marousi' => 'ΟΑΚΑ/Marousi & Gerakas',
                 'gerakas' => 'Gerakas',
-                'zografou_athens' => 'Zografou/Athens',
-                'zografou' => 'Zografou'
+                'zografou,panepistimioupoli' => 'Zografou/University Campus',
+                'zografou,polutexneioupoli' => 'Zografou/Polytechnic Campus'
             ]
         ],
         'news' => [
@@ -582,19 +741,19 @@ return [
         ],
         'index' => [
             'announcement' => [
-                'title' => 'Start your journey with rollerskates in Athens',
+                'title' => 'Rollerskating Classes in Athens',
                 'alts' => [
                     'img1' => 'Beginner roller skating class in Zografou, Athens',
                     'img2' => 'Roller skating for children and families in Athens',
                     'img3' => 'Hermes Rollerskate Academy outdoor group session'
                 ],
-                'p1' => 'Welcome to Hermes Rollerskate Academy, where children and adults learn to skate in a safe and fun environment in Zografou/Athens, OAKA/Marousi, Geraka & Egaleo.',
-                'p2' => 'Join our roller skating classes in Athens and discover the joy of skating with us!',
-                'p3' => 'Are you a complete beginner? Book a private roller skating lesson to build confidence and master the basics—rolling, balance, and safe stops.',
-                'p4' => 'Already know how to skate? Join our group roller skating classes in Athens and develop your freestyle, speed, or dance skills.',
-                'p5' => 'Don\'t have your own roller skates or protection? No problem—just let us know your size and we’ll provide everything you need.',
+                'p1' => 'Welcome to Hermes Rollerskate Academy, the premier destination for children and adults to master skating in a safe and fun environment across Zografou, OAKA/Marousi, Vrilissia, Gerakas, and Egaleo.',
+                'p2' => 'Whether you are looking for professional skating lessons for kids or adult fitness skating, our academy offers the perfect program to discover the joy of rolling in Athens.',
+                'p3' => 'Complete Beginners: Start your journey with a private roller skating lesson. Our expert coaches will help you build confidence, master balance, and learn essential safety techniques from day one.',
+                'p4' => 'Intermediate & Advanced: Take your skills to the next level! Join our group skating classes to specialize in freestyle, speed skating, or artistic dance skating with top-rated instructors.',
+                'p5' => 'No Gear? No Problem: We provide high-quality rental roller skates and full protective gear. Just let us know your size, and we’ll provide everything you need to join the top-rated academy today!',
                 'cta_team' => '📝 Sign up to the team',
-                'cta_private' => '📝 Book your private lesson!',
+                'cta_private' => '📝 Book your private lesson at Zografou!',
                 'winter_schedule' => 'Winter Schedule 24/10-24/3'
             ],
             'schedule' => [
@@ -616,22 +775,23 @@ return [
                     'oaka_marousi' => 'OAKA/Marousi',
                     'gerakas' => 'Gerakas',
                     'egaleo' => 'Egaleo',
-                    'zografou_athens' => 'Zografou/Athens'
+                    'zografou,panepistimioupoli' => 'Zografou/University Campus',
+                    'zografou,polutexneioupoli' => 'Zografou/Polytechnic Campus'
                 ]
             ],
             'news' => [
                 'title' => 'Highlights',
                 'subtitle' => 'See the latest highlights from our matches and training sessions!',
                 'highlight1' => [
-                    'title' => 'Highlights from Patra Rollerskate Festival December',
-                    'desc' => 'Highlights from Patra Rollerskate Festival December'
+                    'title' => 'Our coach"s interview on ERT',
+                    'desc' => 'Our coach"s interview on ERT'
                 ],
                 'highlight2' => [
                     'title' => 'Training highlights',
                     'desc' => 'Training highlights'
                 ],
-                'instagram_aria' => 'Open Hermes Rollerskate Instagram',
-                'instagram_cta' => 'See more highlights on Instagram'
+                'instagram_aria' => 'Rollerblading and skating at Stavros Niarchos',
+                'instagram_cta' => 'Rollerblading and skating at Stavros Niarchos'
             ],
             'merch' => [
                 'badge' => 'Merch',
@@ -779,8 +939,8 @@ return [
         'group_icon' => '📢 Viber Community',
         'send_message' => '💬 Send a Message',
         'locations' => [
-            'zografou_1' => 'Zografou, Athens',
-            'zografou_2' => 'Zografou 2, Athens',
+            'zografou,panepistimioupoli' => 'Zografou/University Campus',
+            'zografou,polutexneioupoli' => 'Zografou/Polytechnic Campus',
             'gerakas' => 'Gerakas',
             'oaka' => 'OAKA, Marousi',
             'egaleo' => 'Egaleo',
@@ -816,7 +976,8 @@ return [
             'equipment' => 'Equipment',
             'activities' => 'Activities',
             'prices' => 'Prices',
-            'benefits' => 'Benefits'
+            'benefits' => 'Benefits',
+            'blog' => 'Blog'
         ],
         'auth' => [
             'admin_dashboard' => 'Admin Dashboard',
@@ -830,8 +991,7 @@ return [
             'greek' => 'Greek'
         ],
         'mobile' => [
-            'help' => 'Help',
-            'help_faq' => 'Help & FAQs',
+            'help_faq' => 'FAQs',
             'contact' => 'Contact'
         ]
     ],

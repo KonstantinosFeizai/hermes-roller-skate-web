@@ -19,12 +19,8 @@ $pageScripts = [
   "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/Draggable.min.js",
-  'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
-
-
   "js/welcome-overlay.js",
-  "js/alerts.js",
-  'js/swiper.js'
+  "js/alerts.js"
 ];
 // Active nav item
 $activePage = 'Home';
@@ -45,17 +41,58 @@ if (isset($_SESSION['alert_message'])) {
   unset($_SESSION['alert_message']);
   unset($_SESSION['alert_type']);
 }
+
+// Keep overlay hero text in English to preserve consistent typography.
+$enTranslations = require PROJECT_ROOT . 'lang/en.php';
+$getEnglishText = static function (string $key, string $fallback = '') use ($enTranslations): string {
+  $value = $enTranslations;
+
+  foreach (explode('.', $key) as $segment) {
+    if (!is_array($value) || !array_key_exists($segment, $value)) {
+      return $fallback !== '' ? $fallback : $key;
+    }
+    $value = $value[$segment];
+  }
+
+  return is_string($value) ? $value : ($fallback !== '' ? $fallback : $key);
+};
+
+$overlayTitle = $getEnglishText('home.hero.title', t('home.hero.title'));
+$overlaySubtitle = $getEnglishText('home.hero.subtitle', t('home.hero.subtitle'));
 ?>
 
 <!-- HOME PAGE CONTENT -->
 <header class="home-hero">
-  <div id="welcome-overlay" class="animate__animated">
-    <h1 class="animate__animated animate__backInDown" id="welcome-text">
-      <?= htmlspecialchars(t('home.hero.title')) ?>
-    </h1>
-    <h2 class="animate__animated animate__bounceInUp">
-      <?= htmlspecialchars(t('home.hero.subtitle')) ?>
-    </h2>
+  <div
+    id="welcome-overlay"
+    class="animate__animated"
+    style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;background-color:#05070b;">
+    <div class="welcome-logo-wrap">
+      <svg class="welcome-ring-text" viewBox="-20 -20 540 540" aria-hidden="true" focusable="false">
+        <defs>
+          <path id="welcome-top-arc" d="M 10 250 A 240 240 0 0 1 490 250" />
+          <path id="welcome-bottom-arc" d="M 10 250 A 240 240 0 0 0 490 250" />
+        </defs>
+        <text class="ring-title ring-enter-top">
+          <textPath href="#welcome-top-arc" startOffset="50%" text-anchor="middle">
+            <?= htmlspecialchars($overlayTitle) ?>
+          </textPath>
+        </text>
+        <text class="ring-subtitle ring-enter-bottom">
+          <textPath href="#welcome-bottom-arc" startOffset="50%" text-anchor="middle">
+            <?= htmlspecialchars($overlaySubtitle) ?>
+          </textPath>
+        </text>
+      </svg>
+      <img
+        class="welcome-logo animate__animated animate__fadeIn"
+        src="<?= asset('photo/hermes_logo.png') ?>"
+        alt="Hermes Roller Skate logo"
+        loading="eager"
+        decoding="async">
+    </div>
+    <h1 id="welcome-text" class="sr-only"><?= htmlspecialchars($overlayTitle) ?></h1>
+    <h2 id="welcome-subtext" class="sr-only"><?= htmlspecialchars($overlaySubtitle) ?></h2>
   </div>
 </header>
 <!-- One-time alert message -->
@@ -123,63 +160,152 @@ if (isset($_SESSION['alert_message'])) {
 
   <!-- Weekly Schedule Grid -->
 
+  <!-- Weekly Schedule Grid -->
+
   <section class="grid-container">
-    <!-- Tuesday -->
+
+
+    <!-- Zografou 1 (Saturday & Sunday) -->
     <div class="grid-item">
-      <h3><?= htmlspecialchars(t('home.index.schedule.days.tuesday')) ?></h3>
-      <ul class="class-list">
-        <li><span class="time">16:30–18:00</span> <strong class="level-private"><?= htmlspecialchars(t('home.index.schedule.levels.private')) ?></strong></li>
-        <li><span class="time">18:00–19:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">19:00–20:00</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
-      </ul>
       <div class="location">
-        <?= htmlspecialchars(t('home.index.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/iwtuXZvQoZDqqgUy9" target="_blank"><?= htmlspecialchars(t('home.index.schedule.locations.oaka_marousi')) ?></a>
+        <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank" rel="noopener noreferrer">
+          <?= t('footer.locations.zografou,panepistimioupoli') ?></a>
+        </a>
       </div>
-    </div>
 
-    <!-- Wednesday -->
-    <div class="grid-item">
-      <h3><?= htmlspecialchars(t('home.index.schedule.days.wednesday')) ?></h3>
-      <ul class="class-list">
-        <li><span class="time">16:30–17:30</span> <strong class="level-private"><?= htmlspecialchars(t('home.index.schedule.levels.private')) ?></strong></li>
-        <li><span class="time">17:30–18:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">18:30–19:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
-      </ul>
-      <div class="location">
-        <?= htmlspecialchars(t('home.index.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/Hdjvv418PZGE3nQU8" target="_blank"><?= htmlspecialchars(t('home.index.schedule.locations.gerakas')) ?></a> <a> & </a> <a href="https://maps.app.goo.gl/DYMoGFQhHgmn7oKb7" target="_blank"><?= htmlspecialchars(t('home.index.schedule.locations.egaleo')) ?></a>
-      </div>
-    </div>
-
-    <!-- Monday & Thursday -->
-    <div class="grid-item">
-      <h3><?= htmlspecialchars(t('home.index.schedule.days.monday_thursday')) ?></h3>
-      <ul class="class-list">
-        <li><span class="time">16:00–16:50</span> <strong class="level-private"><?= htmlspecialchars(t('home.index.schedule.levels.private')) ?></strong></li>
-        <li><span class="time">16:50–17:50</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
-
-      </ul>
-      <div class="location">
-        <?= htmlspecialchars(t('home.index.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank"><?= htmlspecialchars(t('home.index.schedule.locations.zografou_athens')) ?></a>
-      </div>
-    </div>
-
-    <!-- Sunday -->
-    <div class="grid-item">
-      <h3><?= htmlspecialchars(t('home.index.schedule.days.weekends')) ?></h3>
       <ul class="class-list">
         <li><span class="time">09:30–10:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
         <li><span class="time">10:30–11:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
         <li><span class="time">11:30–12:30</span> <strong class="level-l3"><?= htmlspecialchars(t('home.index.schedule.levels.l3')) ?></strong></li>
-        <li><span class="time">12:30–14:30</span> <strong class="level-private"><?= htmlspecialchars(t('home.index.schedule.levels.private')) ?></strong></li>
         <li><span class="time">16:00–17:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
         <li><span class="time">17:00–18:00</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
-
-
       </ul>
-      <div class="location">
-        <?= htmlspecialchars(t('home.index.schedule.location_label')) ?> <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank"><?= htmlspecialchars(t('home.index.schedule.locations.zografou_athens')) ?></a>
+
+      <div class="day-label">
+        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.saturday') ?> & <?= t('profile.labels.sunday') ?>
       </div>
     </div>
+
+    <!-- Zografou 2 (Saturday) -->
+    <div class="grid-item">
+      <div class="location">
+        <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank" rel="noopener noreferrer">
+          <?= t('footer.locations.zografou,polutexneioupoli') ?></a>
+      </div>
+
+      <ul class="class-list">
+        <li><span class="time">18:30–19:30</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
+      </ul>
+
+      <div class="day-label">
+        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.saturday') ?>
+      </div>
+    </div>
+
+    <!-- Gerakas (Saturday) -->
+    <div class="grid-item">
+      <div class="location">
+        <a href="https://maps.app.goo.gl/Hdjvv418PZGE3nQU8" target="_blank" rel="noopener noreferrer">
+          <?= htmlspecialchars(t('home.index.schedule.locations.gerakas')) ?>
+        </a>
+      </div>
+
+      <ul class="class-list">
+        <li><span class="time">14:00–15:00</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
+      </ul>
+
+      <div class="day-label">
+        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.saturday') ?>
+      </div>
+    </div>
+
+    <!-- Vrilissia (Sunday) -->
+    <div class="grid-item">
+      <div class="location">
+        <a href="https://maps.app.goo.gl/AbqNkvtueDurwayW8" target="_blank" rel="noopener noreferrer">
+          <?= t('footer.locations.vrilissia') ?>
+        </a>
+      </div>
+
+      <ul class="class-list">
+        <li><span class="time">14:00–15:00</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
+      </ul>
+
+      <div class="day-label">
+        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.sunday') ?>
+      </div>
+    </div>
+
+    <!-- Megalopolis -->
+    <div class="grid-item">
+      <div class="location">
+        <a href="https://maps.app.goo.gl/glgYHxkCwQp5NURGv78" target="_blank" rel="noopener noreferrer">
+          <?= t('footer.locations.megalopoli') ?>
+        </a>
+      </div>
+
+      <ul class="class-list">
+        <li><span class="time">16:30–17:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">17:30–18:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
+        <li><span class="time">18:30–19:30</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
+      </ul>
+
+      <div class="day-label">
+        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.tuesday') ?>
+      </div>
+    </div>
+
+    <!-- Kalamata -->
+    <div class="grid-item">
+      <div class="location">
+        <a href="https://maps.app.goo.gl/AbqNkvtueDurwayW8" target="_blank" rel="noopener noreferrer">
+          <?= t('footer.locations.kalamata') ?>
+        </a>
+      </div>
+
+      <ul class="class-list">
+        <li><span class="time">16:30–17:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">17:30–18:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
+        <li><span class="time">18:30–19:30</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
+      </ul>
+
+      <div class="day-label">
+        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.wednesday') ?>
+      </div>
+    </div>
+    <!-- Egaleo -->
+    <div class="grid-item">
+      <div class="location">
+        <a href="https://maps.app.goo.gl/mR3nCq1aDrtMANZ69" target="_blank" rel="noopener noreferrer">
+          <?= t('footer.locations.egaleo') ?>
+        </a>
+      </div>
+
+      <ul class="class-list">
+        <li><span class="time">16:00–17:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">17:00–18:00</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
+      </ul>
+      <div class="day-label">
+        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.wednesday') ?>
+      </div>
+    </div>
+    <!-- OAKA/Marousi -->
+    <div class="grid-item">
+      <div class="location">
+        <a href="https://maps.app.goo.gl/BtULHH8qoyCsTo3v9" target="_blank" rel="noopener noreferrer">
+          <?= t('footer.locations.oaka') ?>
+        </a>
+
+      </div>
+
+      <ul class="class-list">
+        <li><span class="time">10:00–11:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
+        <li><span class="time">11:00–12:00</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
+      </ul>
+      <div class="day-label">
+        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.sunday') ?>
+      </div>
+
   </section>
 
   <!-- Latest News / Highlights Section -->
@@ -191,31 +317,14 @@ if (isset($_SESSION['alert_message'])) {
       <div class="highlights">
         <!-- Highlight 1 -->
         <div class="highlight-item">
-          <iframe width="560" height="315"
-            src="https://www.youtube.com/embed/nECR502WJB8"
-            title="<?= htmlspecialchars(t('home.index.news.highlight1.title')) ?>"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-          </iframe>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/hgv8rrNYaxk?si=3RVEwLvqZQVf_k1h" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           <p class="highlight-desc">
             <?= htmlspecialchars(t('home.index.news.highlight1.desc')) ?>
           </p>
         </div>
 
         <!-- Highlight 2 -->
-        <div class="highlight-item">
-          <iframe width="560" height="315"
-            src="https://www.youtube.com/embed/inaj73_UV0M"
-            title="<?= htmlspecialchars(t('home.index.news.highlight2.title')) ?>"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-          </iframe>
-          <p class="highlight-desc">
-            <?= htmlspecialchars(t('home.index.news.highlight2.desc')) ?>
-          </p>
-        </div>
+
       </div>
 
       <a class="btn-gradient-pill" href="https://www.instagram.com/hermes_rollerskate_academy/" target="_blank" rel="noopener" aria-label="<?= htmlspecialchars(t('home.index.news.instagram_aria')) ?>">
@@ -229,32 +338,26 @@ if (isset($_SESSION['alert_message'])) {
 
 
   <!-- Suggested Products Section -->
-  <div class="container swiper">
+  <div class="container">
     <div class="card-wrapper">
-      <ul class="card-list swiper-wrapper">
-        <li class="card-item swiper-slide">
-          <a href="https://www.instagram.com/direct/t/17843521326338523/" class="card-link">
+      <ul class="card-list">
+        <li class="card-item">
+          <a href="https://www.instagram.com/direct/t/17850152298606126/" class="card-link">
             <img src="photo/TshirtHermes.webp" alt="<?= htmlspecialchars(t('home.index.merch.card1.alt')) ?>" class="card-image">
             <p class="badge"><?= htmlspecialchars(t('home.index.merch.badge')) ?></p>
             <h2><?= htmlspecialchars(t('home.index.merch.card1.title')) ?></h2>
-            <p class="badge price"><?= htmlspecialchars(t('home.index.merch.price_label')) ?> €15</p>
             <button class="card-button material-symbols-rounded">arrow_forward</button>
           </a>
         </li>
-        <li class="card-item swiper-slide">
-          <a href="https://www.instagram.com/direct/t/17843521326338523" class="card-link">
+        <li class="card-item">
+          <a href="https://www.instagram.com/direct/t/17850152298606126/" class="card-link">
             <img src="photo/TshirtHermida.webp" alt="<?= htmlspecialchars(t('home.index.merch.card2.alt')) ?>" class="card-image">
             <p class="badge"><?= htmlspecialchars(t('home.index.merch.badge')) ?></p>
             <h2><?= htmlspecialchars(t('home.index.merch.card2.title')) ?></h2>
-            <p class="badge price"><?= htmlspecialchars(t('home.index.merch.price_label')) ?> €15</p>
             <button class="card-button material-symbols-rounded">arrow_forward</button>
           </a>
         </li>
       </ul>
-
-      <div class="swiper-pagination"></div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
     </div>
   </div>
 

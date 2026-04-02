@@ -15,7 +15,8 @@ require_once __DIR__ . '/../includes/lang.php';
 $pageTitle = $pageTitle ?? 'Hermes Rollerskate Academy';
 $pageDesc = $pageDescription ?? 'Hermes Rollerskate Academy - Learn, practice, and enjoy roller skating with expert guidance.';
 $pageKeywords = $pageKeywords ?? 'roller skating, skating classes, Athens, Hermes Rollerskate, skating lessons, skating academy';
-$pageOgImage = $pageOgImage ?? asset('photo/logo.webp');
+$pageOgImage = $pageOgImage ?? asset('photo/hermes_logo.png');
+$pageOgUrl   = $pageOgUrl   ?? 'https://hermesrollerskate.com' . ($_SERVER['REQUEST_URI'] ?? '/');
 $activePage = $activePage ?? null;
 
 // Auth state for header UI
@@ -94,10 +95,28 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
     <meta property="og:title" content="<?= htmlspecialchars($pageTitle) ?>" />
     <meta property="og:description" content="<?= htmlspecialchars($pageDesc) ?>" />
     <meta property="og:image" content="<?= htmlspecialchars($pageOgImage) ?>" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:url" content="<?= htmlspecialchars($pageOgUrl) ?>" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Hermes Rollerskate Academy" />
+    <meta property="og:locale" content="<?= $isGreek ? 'el_GR' : 'en_US' ?>" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="<?= htmlspecialchars($pageTitle) ?>" />
+    <meta name="twitter:description" content="<?= htmlspecialchars($pageDesc) ?>" />
+    <meta name="twitter:image" content="<?= htmlspecialchars($pageOgImage) ?>" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="<?= htmlspecialchars($pageOgUrl) ?>" />
 
     <!-- Favicon -->
     <link rel="icon" href="<?= asset('photo/hermes_logo.png') ?>">
+
+    <?php if ($activePage === 'Home'): ?>
+        <link rel="preload" as="image" href="<?= asset('photo/welcome-intro.jpg') ?>" fetchpriority="high">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chewy&display=swap">
+    <?php endif; ?>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17685814149"></script>
@@ -136,10 +155,7 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_forward" />
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
 
     <!-- Global Scripts -->
     <!--  getVersionedAssetUrl() -->
@@ -195,6 +211,11 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
             <li>
                 <a href="<?= asset('activities') ?>" class="nav-link<?= isActive($activePage, 'activities') ?>">
                     <?= t('header.nav.activities') ?>
+                </a>
+            </li>
+            <li>
+                <a href="<?= asset('blog') ?>" class="nav-link<?= isActive($activePage, 'blog') ?>">
+                    <?= t('header.nav.blog') ?>
                 </a>
             </li>
             <li>
@@ -289,6 +310,11 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
                 </a>
             </li>
             <li>
+                <a href="<?= asset('blog') ?>" class="nav-link<?= isActive($activePage, 'blog') ?>">
+                    <?= t('header.nav.blog') ?>
+                </a>
+            </li>
+            <li>
                 <a href="<?= asset('prices-policies') ?>"
                     class="nav-link<?= isActive($activePage, 'prices-policies') ?>">
                     <?= t('header.nav.prices') ?>
@@ -313,7 +339,7 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
                     </a>
                 </li>
                 <li>
-                    <a href="https://www.instagram.com/hermes_rollerskate/" target="_blank" rel="noopener noreferrer"
+                    <a href="https://www.instagram.com/hermes_rollerskate_academy/" target="_blank" rel="noopener noreferrer"
                         aria-label="<?= t('footer.social_labels.instagram') ?>">
                         <img src="<?= asset('photo/insta.webp') ?>" alt="Instagram">
                     </a>
@@ -340,7 +366,6 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
         </div>
         <!-- Help links -->
         <div class="help-links">
-            <h3 class="help-heading"><?= t('header.mobile.help') ?></h3>
             <a href="<?= asset('policies#FAQ') ?>" class="nav-link">
                 <?= t('header.mobile.help_faq') ?>
             </a>

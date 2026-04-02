@@ -281,6 +281,7 @@ body {
 .btn-success {
   background: #22c55e;
   color: #fff;
+  text-decoration: none;
 }
 
 .btn-success:hover {

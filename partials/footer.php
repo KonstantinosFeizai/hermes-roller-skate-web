@@ -31,7 +31,7 @@ require_once __DIR__ . '/../includes/lang.php';
                         </a>
                     </li>
                     <li>
-                        <a href="https://www.instagram.com/hermes_rollerskate/" target="_blank"
+                        <a href="https://www.instagram.com/hermes_rollerskate_academy/" target="_blank"
                             rel="noopener noreferrer" aria-label="<?= t('footer.social_labels.instagram') ?>">
                             <img src="<?= asset('photo/insta.webp') ?>" alt="Instagram">
                         </a>
@@ -74,9 +74,9 @@ require_once __DIR__ . '/../includes/lang.php';
             <p><strong><?= t('footer.email_label') ?></strong><a
                     href="mailto:hermesrollerskate@gmail.com?subject=Inquiry">hermesrollerskate@gmail.com</a></p>
             <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/WW9z9DtAkKdPqenU7" target="_blank"
-                    rel="noopener noreferrer"> <?= t('footer.locations.zografou_1') ?></a></p>
+                    rel="noopener noreferrer"> <?= t('footer.locations.zografou,panepistimioupoli') ?></a></p>
             <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/QbrQcmkWropaxx1H6" target="_blank"
-                    rel="noopener noreferrer"> <?= t('footer.locations.zografou_2') ?></a>
+                    rel="noopener noreferrer"> <?= t('footer.locations.zografou,polutexneioupoli') ?></a>
             </p>
             <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/Hdjvv418PZGE3nQU8" target="_blank"
                     rel="noopener noreferrer"> <?= t('footer.locations.gerakas') ?>

@@ -1,0 +1,258 @@
+/* Basic blog listing styles */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px;
+}
+body {
+  margin-top: 50px;
+}
+
+.blog-hero h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.blog-hero .lead {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.blog-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #f1f5f9; /* slate-100 */
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(2, 6, 23, 0.04); /* shadow-sm */
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 0.8s ease,
+    box-shadow 0.8s ease; /* transition-all duration-500 */
+}
+
+/* indicate the card is clickable */
+.card {
+  cursor: pointer;
+}
+
+.card:hover {
+  box-shadow: 0 40px 90px rgba(2, 6, 23, 0.18); /* stronger shadow */
+}
+
+.card-media {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.card-media img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s ease;
+  transform-origin: center center;
+}
+
+.card:hover .card-media img {
+  transform: scale(1.06);
+}
+
+.card-badges {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cat-badge {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f2937;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 6px rgba(2, 6, 23, 0.06);
+}
+
+.card-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 auto;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 19px;
+  line-height: 28px;
+  color: #0f172a;
+  transition: color 0.25s ease;
+}
+
+.card:hover .card-title {
+  color: var(--utility-color);
+}
+.card:hover .read-more {
+  color: var(--utility-color);
+}
+
+/* Controls (categories + search) placed under hero */
+.blog-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 22px 0;
+  flex-wrap: wrap;
+}
+
+.category-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.cat-filter {
+  background: #fff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  color: var(--primary-color, #2c3e50);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.12s ease;
+}
+
+.cat-filter:hover {
+  transform: translateY(-2px);
+}
+.cat-filter.active {
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+}
+
+.blog-search input[type="search"],
+.blog-search input {
+  padding: 10px 14px;
+  border-radius: 24px;
+  border: 1px solid #e6eef8;
+  min-width: 220px;
+}
+
+@media (max-width: 880px) {
+  .blog-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .blog-search {
+    margin-top: 12px;
+  }
+  .blog-search input {
+    width: 100%;
+    max-width: 420px;
+  }
+}
+
+.card-meta {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.card-excerpt {
+  color: #334155;
+  margin-top: 6px;
+  flex: 1 1 auto;
+  font-size: 14px;
+}
+
+.card-actions {
+  margin-top: 8px;
+}
+
+.read-more {
+  display: inline-block;
+  background: transparent;
+  color: #0f172a;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .card-media img {
+    height: 220px;
+  }
+}
+
+/* Container για το Pagination */
+.pagination-controls {
+  display: flex;
+  justify-content: center; /* Κεντράρισμα */
+  align-items: center;
+  gap: 8px; /* Απόσταση μεταξύ των κουμπιών */
+  margin: 50px 0; /* Περιθώριο πάνω-κάτω */
+  padding: 20px;
+}
+
+/* Στυλ για τα κουμπιά */
+.pagination-controls button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 45px;
+  height: 45px;
+  cursor: pointer;
+  background-color: #ffffff;
+  color: #2c829c;
+  border: 2px solid #2c829c;
+
+  /* Στρογγυλεμένες γωνίες */
+  border-radius: 50%; /* Για τέλειο κύκλο */
+  /* Ή χρησιμοποίησε border-radius: 12px; αν τα θες τετραγωνισμένα με καμπύλες */
+
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+/* Hover εφέ */
+.pagination-controls button:hover:not(.active) {
+  background-color: #f0f8fa;
+  transform: translateY(-2px); /* Μικρή ανύψωση */
+  box-shadow: 0 4px 8px rgba(44, 130, 156, 0.2);
+}
+
+/* Active σελίδα */
+.pagination-controls button.active {
+  background-color: #2c829c;
+  color: #ffffff;
+  border-color: #2c829c;
+  cursor: default;
+  box-shadow: 0 4px 12px rgba(44, 130, 156, 0.3);
+}
+
+/* Responsive για κινητά */
+@media (max-width: 480px) {
+  .pagination-controls button {
+    min-width: 38px;
+    height: 38px;
+    font-size: 0.9rem;
+  }
+}

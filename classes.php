@@ -47,14 +47,17 @@ require_once PROJECT_ROOT . 'partials/header.php';
             </p>
 
             <dl class="class-card__details">
-              <dt><?= htmlspecialchars(t('classes.private.slots_title')) ?></dt>
-              <dd><?= htmlspecialchars(t('classes.private.slots_sat')) ?></dd>
-              <dd><?= htmlspecialchars(t('classes.private.slots_sun')) ?></dd>
 
               <dt><?= htmlspecialchars(t('classes.private.included_title')) ?></dt>
-              <dd>
-                <?= htmlspecialchars(t('classes.private.included_text')) ?>
-              </dd>
+              <dd><?= htmlspecialchars(t('classes.private.included_text')) ?></dd>
+
+              <dt><?= htmlspecialchars(t('classes.private.milestones.title')) ?></dt>
+              <dd>• <?= htmlspecialchars(t('classes.private.milestones.age_6_12')) ?></dd>
+              <dd>• <?= htmlspecialchars(t('classes.private.milestones.age_5_6')) ?></dd>
+              <dd>• <?= htmlspecialchars(t('classes.private.milestones.age_3_5')) ?></dd>
+              <small style="display: block; margin-top: 5px; font-style: italic; opacity: 0.8;">
+                <?= htmlspecialchars(t('classes.private.milestones.note')) ?>
+              </small>
             </dl>
           </div>
         </article>
@@ -72,17 +75,60 @@ require_once PROJECT_ROOT . 'partials/header.php';
             </p>
 
             <dl class="class-card__details">
-              <dt><?= htmlspecialchars(t('classes.group.schedule_title')) ?></dt>
-              <dd><?= htmlspecialchars(t('classes.group.schedule_sat')) ?></dd>
-              <dd><?= htmlspecialchars(t('classes.group.schedule_sun')) ?></dd>
 
               <dt><?= htmlspecialchars(t('classes.group.learn_title')) ?></dt>
               <dd><?= htmlspecialchars(t('classes.group.learn_beginner')) ?></dd>
-              <dd><?= htmlspecialchars(t('classes.group.learn_advanced')) ?></dd>
-              <dd><?= htmlspecialchars(t('classes.group.learn_all')) ?></dd>
 
               <dt><?= htmlspecialchars(t('classes.group.structure_title')) ?></dt>
               <dd><?= htmlspecialchars(t('classes.group.structure_text')) ?></dd>
+            </dl>
+          </div>
+        </article>
+        <article class="class-card class-card--basic">
+          <figure class="class-card__media">
+            <img src="photo/basic_level.webp" alt="<?= htmlspecialchars(t('classes.basic.alt')) ?>">
+          </figure>
+          <div class="class-card__body">
+            <h2 class="class-card__title">
+              <?= htmlspecialchars(t('classes.basic.title')) ?>
+            </h2>
+            <p class="class-card__text">
+              <?= htmlspecialchars(t('classes.basic.text')) ?>
+            </p>
+
+            <dl class="class-card__details">
+              <dt><?= htmlspecialchars(t('classes.basic.learn_title')) ?></dt>
+              <dd><?= htmlspecialchars(t('classes.basic.learn_text')) ?></dd>
+
+              <dt><?= htmlspecialchars(t('classes.basic.opportunities_title')) ?></dt>
+              <dd><?= htmlspecialchars(t('classes.basic.opportunities_text')) ?></dd>
+
+              <dt><?= htmlspecialchars(t('classes.basic.structure_title')) ?></dt>
+              <dd><?= htmlspecialchars(t('classes.basic.structure_text')) ?></dd>
+            </dl>
+          </div>
+        </article>
+        <article class="class-card class-card--advanced">
+          <figure class="class-card__media">
+            <img src="photo/advanced_action.webp" alt="<?= htmlspecialchars(t('classes.advanced.alt')) ?>">
+          </figure>
+          <div class="class-card__body">
+            <h2 class="class-card__title">
+              <?= htmlspecialchars(t('classes.advanced.title')) ?>
+            </h2>
+            <p class="class-card__text">
+              <?= htmlspecialchars(t('classes.advanced.text')) ?>
+            </p>
+
+            <dl class="class-card__details">
+              <dt><?= htmlspecialchars(t('classes.advanced.learn_title')) ?></dt>
+              <dd><?= htmlspecialchars(t('classes.advanced.learn_text')) ?></dd>
+
+              <dt><?= htmlspecialchars(t('classes.advanced.opportunities_title')) ?></dt>
+              <dd><?= htmlspecialchars(t('classes.advanced.opportunities_text')) ?></dd>
+
+              <dt><?= htmlspecialchars(t('classes.advanced.structure_title')) ?></dt>
+              <dd><?= htmlspecialchars(t('classes.advanced.structure_text')) ?></dd>
             </dl>
           </div>
         </article>

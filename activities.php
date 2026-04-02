@@ -306,7 +306,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
 <section class="cta-section container">
   <div class="cta-content">
     <p><?= htmlspecialchars(t('activities.cta.text')) ?></p>
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLScIWPgULw7AtR9Gsvh3Mm8ma5AXzohL4UAUQsKdyZHTTnmqHg/viewform?usp=sf_link"
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeAawGRiqE58WiY_K6jB6JIRDhrlj6ZxK-g9eXLRipInN01IA/viewform"
       target="_blank" rel="noopener" class="button-link" role="button">
       <?= htmlspecialchars(t('activities.cta.button')) ?>
     </a>

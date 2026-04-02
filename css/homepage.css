@@ -9,9 +9,11 @@ body {
   left: 0;
   width: 100%;
   height: 100vh;
+  background-color: #05070b;
   background-image: url("../photo/welcome-intro.jpg");
   background-position: center;
   background-size: cover;
+  background-repeat: no-repeat;
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -20,6 +22,151 @@ body {
   text-align: center;
   color: white;
   padding: 2rem;
+  gap: 0.35rem;
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+  will-change: opacity, filter, transform;
+}
+
+.welcome-logo {
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+
+.welcome-logo.animate__fadeIn {
+  animation-duration: 1.4s;
+}
+
+.welcome-logo-heartbeat {
+  animation: welcomeHeartbeatSoft 1.35s ease-in-out 2;
+  transform-origin: center;
+  will-change: transform;
+}
+
+@keyframes welcomeHeartbeatSoft {
+  0% {
+    transform: scale(1);
+  }
+
+  15% {
+    transform: scale(1.02);
+  }
+
+  28% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.03);
+  }
+
+  62% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.welcome-logo-wrap {
+  width: min(46vw, 360px);
+  max-width: 78vw;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-ring-text {
+  position: absolute;
+  width: 172%;
+  height: 172%;
+  inset: -36%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ring-title,
+.ring-subtitle {
+  font-family: "Chewy", system-ui;
+  font-weight: 400;
+  fill: #2b2914;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  paint-order: stroke;
+  stroke: rgba(235, 207, 140, 0.55);
+  stroke-width: 1.4px;
+  font-size: clamp(15px, 2vw, 22px);
+}
+
+.ring-title {
+  font-size: clamp(18px, 2.4vw, 28px);
+}
+
+.ring-subtitle {
+  font-size: clamp(19px, 2.5vw, 29px);
+  letter-spacing: 0.65px;
+}
+
+.ring-enter-top,
+.ring-enter-bottom {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-duration: 900ms;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-fill-mode: both;
+}
+
+.ring-enter-top {
+  animation-name: ringPopInTop;
+}
+
+.ring-enter-bottom {
+  animation-name: ringPopInBottom;
+  animation-delay: 120ms;
+}
+
+@keyframes ringPopInTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-64px) scale(0.82);
+    letter-spacing: 4px;
+  }
+
+  65% {
+    opacity: 1;
+    transform: translateY(8px) scale(1.03);
+    letter-spacing: 2px;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    letter-spacing: 1.5px;
+  }
+}
+
+@keyframes ringPopInBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(64px) scale(0.82);
+    letter-spacing: 4px;
+  }
+
+  65% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.03);
+    letter-spacing: 2px;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    letter-spacing: 1.5px;
+  }
 }
 
 #welcome-overlay.fade-out {
@@ -27,26 +174,34 @@ body {
   pointer-events: none;
 }
 
-#welcome-overlay h1 {
-  font-size: 3rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  margin-top: 1rem;
-  padding: 0 1rem;
-  animation: bounceInUp 2.5s;
-}
-
-#welcome-overlay h2 {
-  font-size: 1.5rem;
-  color: var(--dark-bg);
-  margin-top: 0.5rem;
-  padding: 0 1rem;
-  animation: backInDown 2s;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* MAIN CONTENT */
 main {
   text-align: center;
+}
+
+body.has-welcome-overlay main {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+body.has-welcome-overlay.is-revealing-main main {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .private {
@@ -111,6 +266,54 @@ main {
   text-align: center;
 }
 
+/* =============================
+   HIGHLIGHTS / YOUTUBE SECTION
+   ============================= */
+
+.highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.highlight-item {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Smooth hover only on non-touch devices */
+@media (hover: hover) {
+  .highlight-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.14);
+  }
+}
+
+/* Responsive video wrapper */
+.highlight-item iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: none;
+  display: block;
+}
+
+/* Text under video */
+.highlight-desc {
+  padding: 0.9rem 1rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  line-height: 1.35;
+}
+
 /* grid schedule styling */
 .grid-container {
   display: grid;
@@ -119,6 +322,23 @@ main {
   padding: 2.5rem 1rem;
   max-width: 1400px;
   margin: 0 auto;
+}
+
+@media (min-width: 1200px) {
+  .grid-container {
+    grid-template-columns: repeat(4, minmax(240px, 1fr));
+  }
+}
+
+/* Center cards in the last row if they don't fill the full 4 columns */
+.grid-container > .grid-item:last-child:nth-child(4n - 2) {
+  grid-column: 2 / span 1;
+}
+.grid-container > .grid-item:last-child:nth-child(4n - 1) {
+  grid-column: 2 / span 1;
+}
+.grid-container > .grid-item:nth-last-child(2):nth-child(4n - 2) {
+  grid-column: 2 / span 1;
 }
 
 .grid-item {
@@ -237,7 +457,22 @@ main {
   text-decoration: underline;
 }
 
-/* CARD SLIDER SECTION   */
+/* SUGGESTED PRODUCTS SECTION */
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-list .card-item {
+  flex: 1 1 280px;
+  max-width: 350px;
+}
+
 .card-list .card-item .card-link {
   width: 100%;
   max-width: 350px;
@@ -317,22 +552,6 @@ main {
   background: #5372f0;
 }
 
-.card-wrapper .swiper-pagination-bullet {
-  height: 13px;
-  width: 13px;
-  opacity: 0.5;
-  background: #5372f0;
-}
-
-.card-wrapper .swiper-pagination-bullet-active {
-  opacity: 1;
-}
-
-.card-wrapper .swiper-slide-button {
-  color: #5372f0;
-  margin-top: -35px;
-}
-
 /* Container for Cards */
 .container {
   max-width: 1200px;
@@ -403,6 +622,43 @@ h3 {
   font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
 }
 
+.highlights {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+/* When only one highlight exists, stretch it to full width and limit its max size */
+.highlights:has(.highlight-item:only-child) {
+  grid-template-columns: 1fr;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.highlight-item {
+  width: 100%;
+}
+
+.highlight-item iframe {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 10px;
+}
+
+.highlight-desc {
+  margin-top: 0.6rem;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: #333;
+}
+
 .btn-gradient-pill {
   display: inline-flex;
   align-items: center;
@@ -445,16 +701,32 @@ h3 {
 }
 
 @media (max-width: 768px) {
-  #welcome-overlay h1 {
-    font-size: 2rem;
-  }
-
-  #welcome-overlay h2 {
-    font-size: 1.5rem;
-  }
-
   #welcome-overlay {
     padding: 1rem;
+  }
+
+  .welcome-logo-wrap {
+    width: min(52vw, 290px);
+  }
+
+  .welcome-ring-text {
+    width: 166%;
+    height: 166%;
+    inset: -33%;
+  }
+
+  .ring-title {
+    font-size: clamp(17px, 3.2vw, 24px);
+  }
+
+  .ring-subtitle {
+    font-size: clamp(17px, 3vw, 23px);
+    letter-spacing: 0.5px;
+  }
+
+  .highlights {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
   .announcement-images {
@@ -488,6 +760,35 @@ h3 {
 }
 
 @media (max-width: 425px) {
+  #welcome-overlay {
+    padding: 0.75rem;
+  }
+
+  .welcome-logo-wrap {
+    width: min(50vw, 150px);
+  }
+
+  .welcome-ring-text {
+    width: 154%;
+    height: 154%;
+    inset: -27%;
+  }
+
+  .ring-title {
+    font-size: 30px;
+    stroke-width: 1px;
+  }
+
+  .ring-subtitle {
+    font-size: 29px;
+    letter-spacing: 0.35px;
+    stroke-width: 1px;
+  }
+
+  .highlight-desc {
+    font-size: 0.9rem;
+  }
+
   .announcement h2 {
     font-size: 1.6rem;
   }

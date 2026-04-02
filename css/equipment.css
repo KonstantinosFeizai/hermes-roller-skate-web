@@ -356,6 +356,187 @@
 .eq-color-btn--blueblack {
   background: linear-gradient(135deg, #1e40af 50%, #1f2937 50%);
 }
+.eq-color-btn--pinkpurple {
+  background-color: #d175b7;
+}
+.eq-color-btn--blue {
+  background-color: #2c5ba7;
+}
+.eq-color-btn--red {
+  background-color: #e60000;
+}
+/* Firefly Editions με gradients */
+.eq-color-btn--firefly-yellow {
+  background: linear-gradient(135deg, #e1ff00 50%, #0055ff 50%);
+}
+.eq-color-btn--firefly-blue {
+  background: linear-gradient(135deg, #00ccff 50%, #ffffff 50%);
+  border: 1px solid #ccc;
+}
+
+/* MT Plus Μονόχρωμα */
+.eq-color-btn--emerald {
+  background-color: #508588;
+}
+.eq-color-btn--sand {
+  background-color: #d2d2d2;
+}
+.eq-color-btn--cherry {
+  background-color: #8b5a6d;
+}
+.eq-color-btn--blue {
+  background-color: #007bff;
+}
+.eq-color-btn--red {
+  background-color: #ff0000;
+}
+.eq-color-btn--black {
+  background-color: #000000;
+}
+/* Καθαρό μαύρο */
+.eq-color-btn--black {
+  background-color: #000000;
+}
+
+/* Έντονο ροζ */
+.eq-color-btn--pink {
+  background-color: #e91e63;
+}
+
+/* Magic Edition (Λευκό και Μωβ) */
+.eq-color-btn--magic {
+  background: linear-gradient(135deg, #ffffff 50%, #9c27b0 50%);
+  border: 1px solid #ccc;
+}
+
+/* Καθαρό Λευκό με border για να φαίνεται στο άσπρο φόντο */
+.eq-color-btn--white {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+}
+
+/* Μαύρο και Λευκό */
+.eq-color-btn--blackwhite {
+  background: linear-gradient(135deg, #000000 50%, #ffffff 50%);
+  border: 1px solid #ccc;
+}
+
+/* Ροζ και Λευκό */
+.eq-color-btn--pinkwhite {
+  background: linear-gradient(135deg, #ff69b4 50%, #ffffff 50%);
+  border: 1px solid #ccc;
+}
+
+/* Μπεζ και Καφέ */
+.eq-color-btn--beigebrown {
+  background: linear-gradient(135deg, #f5f5dc 50%, #8b4513 50%);
+}
+
+/* Γαλάζιο και Ροζ */
+.eq-color-btn--bluepink {
+  background: linear-gradient(135deg, #87ceeb 50%, #ff69b4 50%);
+}
+/* Aqua / Light Blue */
+.eq-color-btn--stargaze-aqua {
+  background-color: #4ed9ef;
+}
+
+/* Pink */
+.eq-color-btn--stargaze-pink {
+  background-color: #ff3399;
+}
+
+/* Black and Blue gradient */
+.eq-color-btn--stargaze-blackblue {
+  background: linear-gradient(135deg, #000000 50%, #0066ff 50%);
+}
+
+/* Dusk (Grey and Yellow) */
+.eq-color-btn--stargaze-dusk {
+  background: linear-gradient(135deg, #4a5568 50%, #f6ad55 50%);
+}
+/* Zoom Black */
+.eq-color-btn--zoom-black {
+  background-color: #000000;
+}
+
+/* Zoom Cotton Candy Pink (με το γαλάζιο της λεπτομέρειας) */
+.eq-color-btn--zoom-pink {
+  background: linear-gradient(135deg, #f7a8b8 50%, #55cdfc 50%);
+}
+
+/* Zoom Neon Yellow (με το φούξια της λεπτομέρειας) */
+.eq-color-btn--zoom-yellow {
+  background: linear-gradient(135deg, #e1ff00 50%, #ff007f 50%);
+}
+/* Black and Red with marble/smoke feel */
+.eq-color-btn--jet-blackred {
+  background: linear-gradient(135deg, #000000 50%, #ff0000 50%);
+}
+
+/* Lavender and Pink */
+.eq-color-btn--jet-lavender {
+  background: linear-gradient(135deg, #b19cd9 50%, #ffc0cb 50%);
+}
+/* Tempish Gokid - Blue/Black Edition */
+.eq-color-btn--gokid-blue {
+  /* Χρησιμοποιούμε το Cyan-Blue της ρόδας και το Μαύρο της μπότας */
+  background: linear-gradient(135deg, #00adef 50%, #1a1a1a 50%);
+  border: 1px solid #ddd;
+}
+
+/* Tempish Gokid - Pink/White Edition */
+.eq-color-btn--gokid-pink {
+  /* Χρησιμοποιούμε το έντονο Pink/Magenta και το Λευκό του σκελετού */
+  background: linear-gradient(135deg, #ec008c 50%, #ffffff 50%);
+  border: 1px solid #ddd;
+}
+
+/* Tempish Exon - Full Black με Red λεπτομέρεια */
+.eq-color-btn--exon-black {
+  /* Το Exon είναι σχεδόν όλο μαύρο, αλλά έχει αυτό το κόκκινο κλιπ ασφαλείας */
+  background: linear-gradient(135deg, #1a1a1a 80%, #ff0000 20%);
+  border: 1px solid #ddd;
+}
+/* Black / Gold (80 & 90) */
+.eq-color-btn--viber-blackgold,
+.eq-color-btn--viber-blackgold-90 {
+  background: linear-gradient(135deg, #000000 50%, #d4af37 50%);
+  border: 1px solid #b8860b;
+}
+
+/* White / Beige (Lady) */
+.eq-color-btn--viber-whitebeige {
+  background: linear-gradient(135deg, #ffffff 50%, #c7377e 50%);
+  border: 1px solid #a89968;
+}
+/* Ezza Black - Μαύρο με κόκκινες λεπτομέρειες */
+.eq-color-btn--ezza-black {
+  background: linear-gradient(135deg, #1a1a1a 80%, #ff0000 20%);
+  border: 1px solid #ddd;
+}
+
+/* Ezza Uni White - Λευκό με κόκκινες λεπτομέρειες */
+.eq-color-btn--ezza-white {
+  background: linear-gradient(135deg, #ffffff 80%, #ff0000 20%);
+  border: 1px solid #ddd;
+}
+/* S.R.PRO - Λευκή μπότα με μαύρες λεπτομέρειες */
+.eq-color-btn--srpro-wb {
+  background: linear-gradient(135deg, #ffffff 70%, #1a1a1a 30%);
+  border: 1px solid #ddd;
+}
+/* Skado 84 - Black / Blue */
+.eq-color-btn--skado-blue {
+  background: linear-gradient(135deg, #1a1a1a 70%, #0077be 30%);
+  border: 1px solid #ddd;
+}
+
+/* Skado 84 Lady - Black / Pink */
+.eq-color-btn--skado-pink {
+  background: linear-gradient(135deg, #1a1a1a 70%, #f191b4 30%);
+  border: 1px solid #ddd;
+}
 
 /* ===== FutureSkate Button ===== */
 .eq-futureskate-btn {
@@ -370,6 +551,11 @@
   border-radius: 50px;
   text-decoration: none;
   transition: background-color 0.3s ease;
+}
+/* Viber 90 - Μαύρο / Λευκό */
+.eq-color-btn--viber90-bw {
+  background: linear-gradient(135deg, #1a1a1a 50%, #ffffff 50%);
+  border: 1px solid #ddd;
 }
 
 .eq-futureskate-btn:hover {

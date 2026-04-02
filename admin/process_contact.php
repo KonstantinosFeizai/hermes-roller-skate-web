@@ -5,6 +5,9 @@ require_once  __DIR__ . '/../config.php';
 session_start();
 header('Content-Type: application/json');
 
+// Include mailer config so we can notify admin by email
+require_once PROJECT_ROOT . 'email_config.php';
+
 $response = [];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -79,7 +82,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$name, $surname, $email, $phone, $category, $subject, $message]);
 
+        // Attempt to send notification email to admin (SMTP_FROM)
         $response['success'] = true;
+        $response['mail_sent'] = false;
+
+        try {
+            // If mail subsystem is not available, skip sending but log for debugging
+            if (!function_exists('getMailer')) {
+                error_log('process_contact: mailer not available (getMailer missing)');
+            } else {
+                $adminEmail = $GLOBALS['env']['SMTP_FROM'] ?? 'hermesrollerskate@gmail.com';
+                $mail = getMailer();
+                $mail->addAddress($adminEmail);
+                if (!empty($email)) {
+                    $mail->addReplyTo($email, trim($name . ' ' . $surname));
+                }
+                $mail->isHTML(true);
+                $mail->Subject = "Νέο μήνυμα επικοινωνίας: " . ($subject ?: 'Χωρίς θέμα');
+
+                $body  = "<h3>Νέο μήνυμα από τη φόρμα επικοινωνίας</h3>";
+                $body .= "<p><strong>Όνομα:</strong> " . htmlspecialchars($name) . " " . htmlspecialchars($surname) . "</p>";
+                $body .= "<p><strong>Email:</strong> " . htmlspecialchars($email) . "</p>";
+                if (!empty($phone)) {
+                    $body .= "<p><strong>Τηλέφωνο:</strong> " . htmlspecialchars($phone) . "</p>";
+                }
+                $body .= "<p><strong>Κατηγορία:</strong> " . htmlspecialchars($category) . "</p>";
+                $body .= "<p><strong>Θέμα:</strong> " . htmlspecialchars($subject) . "</p>";
+                $body .= "<hr><p>" . nl2br(htmlspecialchars($message)) . "</p>";
+
+                $mail->Body = $body;
+                $mail->send();
+                $response['mail_sent'] = true;
+            }
+        } catch (\Throwable $e) {
+            // Catch any Throwable (Exception or Error) so mail failures don't cause HTTP 500
+            error_log('process_contact mail error: ' . $e->getMessage());
+            $response['mail_sent'] = false;
+        }
+
         echo json_encode($response);
         exit;
     } catch (\PDOException $e) {

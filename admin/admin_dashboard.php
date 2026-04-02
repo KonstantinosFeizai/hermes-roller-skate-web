@@ -24,6 +24,21 @@ try {
     // Query: contact messages for Contact tab
     $stmt = $pdo->query("SELECT * FROM contact_messages ORDER BY created_at DESC");
     $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Query: posts for Posts tab 
+    $stmt_posts = $pdo->query("
+    SELECT 
+        bp.*, 
+        u.first_name, 
+        u.last_name,
+        GROUP_CONCAT(c.name SEPARATOR ', ') AS category_names
+        FROM blog_posts bp
+        LEFT JOIN users u ON bp.author_id = u.id
+        LEFT JOIN post_categories pc ON bp.id = pc.post_id
+        LEFT JOIN categories c ON pc.category_id = c.id
+        GROUP BY bp.id
+        ORDER BY bp.created_at DESC
+    ");
+    $posts = $stmt_posts->fetchAll(PDO::FETCH_ASSOC);
     // Query: unread count badge
     $stmt_unread = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_replied = 0");
     $unread_count = $stmt_unread->fetchColumn();
@@ -57,6 +72,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
             <li class="active" onclick="showTab(event, 'accounts-tab')">Λογαριασμοί</li>
             <li onclick="showTab(event, 'athletes-tab')">Αθλητές</li>
             <li onclick="showTab(event, 'classes-tab')">Τμήματα</li>
+            <li onclick="showTab(event, 'posts-tab')">Άρθρα</li>
             <li onclick="showTab(event, 'finance-tab')">Οικονομικά</li>
             <li onclick="showTab(event, 'contact-tab')"><a href="#contact-tab" class="contact-link">
                     Επικοινωνία
@@ -214,6 +230,79 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
+        </div>
+
+        <div id="posts-tab" class="tab-content">
+            <div class="tab-header">
+                <h2>Διαχείριση Άρθρων</h2>
+                <a href="<?= asset('admin/add_post') ?>" class="action-btn btn-success">+ Νέο Άρθρο</a>
+            </div>
+
+            <?php if (empty($posts)): ?>
+                <p>Δεν υπάρχουν άρθρα.</p>
+            <?php else: ?>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Τίτλος</th>
+                            <th>Ημερομηνία</th>
+                            <th>Δημοσίευση</th>
+                            <th>Γλώσσα</th>
+                            <th>Translation ID</th>
+                            <th>Συντάκτης</th>
+                            <th>Ενέργειες</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($posts as $post): ?>
+                            <tr>
+                                <td><?php echo $post['id']; ?></td>
+                                <td><?php
+                                    $rawTitle = trim(strip_tags($post['title'] ?? ''));
+                                    if ($rawTitle === '') {
+                                        echo '';
+                                    } else {
+                                        $words = preg_split('/\s+/u', $rawTitle);
+                                        if (count($words) > 5) {
+                                            echo htmlspecialchars(implode(' ', array_slice($words, 0, 5)) . '...');
+                                        } else {
+                                            echo htmlspecialchars($rawTitle);
+                                        }
+                                    }
+                                    ?></td>
+                                <td><?php echo date('d/m/Y', strtotime($post['created_at'])); ?></td>
+                                <td>
+                                    <?php
+                                    if (!empty($post['is_published'])) {
+                                        $pubDate = !empty($post['published_at']) ? $post['published_at'] : $post['created_at'];
+                                        echo date('d/m/Y', strtotime($pubDate));
+                                    } else {
+                                        echo 'Not published yet';
+                                    }
+                                    ?>
+                                </td>
+                                <td><?php echo htmlspecialchars($post['language'] ?? '-'); ?></td>
+                                <td><?php echo htmlspecialchars($post['translation_id'] ?? '-'); ?></td>
+                                <td>
+                                    <?php
+                                    if (!empty($post['first_name'])) {
+                                        echo htmlspecialchars($post['first_name'] . ' ' . $post['last_name']);
+                                    } else {
+                                        echo '<span style="color: #999; font-style: italic;">No Author</span>';
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <a class="action-btn" href="<?= asset('admin/edit_post') ?>?id=<?php echo $post['id']; ?>">Επεξεργασία</a>
+                                    <a class="action-btn delete-btn" href="<?= asset('admin/delete_post') ?>?id=<?php echo $post['id']; ?>">Διαγραφή</a>
+                                    <a class="action-btn" target="_blank" href="<?= asset('post') ?>?slug=<?php echo htmlspecialchars($post['slug']); ?>">Προβολή</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
         </div>
 
         <div id="finance-tab" class="tab-content">
