@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
    * @param {boolean} third_party
    */
   function saveConsent(analytics, third_party) {
-    fetch(window.BASE_URL + "api/save_consent.php", {
+    fetch(window.BASE_URL + "api/save-prefs.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ analytics, third_party }),

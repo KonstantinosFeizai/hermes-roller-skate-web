@@ -139,7 +139,7 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
     <link rel="stylesheet" href="<?= getVersionedAssetUrl('css/navigation.css') ?>">
     <link rel="stylesheet" href="<?= getVersionedAssetUrl('css/modal.css') ?>">
     <link rel="stylesheet" href="<?= getVersionedAssetUrl('css/footer.css') ?>">
-    <link rel="stylesheet" href="<?= getVersionedAssetUrl('css/cookie-banner.css') ?>">
+    <link rel="stylesheet" href="<?= getVersionedAssetUrl('css/site-notice.css') ?>">
     <!-- Auth modal HTML -->
     <?php require_once __DIR__ . '/login_modal.php'; ?>
 
@@ -167,7 +167,7 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
     <script src="<?= getVersionedAssetUrl('js/auth.js') ?>" defer></script>
     <script src="<?= getVersionedAssetUrl(path: 'js/scroll-navbar.js') ?>" defer></script>
     <script src="<?= getVersionedAssetUrl('js/newsletter.js') ?>" defer></script>
-    <script src="<?= getVersionedAssetUrl('js/cookie-banner.js') ?>" defer></script>
+    <script src="<?= getVersionedAssetUrl('js/site-notice.js') ?>" defer></script>
 
     <!-- Page-specific Scripts -->
     <?php foreach ($pageScripts as $script): ?>
@@ -399,7 +399,7 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
     </script>
 
     <!-- Cookie Consent Banner -->
-    <?php require_once __DIR__ . '/cookie-banner.php'; ?>
+    <?php require_once __DIR__ . '/site-notice.php'; ?>
 
     <!-- Logout Confirm Modal -->
     <div id="logoutConfirmOverlay">
