@@ -27,56 +27,91 @@ if ($subject === '' || $message === '') {
 }
 
 try {
-    $stmt = $pdo->query("SELECT email FROM newsletter_subscribers ORDER BY subscribed_at DESC");
-    $emails = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    // Μόνο active subscribers + παίρνουμε και το token για το unsubscribe link
+    $stmt = $pdo->query("
+        SELECT email, unsubscribe_token 
+        FROM newsletter_subscribers 
+        WHERE is_active = 1
+        ORDER BY subscribed_at DESC
+    ");
+    $subscribers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if (empty($emails)) {
+    if (empty($subscribers)) {
         echo json_encode(['success' => false, 'message' => 'Δεν υπάρχουν εγγεγραμμένοι.']);
         exit;
     }
 
-    // Keep only valid emails
-    $validEmails = array_values(array_filter($emails, fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
+    // Κρατάμε μόνο έγκυρα emails
+    $validSubscribers = array_values(array_filter(
+        $subscribers,
+        fn($s) => filter_var($s['email'], FILTER_VALIDATE_EMAIL)
+    ));
 
-    if (empty($validEmails)) {
+    if (empty($validSubscribers)) {
         echo json_encode(['success' => false, 'message' => 'Δεν υπάρχουν έγκυρα emails.']);
         exit;
     }
 
-    $sent = 0;
-    $failed = 0;
-    $errors = [];
+    $sent      = 0;
+    $failed    = 0;
+    $errors    = [];
     $batchSize = 50;
 
-    // Send in BCC batches to avoid provider limits
-    foreach (array_chunk($validEmails, $batchSize) as $batch) {
+    // Base URL για το unsubscribe link
+    // $baseUrl = rtrim(defined('BASE_URL') ? BASE_URL : 'https://hermesrollerskate.com', '/');
+    // $baseUrl = rtrim(defined('BASE_URL') ? BASE_URL : 'http://localhost/hermesrollerskate', '/'); // ← τοπικό για ανάπτυξη
+    $baseUrl = rtrim(APP_URL, '/');
+
+    // Δημιουργούμε ΜΟΝΟ ΜΙΑ SMTP σύνδεση για όλα τα emails (αποφεύγουμε rate limiting)
+    $mail = getMailer();
+    $mail->SMTPKeepAlive = true;
+
+    // Στέλνουμε ξεχωριστό email σε κάθε subscriber
+    // ώστε το unsubscribe link να είναι personalized με το δικό του token
+    foreach ($validSubscribers as $subscriber) {
         try {
-            $mail = getMailer();
+            $mail->clearAddresses();
             $mail->isHTML(true);
             $mail->Subject = $subject;
-            $mail->Body = nl2br(htmlspecialchars($message));
-            $mail->AltBody = $message;
 
-            // Required visible recipient
-            $mail->addAddress('no-reply@hermesrollerskate.gr', 'Hermes Roller Skate');
+            $mail->addAddress($subscriber['email']);
 
-            foreach ($batch as $email) {
-                $mail->addBCC($email);
-            }
+            // Unsubscribe link με το μοναδικό token του subscriber
+            $unsubscribeUrl = $baseUrl . '/api/unsubscribe?token=' . urlencode($subscriber['unsubscribe_token']);
+
+            // HTML body με unsubscribe link στο footer του email
+            $mail->Body = '
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    ' . nl2br(htmlspecialchars($message)) . '
+                    <hr style="margin: 2rem 0; border: none; border-top: 1px solid #eee;">
+                    <p style="font-size: 12px; color: #999; text-align: center;">
+                        Λαμβάνετε αυτό το email γιατί έχετε εγγραφεί στο newsletter μας.<br>
+                        Αν δεν επιθυμείτε να λαμβάνετε άλλα emails, 
+                        <a href="' . $unsubscribeUrl . '" style="color: #e63946;">κάντε κλικ εδώ για κατάργηση εγγραφής</a>.
+                    </p>
+                </div>
+            ';
+
+            $mail->AltBody = $message . "\n\n"
+                . "---\n"
+                . "Για κατάργηση εγγραφής από το newsletter: " . $unsubscribeUrl;
 
             $mail->send();
-            $sent += count($batch);
+            $sent++;
         } catch (Exception $e) {
-            $failed += count($batch);
-            $errors[] = $e->getMessage();
+            $failed++;
+            $errors[] = $subscriber['email'] . ': ' . $e->getMessage();
         }
     }
 
+    // Κλείνουμε τη σύνδεση μετά το τέλος του loop
+    $mail->smtpClose();
+
     echo json_encode([
         'success' => $sent > 0,
-        'sent' => $sent,
-        'failed' => $failed,
-        'errors' => array_slice($errors, 0, 3)
+        'sent'    => $sent,
+        'failed'  => $failed,
+        'errors'  => array_slice($errors, 0, 5)
     ]);
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Σφάλμα βάσης δεδομένων.']);

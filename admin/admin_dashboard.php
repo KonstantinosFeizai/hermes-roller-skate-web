@@ -476,6 +476,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
                 <thead>
                     <tr>
                         <th>Email</th>
+                        <th>Status</th>
                         <th>Ημερομηνία Εγγραφής</th>
                     </tr>
                 </thead>

@@ -1,36 +1,34 @@
 <?php
 // signup_handler.php
 // Purpose: Create a new account and send a verification email.
+//          Αν το email/username υπάρχει αλλά δεν έχει επιβεβαιωθεί → ανανέωση + νέο email.
 
 session_start();
-// Load DB connection ($pdo)
 require_once __DIR__ . '/../config.php';
-
-// Load email configuration (PHPMailer)
 require_once PROJECT_ROOT . 'email_config.php';
+require_once PROJECT_ROOT . 'includes/rate_limiter.php';
+require_once PROJECT_ROOT . 'includes/lang.php';
 
 use PHPMailer\PHPMailer\Exception;
 
-// Return JSON responses
 header('Content-Type: application/json');
 
-// Allow only POST requests
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    http_response_code(405); // Method Not Allowed
-    echo json_encode(['status' => 'error', 'message' => 'Μη επιτρεπτή μέθοδος αιτήματος.']);
+    http_response_code(405);
+    echo json_encode(['status' => 'error', 'message' => t('auth.errors.method_not_allowed')]);
     exit;
 }
 
-// Read JSON payload from Fetch/Ajax
 $data = json_decode(file_get_contents("php://input"), true);
 
-$username = trim($data['username'] ?? '');
-$email = trim($data['email'] ?? '');
-$password = $data['password'] ?? '';
+$username         = trim($data['username'] ?? '');
+$email            = trim($data['email'] ?? '');
+$password         = $data['password'] ?? '';
 $confirm_password = $data['confirm_password'] ?? '';
+$accepted_terms   = !empty($data['accepted_terms']);
 
 try {
-    // 1. Basic validation
+    // ── 1. Basic validation ───────────────────────────────────
     if (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
         throw new Exception("Παρακαλώ συμπληρώστε όλα τα πεδία.");
     }
@@ -43,34 +41,81 @@ try {
     if (strlen($password) < 6) {
         throw new Exception("Ο κωδικός πρόσβασης πρέπει να είναι τουλάχιστον 6 χαρακτήρες.");
     }
-
-    // Check if username or email already exists
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-    $stmt->execute([$username, $email]);
-
-    if ($stmt->fetch()) {
-        // Username or email already in use
-        throw new Exception("Το όνομα χρήστη ή το email χρησιμοποιείται ήδη. Παρακαλώ δοκιμάστε με διαφορετικά στοιχεία.");
+    if (!$accepted_terms) {
+        throw new Exception("Πρέπει να αποδεχτείς τους Όρους Χρήσης και την Πολιτική Απορρήτου.");
     }
 
-    // 3. Hash password and generate confirmation token
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+    // ── 2. Rate limit ─────────────────────────────────────────
+    if (isRateLimited($pdo, 'signup')) {
+        $retryAfter = getRateLimitRetryAfter($pdo, 'signup');
+        http_response_code(429);
+        echo json_encode([
+            'status'      => 'error',
+            'message'     => 'Πολλές εγγραφές από αυτή τη σύνδεση. Δοκιμάστε ξανά σε ' . ceil($retryAfter / 60) . ' λεπτά.',
+            'retry_after' => $retryAfter,
+        ]);
+        exit;
+    }
+    recordAttempt($pdo, 'signup');
+
+    // ── 3. Έλεγχος αν υπάρχει ήδη ο χρήστης ─────────────────
+    $stmt = $pdo->prepare("
+        SELECT id, is_active, email 
+        FROM users 
+        WHERE username = ? OR email = ?
+        LIMIT 1
+    ");
+    $stmt->execute([$username, $email]);
+    $existing = $stmt->fetch();
+
+    // Κοινά δεδομένα για INSERT και UPDATE
+    $hashed_password    = password_hash($password, PASSWORD_BCRYPT);
     $confirmation_token = bin2hex(random_bytes(32));
+    $accepted_terms_at  = date("Y-m-d H:i:s");
 
-    // 4. Insert user record
-    $stmt = $pdo->prepare("INSERT INTO users (username, email, password, confirm_token) 
-                           VALUES (?, ?, ?, ?)");
-    $stmt->execute([$username, $email, $hashed_password, $confirmation_token]);
+    if ($existing) {
+        if ($existing['is_active'] == 1) {
+            // ── Ενεργός λογαριασμός → απαγορεύεται ──────────
+            throw new Exception(t('auth.errors.user_exists'));
+        }
 
-    // -------- Send verification email --------
+        // ── Ανενεργός λογαριασμός → ανανέωση ────────────────
+        // Ο χρήστης είχε εγγραφεί αλλά δεν επιβεβαίωσε ποτέ.
+        // Ανανεώνουμε κωδικό, token και στοιχεία — στέλνουμε νέο email.
+        $stmt = $pdo->prepare("
+            UPDATE users 
+            SET username          = ?,
+                email             = ?,
+                password          = ?,
+                confirm_token     = ?,
+                accepted_terms_at = ?,
+                created_at        = NOW()
+            WHERE id = ?
+        ");
+        $stmt->execute([
+            $username,
+            $email,
+            $hashed_password,
+            $confirmation_token,
+            $accepted_terms_at,
+            $existing['id'],
+        ]);
+    } else {
+        // ── Νέος χρήστης → INSERT ────────────────────────────
+        $stmt = $pdo->prepare("
+            INSERT INTO users (username, email, password, confirm_token, accepted_terms_at)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([$username, $email, $hashed_password, $confirmation_token, $accepted_terms_at]);
+    }
+
+    // ── 4. Αποστολή verification email ───────────────────────
+    // (ίδιο για νέο χρήστη ΚΑΙ για ανανέωση)
     try {
         $mail = getMailer();
-        // Προς ποιον στέλνουμε
         $mail->addAddress($email, $username);
 
-        // Build verification link using APP_URL from config
-        $base_url = rtrim($APP_URL, '/');
-        $verification_link = $base_url . "/auth/verify.php?token=" . $confirmation_token;
+        $verification_link = APP_URL . "/auth/verify.php?token=" . $confirmation_token;
 
         $mail->isHTML(true);
         $mail->Subject = 'Επιβεβαίωση Λογαριασμού Hermes Roller Skate';
@@ -79,23 +124,23 @@ try {
             <p>Για να ενεργοποιήσεις τον λογαριασμό σου, παρακαλώ κάνε κλικ στον παρακάτω σύνδεσμο:</p>
             <p><a href="' . $verification_link . '">' . $verification_link . '</a></p>
             <p>Αν δεν αιτηθήκατε εγγραφή, μπορείτε να αγνοήσετε αυτό το email.</p>';
-
         $mail->AltBody = 'Για να ενεργοποιήσετε τον λογαριασμό σας, επισκεφθείτε: ' . $verification_link;
 
         $mail->send();
     } catch (Exception $mailError) {
-        // Log mail errors but keep registration success
         error_log("PHPMailer Error: " . $mailError->getMessage());
     }
 
-    // Success response
-    http_response_code(201); // Created
-    echo json_encode(['status' => 'success', 'message' => 'Η εγγραφή σας ολοκληρώθηκε! Έχει σταλεί email επιβεβαίωσης.']);
+    http_response_code(201);
+    echo json_encode([
+        'status'  => 'success',
+        'message' => t('auth.errors.signup_success'),
+    ]);
 } catch (PDOException $e) {
-    http_response_code(500); // Internal Server Error
-    echo json_encode(['status' => 'error', 'message' => 'Σφάλμα βάσης δεδομένων: ' . $e->getMessage()]);
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => t('auth.errors.db_error')]);
 } catch (Exception $e) {
-    http_response_code(400); // Bad Request
+    http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 

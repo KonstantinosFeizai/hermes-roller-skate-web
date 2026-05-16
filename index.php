@@ -20,7 +20,8 @@ $pageScripts = [
   "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/Draggable.min.js",
   "js/welcome-overlay.js",
-  "js/alerts.js"
+  "js/alerts.js",
+  "js/schedule.js"
 ];
 // Active nav item
 $activePage = 'Home';
@@ -62,39 +63,17 @@ $overlaySubtitle = $getEnglishText('home.hero.subtitle', t('home.hero.subtitle')
 ?>
 
 <!-- HOME PAGE CONTENT -->
-<header class="home-hero">
-  <div
-    id="welcome-overlay"
-    class="animate__animated"
-    style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;background-color:#05070b;">
-    <div class="welcome-logo-wrap">
-      <svg class="welcome-ring-text" viewBox="-20 -20 540 540" aria-hidden="true" focusable="false">
-        <defs>
-          <path id="welcome-top-arc" d="M 10 250 A 240 240 0 0 1 490 250" />
-          <path id="welcome-bottom-arc" d="M 10 250 A 240 240 0 0 0 490 250" />
-        </defs>
-        <text class="ring-title ring-enter-top">
-          <textPath href="#welcome-top-arc" startOffset="50%" text-anchor="middle">
-            <?= htmlspecialchars($overlayTitle) ?>
-          </textPath>
-        </text>
-        <text class="ring-subtitle ring-enter-bottom">
-          <textPath href="#welcome-bottom-arc" startOffset="50%" text-anchor="middle">
-            <?= htmlspecialchars($overlaySubtitle) ?>
-          </textPath>
-        </text>
-      </svg>
-      <img
-        class="welcome-logo animate__animated animate__fadeIn"
-        src="<?= asset('photo/hermes_logo.png') ?>"
-        alt="Hermes Roller Skate logo"
-        loading="eager"
-        decoding="async">
+<div id="welcome-overlay">
+  <div class="welcome-logo-wrap">
+
+    <?php include __DIR__ . '/photo/welcome-intro.php'; ?>
+
+    <div id="logo-appear-wrapper" class="animate__animated animate__fadeIn">
+      <img src="<?= asset('photo/hermes_logo.png') ?>" id="logo-center">
     </div>
-    <h1 id="welcome-text" class="sr-only"><?= htmlspecialchars($overlayTitle) ?></h1>
-    <h2 id="welcome-subtext" class="sr-only"><?= htmlspecialchars($overlaySubtitle) ?></h2>
+
   </div>
-</header>
+</div>
 <!-- One-time alert message -->
 <?php if ($alert_message): ?>
   <div class="alert alert-<?php echo htmlspecialchars($alert_type); ?>" role="alert">
@@ -152,159 +131,97 @@ $overlaySubtitle = $getEnglishText('home.hero.subtitle', t('home.hero.subtitle')
         target="_blank" rel="noopener">
         <?= htmlspecialchars(t('home.index.announcement.cta_private')) ?>
       </a>
-      <p class="info-paragraph bold-highlight">
-        <?= htmlspecialchars(t('home.index.announcement.winter_schedule')) ?>
-      </p>
+
     </div>
   </section>
 
-  <!-- Weekly Schedule Grid -->
+  <!-- Weekly Schedule -->
 
-  <!-- Weekly Schedule Grid -->
+  <script>
+    window.SCHED_LABELS = {
+      /* levels */
+      basic: '<?= addslashes(t('home.index.schedule.levels.l1',   'Basic')) ?>',
+      advanced: '<?= addslashes(t('home.index.schedule.levels.l2',   'Advanced')) ?>',
+      beginners: '<?= addslashes(t('home.index.schedule.levels.l3',   'Beginners')) ?>',
+      mixed: '<?= addslashes(t('home.index.schedule.levels.l4',   'Mixed / Pre-competitive')) ?>',
+      /* ui */
+      mapsLabel: '<?= addslashes(t('home.index.schedule.maps_cta',    'View on Google Maps')) ?>',
+      locationTbc: '<?= addslashes(t('home.index.schedule.location_tbc', 'Location TBC')) ?>',
+      /* season */
+      winterBadge: '<?= addslashes(t('home.index.schedule.season.winter', 'Winter Schedule')) ?>',
+      summerBadge: '<?= addslashes(t('home.index.schedule.season.summer', 'Summer Schedule')) ?>',
+      winterRange: '<?= addslashes(t('home.index.schedule.season.winter_range', 'Active: 24 October – 12 May')) ?>',
+      summerRange: '<?= addslashes(t('home.index.schedule.season.summer_range', 'Active: 13 May – 23 October')) ?>',
+      /* toggle */
+      previewWin: '<?= addslashes(t('home.index.schedule.toggle.preview_winter', 'Preview Winter Schedule')) ?>',
+      previewSum: '<?= addslashes(t('home.index.schedule.toggle.preview_summer', 'Preview Summer Schedule')) ?>',
+      returnCur: '<?= addslashes(t('home.index.schedule.toggle.return', 'Return to Current Schedule')) ?>',
+      /* days */
+      satSun: '<?= addslashes(t('home.index.schedule.days.saturday_sunday', 'Saturday & Sunday')) ?>',
+      saturday: '<?= addslashes(t('home.index.schedule.days.saturday',        'Saturday')) ?>',
+      sunday: '<?= addslashes(t('home.index.schedule.days.sunday',          'Sunday')) ?>',
+      tuesday: '<?= addslashes(t('home.index.schedule.days.tuesday',         'Tuesday')) ?>',
+      wednesday: '<?= addslashes(t('home.index.schedule.days.wednesday',       'Wednesday')) ?>',
+      multipleDays: '<?= addslashes(t('home.index.schedule.days.multiple',        'Multiple Days')) ?>',
+      /* location sub-labels */
+      subUniversity: '<?= addslashes(t('home.index.schedule.location_subs.panepistimioupoli', 'University Campus')) ?>',
+      subPolytechnic: '<?= addslashes(t('home.index.schedule.location_subs.polytexneioupoli',  'Polytechnic Campus')) ?>',
+      /* location names */
+      locZografou: '<?= addslashes(t('home.index.schedule.locations.zografou',    'Zografou')) ?>',
+      locOaka: '<?= addslashes(t('home.index.schedule.locations.oaka_marousi', 'OAKA / Marousi')) ?>',
+      locGerakas: '<?= addslashes(t('home.index.schedule.locations.gerakas',     'Gerakas')) ?>',
+      locEgaleo: '<?= addslashes(t('home.index.schedule.locations.egaleo',      'Egaleo')) ?>',
+      locVrilissia: '<?= addslashes(t('home.index.schedule.locations.vrilissia',   'Vrilissia')) ?>',
+      locMegalopolis: '<?= addslashes(t('home.index.schedule.locations.megalopolis', 'Megalopolis')) ?>',
+      locKalamata: '<?= addslashes(t('home.index.schedule.locations.kalamata',    'Kalamata')) ?>',
+      locIlioupoli: '<?= addslashes(t('home.index.schedule.locations.ilioupoli',   'Ilioupoli')) ?>',
+    };
+  </script>
 
-  <section class="grid-container">
+  <section class="schedule-section" id="schedule-root"
+    aria-label="<?= htmlspecialchars(t('home.index.schedule.aria_label', 'Weekly Schedule')) ?>">
 
+    <header class="schedule-header">
+      <div class="schedule-season-badge" id="schedule-season-badge" aria-live="polite"></div>
+      <h2 class="schedule-title">
+        <?= htmlspecialchars(t('home.index.schedule.title', 'Weekly Schedule')) ?>
+      </h2>
+      <p class="schedule-subtitle" id="schedule-season-subtitle" aria-live="polite"></p>
+    </header>
 
-    <!-- Zografou 1 (Saturday & Sunday) -->
-    <div class="grid-item">
-      <div class="location">
-        <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank" rel="noopener noreferrer">
-          <?= t('footer.locations.zografou,panepistimioupoli') ?></a>
-        </a>
+    <div class="sched-toggle-wrap">
+      <button class="sched-toggle-btn" id="sched-toggle-btn" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+        <span id="sched-toggle-label"></span>
+      </button>
+    </div>
+
+    <div class="sched-legend"
+      aria-label="<?= htmlspecialchars(t('home.index.schedule.legend_aria', 'Level legend')) ?>">
+      <div class="sched-legend-item">
+        <span class="sched-legend-dot" style="background:var(--sched-l1)"></span>
+        <?= htmlspecialchars(t('home.index.schedule.levels.l1', 'Basic')) ?>
       </div>
-
-      <ul class="class-list">
-        <li><span class="time">09:30–10:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">10:30–11:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
-        <li><span class="time">11:30–12:30</span> <strong class="level-l3"><?= htmlspecialchars(t('home.index.schedule.levels.l3')) ?></strong></li>
-        <li><span class="time">16:00–17:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">17:00–18:00</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
-      </ul>
-
-      <div class="day-label">
-        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.saturday') ?> & <?= t('profile.labels.sunday') ?>
+      <div class="sched-legend-item">
+        <span class="sched-legend-dot" style="background:var(--sched-l2)"></span>
+        <?= htmlspecialchars(t('home.index.schedule.levels.l2', 'Advanced')) ?>
+      </div>
+      <div class="sched-legend-item">
+        <span class="sched-legend-dot" style="background:var(--sched-l3)"></span>
+        <?= htmlspecialchars(t('home.index.schedule.levels.l3', 'Beginners')) ?>
+      </div>
+      <div class="sched-legend-item">
+        <span class="sched-legend-dot"
+          style="background:linear-gradient(120deg,var(--sched-l4-a) 45%,var(--sched-l4-b) 45%)"></span>
+        <?= htmlspecialchars(t('home.index.schedule.levels.l4', 'Mixed / Pre-competitive')) ?>
       </div>
     </div>
 
-    <!-- Zografou 2 (Saturday) -->
-    <div class="grid-item">
-      <div class="location">
-        <a href="https://maps.app.goo.gl/4ifyZcivRadWFjKd6" target="_blank" rel="noopener noreferrer">
-          <?= t('footer.locations.zografou,polutexneioupoli') ?></a>
-      </div>
-
-      <ul class="class-list">
-        <li><span class="time">18:30–19:30</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
-      </ul>
-
-      <div class="day-label">
-        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.saturday') ?>
-      </div>
-    </div>
-
-    <!-- Gerakas (Saturday) -->
-    <div class="grid-item">
-      <div class="location">
-        <a href="https://maps.app.goo.gl/Hdjvv418PZGE3nQU8" target="_blank" rel="noopener noreferrer">
-          <?= htmlspecialchars(t('home.index.schedule.locations.gerakas')) ?>
-        </a>
-      </div>
-
-      <ul class="class-list">
-        <li><span class="time">14:00–15:00</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
-      </ul>
-
-      <div class="day-label">
-        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.saturday') ?>
-      </div>
-    </div>
-
-    <!-- Vrilissia (Sunday) -->
-    <div class="grid-item">
-      <div class="location">
-        <a href="https://maps.app.goo.gl/AbqNkvtueDurwayW8" target="_blank" rel="noopener noreferrer">
-          <?= t('footer.locations.vrilissia') ?>
-        </a>
-      </div>
-
-      <ul class="class-list">
-        <li><span class="time">14:00–15:00</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
-      </ul>
-
-      <div class="day-label">
-        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.sunday') ?>
-      </div>
-    </div>
-
-    <!-- Megalopolis -->
-    <div class="grid-item">
-      <div class="location">
-        <a href="https://maps.app.goo.gl/glgYHxkCwQp5NURGv78" target="_blank" rel="noopener noreferrer">
-          <?= t('footer.locations.megalopoli') ?>
-        </a>
-      </div>
-
-      <ul class="class-list">
-        <li><span class="time">16:30–17:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">17:30–18:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
-        <li><span class="time">18:30–19:30</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
-      </ul>
-
-      <div class="day-label">
-        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.tuesday') ?>
-      </div>
-    </div>
-
-    <!-- Kalamata -->
-    <div class="grid-item">
-      <div class="location">
-        <a href="https://maps.app.goo.gl/AbqNkvtueDurwayW8" target="_blank" rel="noopener noreferrer">
-          <?= t('footer.locations.kalamata') ?>
-        </a>
-      </div>
-
-      <ul class="class-list">
-        <li><span class="time">16:30–17:30</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">17:30–18:30</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
-        <li><span class="time">18:30–19:30</span> <strong class="level-l4"><?= htmlspecialchars(t('home.index.schedule.levels.l4')) ?></strong></li>
-      </ul>
-
-      <div class="day-label">
-        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.wednesday') ?>
-      </div>
-    </div>
-    <!-- Egaleo -->
-    <div class="grid-item">
-      <div class="location">
-        <a href="https://maps.app.goo.gl/mR3nCq1aDrtMANZ69" target="_blank" rel="noopener noreferrer">
-          <?= t('footer.locations.egaleo') ?>
-        </a>
-      </div>
-
-      <ul class="class-list">
-        <li><span class="time">16:00–17:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">17:00–18:00</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
-      </ul>
-      <div class="day-label">
-        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.wednesday') ?>
-      </div>
-    </div>
-    <!-- OAKA/Marousi -->
-    <div class="grid-item">
-      <div class="location">
-        <a href="https://maps.app.goo.gl/BtULHH8qoyCsTo3v9" target="_blank" rel="noopener noreferrer">
-          <?= t('footer.locations.oaka') ?>
-        </a>
-
-      </div>
-
-      <ul class="class-list">
-        <li><span class="time">10:00–11:00</span> <strong class="level-l1"><?= htmlspecialchars(t('home.index.schedule.levels.l1')) ?></strong></li>
-        <li><span class="time">11:00–12:00</span> <strong class="level-l2"><?= htmlspecialchars(t('home.index.schedule.levels.l2')) ?></strong></li>
-      </ul>
-      <div class="day-label">
-        <?= t('profile.labels.calendar') ?> <?= t('profile.labels.sunday') ?>
-      </div>
+    <div class="season-panel" id="panel-winter" aria-label="Winter Schedule"></div>
+    <div class="season-panel hidden" id="panel-summer" aria-label="Summer Schedule"></div>
 
   </section>
 

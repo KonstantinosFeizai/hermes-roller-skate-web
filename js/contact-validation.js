@@ -206,14 +206,28 @@ form.addEventListener("submit", async (event) => {
       body: JSON.stringify(responseData),
     });
 
-    if (!response.ok) {
-      console.error(
-        `Error: Server returned status ${response.status} - ${response.statusText}`,
-      );
+    // Διαβάζουμε το JSON μία φορά ανεξάρτητα από το status code
+    let data = null;
+    try {
+      data = await response.json();
+    } catch (_) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
+    // Rate limit ή άλλο server error με μήνυμα
+    if (!response.ok) {
+      const msg =
+        data?.message ||
+        (currentLang === "el"
+          ? "Παρουσιάστηκε σφάλμα. Παρακαλώ δοκιμάστε ξανά αργότερα."
+          : "An error occurred. Please try again later.");
+
+      formResponse.innerHTML = `<p>${msg}</p>`;
+      responseContainer.style.display = "flex";
+      redirectMessage.style.display = "none";
+      newMessageBtn.style.display = "block";
+      return;
+    }
 
     if (data.success) {
       // Success UI + redirect countdown

@@ -259,3 +259,34 @@
 input.invalid {
   border: 1px solid red;
 }
+
+/* ── Terms checkbox ── */
+.terms-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: #444;
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.terms-label input[type="checkbox"] {
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  accent-color: #e63946;
+  cursor: pointer;
+}
+
+.terms-label a {
+  color: #e63946;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.terms-label a:hover {
+  color: #c1121f;
+}

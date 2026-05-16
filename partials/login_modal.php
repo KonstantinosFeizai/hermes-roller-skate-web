@@ -61,6 +61,18 @@ require_once PROJECT_ROOT . 'includes/lang.php';
 
             <p class="error-msg general-error-msg" id="signupGeneralError"></p>
 
+            <!-- Αποδοχή Όρων Χρήσης ← νέο -->
+            <label class="terms-label">
+                <input type="checkbox" id="acceptTerms" name="accepted_terms">
+                <span>
+                    <?= t('auth.signup.terms_prefix') ?>
+                    <a href="<?= asset('policies#terms') ?>" target="_blank" rel="noopener"><?= t('auth.signup.terms_link') ?></a>
+                    <?= t('auth.signup.terms_and') ?>
+                    <a href="<?= asset('policies#privacy') ?>" target="_blank" rel="noopener"><?= t('auth.signup.privacy_link') ?></a>
+                </span>
+            </label>
+            <p class="error-msg" id="signupTermsError"></p>
+
             <button type="submit" class="login-submit" id="signupBtn"><?= t('auth.signup.submit') ?></button>
 
             <div class="login-divider"><span><?= t('auth.signup.divider') ?></span></div>
@@ -76,6 +88,23 @@ require_once PROJECT_ROOT . 'includes/lang.php';
             <p><?= t('auth.success.message') ?> <strong id="successEmail"></strong>.
                 <?= t('auth.success.verify') ?></p>
             <button type="button" class="login-submit" id="closeSuccessBtn"><?= t('auth.success.close') ?></button>
+        </div>
+
+        <!-- Terms acceptance state (για παλιούς χρήστες)  -->
+        <div id="termsAcceptanceForm" class="auth-form hidden">
+            <h2 class="modal-title"><?= t('auth.terms.title') ?></h2>
+            <p class="terms-notice"><?= t('auth.terms.notice') ?></p>
+            <label class="terms-label">
+                <input type="checkbox" id="existingUserTerms">
+                <span>
+                    <?= t('auth.signup.terms_prefix') ?>
+                    <a href="<?= asset('policies#terms') ?>" target="_blank" rel="noopener"><?= t('auth.signup.terms_link') ?></a>
+                    <?= t('auth.signup.terms_and') ?>
+                    <a href="<?= asset('policies#privacy') ?>" target="_blank" rel="noopener"><?= t('auth.signup.privacy_link') ?></a>
+                </span>
+            </label>
+            <p class="error-msg" id="existingTermsError"></p>
+            <button type="button" class="login-submit" id="acceptTermsBtn"><?= t('auth.terms.accept_btn') ?></button>
         </div>
 
         <!-- Close button -->

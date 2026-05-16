@@ -1,60 +1,31 @@
-// welcome-overlay.js
-// Purpose: Show a short welcome overlay, then fade it out and re-enable scrolling.
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
   const overlay = document.getElementById("welcome-overlay");
-  const welcomeLogo = document.querySelector(".welcome-logo");
-  const HEARTBEAT_ANIMATION = "welcomeHeartbeatSoft";
-  const MAIN_REVEAL_DELAY_MS = 200;
-  const CROSSFADE_DURATION_MS = 420;
-  const CINEMATIC_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
-  let overlayClosed = false;
+  const logoWrapper = document.getElementById("logo-appear-wrapper");
+  const logoImg = document.getElementById("logo-center");
+  const topText = document.getElementById("top-text");
+  const bottomText = document.getElementById("bottom-text");
 
-  const closeOverlay = () => {
-    if (overlayClosed) return;
-    overlayClosed = true;
+  // ΒΗΜΑ 1: Μόλις τελειώσει το FadeIn (εμφάνιση) του λογοτύπου...
+  logoWrapper.addEventListener("animationend", (e) => {
+    if (e.animationName === "fadeIn") {
+      // ΒΗΜΑ 2: Εμφάνισε τα κείμενα (Arcs)
+      topText.style.opacity = "1";
+      bottomText.style.opacity = "1";
+      topText.classList.add("animate__animated", "animate__backInDown");
+      bottomText.classList.add("animate__animated", "animate__backInUp");
+    }
+  });
 
-    document.body.classList.add("is-revealing-main");
-    overlay.style.transition = [
-      `opacity ${CROSSFADE_DURATION_MS}ms ${CINEMATIC_EASING}`,
-      `filter ${CROSSFADE_DURATION_MS}ms ${CINEMATIC_EASING}`,
-      `transform ${CROSSFADE_DURATION_MS}ms ${CINEMATIC_EASING}`,
-    ].join(", ");
-    overlay.style.opacity = "0";
-    overlay.style.filter = "blur(7px)";
-    overlay.style.transform = "scale(1.015)";
+  // ΒΗΜΑ 3: Μόλις τελειώσει το animation των κειμένων (ακούμε το bottom-text)...
+  bottomText.addEventListener("animationend", (e) => {
+    if (e.animationName === "backInUp") {
+      // ΒΗΜΑ 4: ΝΕΟ! Κάνε ένα δυνατό Pulse (χτύπημα) στο λογότυπο
+      logoImg.classList.add("animate__animated", "animate__pulse");
 
-    setTimeout(() => {
-      overlay.style.display = "none";
-      document.body.style.overflow = "auto";
-      document.body.classList.remove(
-        "has-welcome-overlay",
-        "is-revealing-main",
-      );
-    }, CROSSFADE_DURATION_MS);
-  };
-
-  if (!overlay) return;
-
-  document.body.classList.add("has-welcome-overlay");
-
-  if (welcomeLogo) {
-    welcomeLogo.addEventListener("animationend", (event) => {
-      if (event.animationName === "fadeIn") {
-        welcomeLogo.classList.remove("animate__fadeIn");
-        welcomeLogo.classList.add("welcome-logo-heartbeat");
-      }
-
-      if (event.animationName === HEARTBEAT_ANIMATION) {
-        setTimeout(closeOverlay, MAIN_REVEAL_DELAY_MS);
-      }
-    });
-  }
-
-  // Show overlay and disable scrolling
-  document.body.style.overflow = "hidden";
-
-  // Safety fallback in case some animation event does not fire.
-  setTimeout(() => {
-    closeOverlay();
-  }, 5000);
+      // ΒΗΜΑ 5: Μετά από 1 δευτερόλεπτο (αφού τελειώσει το pulse), κλείσε το overlay
+      setTimeout(() => {
+        overlay.classList.add("fade-out");
+      }, 1200); // 1200ms δίνει χρόνο στο pulse (800ms) να ολοκληρωθεί και να "καθίσει"
+    }
+  });
 });

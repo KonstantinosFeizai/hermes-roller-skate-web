@@ -6,45 +6,57 @@ async function loadNewsletterSubscribers() {
   const tableBody = document.getElementById("newsletter-table-body");
   const countEl = document.getElementById("newsletterCount");
 
-  if (!tableBody || !countEl) {
-    return;
-  }
+  if (!tableBody || !countEl) return;
 
-  // Show loading state
-  tableBody.innerHTML = '<tr><td colspan="2">Φόρτωση...</td></tr>';
+  tableBody.innerHTML = '<tr><td colspan="3">Φόρτωση...</td></tr>';
 
   try {
-    // Request subscriber list
     const response = await fetch("get_newsletter_subscribers.php");
     const data = await response.json();
 
     if (!data.success) {
-      // API returned error
-      tableBody.innerHTML = '<tr><td colspan="2">Σφάλμα φόρτωσης.</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="3">Σφάλμα φόρτωσης.</td></tr>';
       return;
     }
 
     const subscribers = data.subscribers || [];
-    // Update total count
-    countEl.textContent = `Σύνολο: ${subscribers.length}`;
+    const stats = data.stats || {};
 
-    // Empty state
+    // Ενημέρωση στατιστικών
+    countEl.innerHTML = `
+      Σύνολο: <strong>${stats.total ?? 0}</strong> &nbsp;|&nbsp;
+      Ενεργοί: <strong style="color: #2d8a4e">${stats.active ?? 0}</strong> &nbsp;|&nbsp;
+      Unsubscribed: <strong style="color: #c0392b">${stats.inactive ?? 0}</strong>
+    `;
+
     if (subscribers.length === 0) {
       tableBody.innerHTML =
-        '<tr><td colspan="2">Δεν υπάρχουν εγγεγραμμένοι.</td></tr>';
+        '<tr><td colspan="3">Δεν υπάρχουν εγγεγραμμένοι.</td></tr>';
       return;
     }
 
-    // Render rows (escape email to avoid HTML injection)
+    // Render rows
     tableBody.innerHTML = subscribers
       .map((sub) => {
         const date = sub.subscribed_at ? new Date(sub.subscribed_at) : null;
         const formattedDate = date ? date.toLocaleString("el-GR") : "-";
-        return `<tr><td>${escapeHtml(sub.email)}</td><td>${formattedDate}</td></tr>`;
+
+        const isActive = sub.is_active == 1;
+        const statusBadge = isActive
+          ? '<span style="color:#2d8a4e; font-weight:600;">✔ Ενεργός</span>'
+          : '<span style="color:#c0392b; font-weight:600;">✘ Unsubscribed</span>';
+
+        return `
+          <tr>
+            <td>${escapeHtml(sub.email)}</td>
+            <td>${statusBadge}</td>
+            <td>${formattedDate}</td>
+          </tr>
+        `;
       })
       .join("");
   } catch (error) {
-    tableBody.innerHTML = '<tr><td colspan="2">Σφάλμα φόρτωσης.</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="3">Σφάλμα φόρτωσης.</td></tr>';
   }
 }
 

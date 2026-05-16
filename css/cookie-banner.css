@@ -1,0 +1,210 @@
+/* ============================================================
+   cookie-banner.css
+   Bottom bar cookie consent — responsive, mobile-first
+   ============================================================ */
+
+/* ── Banner wrapper ── */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+
+  background: #1a1a2e;
+  border-top: 2px solid #e63946;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+
+  /* Slide-up animation */
+  animation: cookieBannerSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cookieBannerSlideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Κρυφό όταν αποδεχτεί */
+.cookie-banner.hidden {
+  display: none;
+}
+
+/* ── Inner layout ── */
+.cookie-banner__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  flex-wrap: wrap; /* wrap σε μικρές οθόνες */
+}
+
+/* ── Text block ── */
+.cookie-banner__text {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1 1 280px; /* μεγαλώνει αλλά δεν συρρικνώνεται πολύ */
+  min-width: 0;
+}
+
+.cookie-banner__icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.cookie-banner__copy {
+  min-width: 0;
+}
+
+.cookie-banner__title {
+  display: block;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  letter-spacing: 0.01em;
+}
+
+.cookie-banner__desc {
+  color: #b0b8cc;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cookie-banner__desc a {
+  color: #e63946;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+
+.cookie-banner__desc a:hover {
+  color: #ff6b6b;
+}
+
+/* ── Action buttons ── */
+.cookie-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+/* ── Base button ── */
+.cookie-btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.cookie-btn:active {
+  transform: scale(0.97);
+}
+
+/* Primary — Αποδοχή Όλων */
+.cookie-btn--primary {
+  background: #e63946;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(230, 57, 70, 0.35);
+}
+
+.cookie-btn--primary:hover {
+  background: #c1121f;
+  box-shadow: 0 4px 14px rgba(230, 57, 70, 0.45);
+}
+
+/* Ghost — Μόνο Απαραίτητα */
+.cookie-btn--ghost {
+  background: transparent;
+  color: #b0b8cc;
+  border: 1.5px solid #3a3a5c;
+}
+
+.cookie-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border-color: #6b6b99;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* Tablet (≤ 768px) */
+@media (max-width: 768px) {
+  .cookie-banner__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+  }
+
+  .cookie-banner__actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .cookie-btn {
+    flex: 1; /* κουμπιά παίρνουν ίσο χώρο */
+    text-align: center;
+    padding: 12px 10px;
+  }
+}
+
+/* Mobile (≤ 480px) */
+@media (max-width: 480px) {
+  .cookie-banner__inner {
+    padding: 12px 14px;
+  }
+
+  .cookie-banner__icon {
+    font-size: 1.3rem;
+  }
+
+  .cookie-banner__title {
+    font-size: 0.9rem;
+  }
+
+  .cookie-banner__desc {
+    font-size: 0.78rem;
+  }
+
+  .cookie-banner__actions {
+    flex-direction: column; /* στοίβα σε πολύ μικρές οθόνες */
+    gap: 8px;
+  }
+
+  .cookie-btn {
+    width: 100%;
+    padding: 13px;
+    font-size: 0.88rem;
+  }
+
+  .cookie-banner__text {
+    flex: 1 1 100px;
+  }
+}

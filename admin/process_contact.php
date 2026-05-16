@@ -1,16 +1,32 @@
 <?php
 // process_contact.php
 // Purpose: Store contact form submissions.
+ob_start(); // Buffer output to prevent notices/warnings from corrupting JSON
 require_once  __DIR__ . '/../config.php';
 session_start();
 header('Content-Type: application/json');
 
-// Include mailer config so we can notify admin by email
-require_once PROJECT_ROOT . 'email_config.php';
+// Email sending support
+require_once PROJECT_ROOT . 'email_config.php'; // provides getMailer()
+require_once PROJECT_ROOT . 'includes/rate_limiter.php';
 
 $response = [];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Rate limit check (5 requests / 60 λεπτά per IP)
+    if (isRateLimited($pdo, 'contact')) {
+        $retryAfter = getRateLimitRetryAfter($pdo, 'contact');
+        http_response_code(429);
+        ob_end_clean();
+        echo json_encode([
+            'success'     => false,
+            'message'     => 'Πολλές αιτήσεις επικοινωνίας. Δοκιμάστε ξανά σε ' . ceil($retryAfter / 60) . ' λεπτά.',
+            'retry_after' => $retryAfter,
+        ]);
+        exit;
+    }
+    recordAttempt($pdo, 'contact');
+
     // Read raw JSON body
     $json_data = file_get_contents('php://input');
 
@@ -82,56 +98,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$name, $surname, $email, $phone, $category, $subject, $message]);
 
-        // Attempt to send notification email to admin (SMTP_FROM)
-        $response['success'] = true;
-        $response['mail_sent'] = false;
-
+        // Try to send notification email (do not fail the request if mail fails)
         try {
-            // If mail subsystem is not available, skip sending but log for debugging
-            if (!function_exists('getMailer')) {
-                error_log('process_contact: mailer not available (getMailer missing)');
-            } else {
-                $adminEmail = $GLOBALS['env']['SMTP_FROM'] ?? 'hermesrollerskate@gmail.com';
-                $mail = getMailer();
-                $mail->addAddress($adminEmail);
-                if (!empty($email)) {
-                    $mail->addReplyTo($email, trim($name . ' ' . $surname));
-                }
-                $mail->isHTML(true);
-                $mail->Subject = "Νέο μήνυμα επικοινωνίας: " . ($subject ?: 'Χωρίς θέμα');
+            $mail = getMailer();
+            // Send to configured recipient (Mailtrap will capture outgoing mails)
+            $mail->addAddress(CONTACT_RECIPIENT_EMAIL);
+            $mail->isHTML(true);
+            $mail->Subject = "Νέο μήνυμα επικοινωνίας: " . ($subject ?: 'Χωρίς θέμα');
 
-                $body  = "<h3>Νέο μήνυμα από τη φόρμα επικοινωνίας</h3>";
-                $body .= "<p><strong>Όνομα:</strong> " . htmlspecialchars($name) . " " . htmlspecialchars($surname) . "</p>";
-                $body .= "<p><strong>Email:</strong> " . htmlspecialchars($email) . "</p>";
-                if (!empty($phone)) {
-                    $body .= "<p><strong>Τηλέφωνο:</strong> " . htmlspecialchars($phone) . "</p>";
-                }
-                $body .= "<p><strong>Κατηγορία:</strong> " . htmlspecialchars($category) . "</p>";
-                $body .= "<p><strong>Θέμα:</strong> " . htmlspecialchars($subject) . "</p>";
-                $body .= "<hr><p>" . nl2br(htmlspecialchars($message)) . "</p>";
+            $bodyHtml = "<h3>Νέο μήνυμα από τη φόρμα επικοινωνίας</h3>" .
+                "<p><strong>Όνομα:</strong> " . htmlspecialchars($name) . " " . htmlspecialchars($surname) . "</p>" .
+                "<p><strong>Email:</strong> " . htmlspecialchars($email) . "</p>" .
+                (!empty($phone) ? "<p><strong>Τηλέφωνο:</strong> " . htmlspecialchars($phone) . "</p>" : "") .
+                "<p><strong>Κατηγορία:</strong> " . htmlspecialchars($category) . "</p>" .
+                "<p><strong>Θέμα:</strong> " . htmlspecialchars($subject) . "</p>" .
+                "<p><strong>Μήνυμα:</strong><br>" . nl2br(htmlspecialchars($message)) . "</p>";
 
-                $mail->Body = $body;
-                $mail->send();
-                $response['mail_sent'] = true;
-            }
-        } catch (\Throwable $e) {
-            // Catch any Throwable (Exception or Error) so mail failures don't cause HTTP 500
-            error_log('process_contact mail error: ' . $e->getMessage());
-            $response['mail_sent'] = false;
+            $mail->Body = $bodyHtml;
+            $mail->AltBody = strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $bodyHtml));
+
+            $mail->send();
+        } catch (\Exception $e) {
+            error_log("Contact form mail error: " . $e->getMessage());
+            // don't change response: keep success true so UX isn't broken
         }
 
+        $response['success'] = true;
+        ob_end_clean();
         echo json_encode($response);
         exit;
     } catch (\PDOException $e) {
         $response['success'] = false;
         $response['message'] = 'An error occurred. Please try again later.';
-        // Log the error for debugging
         error_log("Database error: " . $e->getMessage());
+        ob_end_clean();
         echo json_encode($response);
         exit;
     }
 } else {
     $response['success'] = false;
     $response['message'] = 'Invalid request method.';
+    ob_end_clean();
     echo json_encode($response);
 }

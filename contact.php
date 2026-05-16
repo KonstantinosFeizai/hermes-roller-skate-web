@@ -10,7 +10,7 @@ $pageTitle = t('contact.meta.title');
 $pageDescription = t('contact.meta.description');
 $pageKeywords = t('contact.meta.keywords');
 $pageCss = ["css/contact.css"];
-$pageScripts = ["js/contact-validation.js?v=1.0.x"];
+$pageScripts = ["js/contact-validation.js?v=1.1.0"];
 $activePage = "contact";
 
 // Shared header
@@ -78,6 +78,13 @@ require_once PROJECT_ROOT . 'partials/header.php';
     </div>
 
     <button type="submit"><?= htmlspecialchars(t('contact.form.send')) ?></button>
+    <!-- GDPR Notice ← προσθήκη -->
+    <p class="privacy-notice">
+      <?= htmlspecialchars(t('contact.form.privacy_notice')) ?>
+      <a href="<?= asset('policies#privacy') ?>" target="_blank" rel="noopener">
+        <?= htmlspecialchars(t('contact.form.privacy_link')) ?>
+      </a>
+    </p>
   </form>
 
   <!-- Form response (success/error) -->

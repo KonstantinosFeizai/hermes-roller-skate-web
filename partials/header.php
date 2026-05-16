@@ -10,6 +10,8 @@ if (session_status() === PHP_SESSION_NONE) {
 // Core config + language helper
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/lang.php';
+require_once __DIR__ . '/../includes/cookie_helper.php';
+require_once __DIR__ . '/../includes/session_helper.php';
 
 // Default meta values (can be overridden by pages)
 $pageTitle = $pageTitle ?? 'Hermes Rollerskate Academy';
@@ -118,24 +120,26 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chewy&display=swap">
     <?php endif; ?>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17685814149"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
+    <!-- Google Analytics — φορτώνει μόνο αν υπάρχει συναίνεση για analytics -->
+    <?php if (hasConsentFor('analytics')): ?>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=<?= GA_ID ?>"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
 
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-
-        gtag('config', 'AW-17685814149');
-    </script>
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', '<?= GA_ID ?>');
+        </script>
+    <?php endif; ?>
 
     <!-- Global styles -->
     <!--  getVersionedAssetUrl() -->
     <link rel="stylesheet" href="<?= getVersionedAssetUrl('css/navigation.css') ?>">
     <link rel="stylesheet" href="<?= getVersionedAssetUrl('css/modal.css') ?>">
     <link rel="stylesheet" href="<?= getVersionedAssetUrl('css/footer.css') ?>">
+    <link rel="stylesheet" href="<?= getVersionedAssetUrl('css/cookie-banner.css') ?>">
     <!-- Auth modal HTML -->
     <?php require_once __DIR__ . '/login_modal.php'; ?>
 
@@ -163,6 +167,7 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
     <script src="<?= getVersionedAssetUrl('js/auth.js') ?>" defer></script>
     <script src="<?= getVersionedAssetUrl(path: 'js/scroll-navbar.js') ?>" defer></script>
     <script src="<?= getVersionedAssetUrl('js/newsletter.js') ?>" defer></script>
+    <script src="<?= getVersionedAssetUrl('js/cookie-banner.js') ?>" defer></script>
 
     <!-- Page-specific Scripts -->
     <?php foreach ($pageScripts as $script): ?>
@@ -376,7 +381,41 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
     </div>
 
 
-    <!-- Expose base URL for JS -->
+    <!-- Expose base URL and GA ID for JS -->
     <script>
         window.BASE_URL = "<?= rtrim(asset(''), '/') ?>/";
+        window.GA_ID = "<?= GA_ID ?>";
+        window.AUTH_I18N = <?= json_encode([
+                                'signup_unknown'        => t('auth.errors.signup_unknown'),
+                                'signup_network'        => t('auth.errors.signup_network'),
+                                'login_unknown'         => t('auth.errors.login_unknown'),
+                                'login_network'         => t('auth.errors.login_network'),
+                                'terms_required'        => t('auth.errors.terms_required'),
+                                'logout_confirm_title'  => t('header.auth.logout_confirm_title'),
+                                'logout_confirm_msg'    => t('header.auth.logout_confirm_msg'),
+                                'logout_confirm_ok'     => t('header.auth.logout_confirm_ok'),
+                                'logout_confirm_cancel' => t('header.auth.logout_confirm_cancel'),
+                            ], JSON_UNESCAPED_UNICODE) ?>;
     </script>
+
+    <!-- Cookie Consent Banner -->
+    <?php require_once __DIR__ . '/cookie-banner.php'; ?>
+
+    <!-- Logout Confirm Modal -->
+    <div id="logoutConfirmOverlay">
+        <div class="logout-modal">
+            <div class="logout-modal-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+            </div>
+            <h3 id="logoutModalTitle"></h3>
+            <p id="logoutModalMsg"></p>
+            <div class="logout-modal-actions">
+                <button id="logoutConfirmCancel" class="logout-modal-btn-cancel"></button>
+                <button id="logoutConfirmOk" class="logout-modal-btn-ok"></button>
+            </div>
+        </div>
+    </div>

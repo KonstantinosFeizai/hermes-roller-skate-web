@@ -190,7 +190,82 @@ try {
             font-size: 14px;
         }
     }
+
+    /* Success Modal */
+    #resetSuccessOverlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .success-modal {
+        background: #fff;
+        border-radius: 20px;
+        padding: 40px 32px;
+        width: min(360px, 90%);
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .success-modal-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #f0fdf4;
+        border: 2px solid #bbf7d0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+    }
+
+    .success-modal h3 {
+        margin: 0 0 8px;
+        font-size: 22px;
+        color: #0f172a;
+    }
+
+    .success-modal p {
+        margin: 0 0 28px;
+        color: #64748b;
+        font-size: 15px;
+    }
+
+    .success-modal-btn {
+        width: 100%;
+        padding: 14px;
+        background: #16a34a;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .success-modal-btn:hover {
+        background: #15803d;
+    }
 </style>
+
+<!-- Success Modal -->
+<div id="resetSuccessOverlay">
+    <div class="success-modal">
+        <div class="success-modal-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
+        </div>
+        <h3>Success</h3>
+        <p id="resetSuccessMsg"></p>
+        <button id="resetSuccessBtn" class="success-modal-btn">Confirm</button>
+    </div>
+</div>
 
 <div class="main-content-container">
     <div class="form-card">
@@ -224,7 +299,7 @@ try {
     </div>
 </div>
 
-<script src="/js/auth.js"></script>
+<script src="<?= getVersionedAssetUrl('js/auth.js') ?>"></script>
 
 <?php
 require_once PROJECT_ROOT . 'partials/footer.php';

@@ -2,188 +2,102 @@ body {
   margin-top: 40px;
 }
 
-/* WELCOME OVERLAY */
 #welcome-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background-color: #05070b;
-  background-image: url("../photo/welcome-intro.jpg");
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  inset: 0;
   z-index: 9999;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  color: white;
-  padding: 2rem;
-  gap: 0.35rem;
-  opacity: 1;
-  filter: blur(0);
-  transform: scale(1);
-  will-change: opacity, filter, transform;
+  background-color: #05070b;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("../photo/welcome-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  transition:
+    opacity 0.8s ease,
+    visibility 0.8s ease;
 }
 
-.welcome-logo {
-  width: 100%;
-  height: auto;
-  margin: 0;
+/* Η κλάση που προσθέτει η JS στο τέλος για να σβήσει το overlay */
+#welcome-overlay.fade-out {
+  opacity: 0;
+  visibility: hidden;
 }
 
-.welcome-logo.animate__fadeIn {
-  animation-duration: 1.4s;
-}
-
-.welcome-logo-heartbeat {
-  animation: welcomeHeartbeatSoft 1.35s ease-in-out 2;
-  transform-origin: center;
-  will-change: transform;
-}
-
-@keyframes welcomeHeartbeatSoft {
-  0% {
-    transform: scale(1);
-  }
-
-  15% {
-    transform: scale(1.02);
-  }
-
-  28% {
-    transform: scale(1);
-  }
-
-  45% {
-    transform: scale(1.03);
-  }
-
-  62% {
-    transform: scale(1);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
+/* 2. Το Container (Wrapper) - Εδώ κλειδώνουμε το σχήμα σε τετράγωνο */
 .welcome-logo-wrap {
-  width: min(46vw, 360px);
-  max-width: 78vw;
   position: relative;
+  width: 100vw;
+  max-width: 600px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  display: block; /* Απαραίτητο για να δουλέψει το absolute των παιδιών */
+}
+
+/* 3. Το Wrapper του Logo (Εμφανίζεται με FadeIn) */
+#logo-appear-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%; /* was 45% — now truly centered */
+  transform: translate(-50%, -50%);
+  width: 50%;
+  max-width: 600px;
+  z-index: 5;
+  animation-duration: 2s !important;
   display: flex;
   justify-content: center;
   align-items: center;
+  line-height: 0;
 }
 
-.welcome-ring-text {
-  position: absolute;
-  width: 172%;
-  height: 172%;
-  inset: -36%;
-  overflow: visible;
-  pointer-events: none;
-}
-
-.ring-title,
-.ring-subtitle {
-  font-family: "Chewy", system-ui;
-  font-weight: 400;
-  fill: #2b2914;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  paint-order: stroke;
-  stroke: rgba(235, 207, 140, 0.55);
-  stroke-width: 1.4px;
-  font-size: clamp(15px, 2vw, 22px);
-}
-
-.ring-title {
-  font-size: clamp(18px, 2.4vw, 28px);
-}
-
-.ring-subtitle {
-  font-size: clamp(19px, 2.5vw, 29px);
-  letter-spacing: 0.65px;
-}
-
-.ring-enter-top,
-.ring-enter-bottom {
-  transform-box: fill-box;
+/* 4. Το ίδιο το PNG Logo (Εδώ θα γίνει το Pulse στο τέλος) */
+#logo-center {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
   transform-origin: center;
-  animation-duration: 900ms;
-  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  animation-fill-mode: both;
 }
 
-.ring-enter-top {
-  animation-name: ringPopInTop;
+/* Ειδική ρύθμιση για το Pulse animation μέσω JS */
+#logo-center.animate__pulse {
+  animation-duration: 0.8s !important;
 }
 
-.ring-enter-bottom {
-  animation-name: ringPopInBottom;
-  animation-delay: 120ms;
-}
-
-@keyframes ringPopInTop {
-  0% {
-    opacity: 0;
-    transform: translateY(-64px) scale(0.82);
-    letter-spacing: 4px;
-  }
-
-  65% {
-    opacity: 1;
-    transform: translateY(8px) scale(1.03);
-    letter-spacing: 2px;
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    letter-spacing: 1.5px;
-  }
-}
-
-@keyframes ringPopInBottom {
-  0% {
-    opacity: 0;
-    transform: translateY(64px) scale(0.82);
-    letter-spacing: 4px;
-  }
-
-  65% {
-    opacity: 1;
-    transform: translateY(-8px) scale(1.03);
-    letter-spacing: 2px;
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    letter-spacing: 1.5px;
-  }
-}
-
-#welcome-overlay.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.sr-only {
+/* 5. Το SVG με τα Arcs (Κείμενα) */
+#welcome-text-arcs {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  overflow: visible; /* already there */
+}
+
+/* 6. Ρυθμίσεις για τα SVG Groups (Top & Bottom Text) */
+#top-text,
+#bottom-text {
+  opacity: 0;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation-duration: 1.5s !important;
+  filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.5)); /* ADD THIS */
+}
+
+/* 7. Διόρθωση για Animate.css σε SVG στοιχεία */
+.animate__animated {
+  display: inline-block;
+}
+
+#welcome-text-arcs,
+#welcome-text-arcs * {
+  overflow: visible;
 }
 
 /* MAIN CONTENT */
@@ -702,26 +616,16 @@ h3 {
 
 @media (max-width: 768px) {
   #welcome-overlay {
-    padding: 1rem;
+    padding: 0;
   }
 
   .welcome-logo-wrap {
-    width: min(52vw, 290px);
+    width: min(90vw, 88vh);
+    max-width: min(90vw, 88vh);
   }
 
-  .welcome-ring-text {
-    width: 166%;
-    height: 166%;
-    inset: -33%;
-  }
-
-  .ring-title {
-    font-size: clamp(17px, 3.2vw, 24px);
-  }
-
-  .ring-subtitle {
-    font-size: clamp(17px, 3vw, 23px);
-    letter-spacing: 0.5px;
+  #logo-appear-wrapper {
+    width: 45%;
   }
 
   .highlights {
@@ -761,28 +665,16 @@ h3 {
 
 @media (max-width: 425px) {
   #welcome-overlay {
-    padding: 0.75rem;
+    padding: 0;
   }
 
   .welcome-logo-wrap {
-    width: min(50vw, 150px);
+    width: min(93vw, 88vh);
+    max-width: min(93vw, 88vh);
   }
 
-  .welcome-ring-text {
-    width: 154%;
-    height: 154%;
-    inset: -27%;
-  }
-
-  .ring-title {
-    font-size: 30px;
-    stroke-width: 1px;
-  }
-
-  .ring-subtitle {
-    font-size: 29px;
-    letter-spacing: 0.35px;
-    stroke-width: 1px;
+  #logo-appear-wrapper {
+    width: 42%;
   }
 
   .highlight-desc {
@@ -857,6 +749,382 @@ h3 {
 
   .location {
     font-size: 0.85rem;
+  }
+}
+
+/* ============================================================
+   SCHEDULE SECTION  (JS-driven seasonal grid)
+   ============================================================ */
+
+:root {
+  --sched-l1: #2ecc71;
+  --sched-l2: #2980b9;
+  --sched-l3: #8e44ad;
+  --sched-l4-a: #2980b9;
+  --sched-l4-b: #8e44ad;
+  --sched-accent-w: #2980b9;
+  --sched-accent-s: #e67e22;
+}
+
+.schedule-section {
+  padding: 2rem 1rem 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.schedule-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.schedule-season-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.75rem;
+}
+
+.schedule-season-badge svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.schedule-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  color: var(--primary-color);
+  margin: 0.25rem 0;
+}
+
+.schedule-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+  margin: 0;
+}
+
+/* Season toggle */
+.sched-toggle-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.sched-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 999px;
+  border: 2px solid var(--primary-color);
+  background: transparent;
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.sched-toggle-btn:hover {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.sched-toggle-btn svg {
+  width: 1rem;
+  height: 1rem;
+  transition: transform 0.4s ease;
+}
+
+.sched-toggle-btn.spin svg {
+  transform: rotate(360deg);
+}
+
+/* Level legend */
+.sched-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.sched-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sched-legend-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Season panels */
+.season-panel.hidden {
+  display: none;
+}
+
+.season-panel.fade-in {
+  animation: schedFadeIn 0.35s ease forwards;
+}
+
+@keyframes schedFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Schedule grid */
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Card */
+.sched-card {
+  background: var(--dark-bg, #fff);
+  border: 1px solid #e8e8e8;
+  border-radius: 16px;
+  padding: 1.1rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+@media (hover: hover) {
+  .sched-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.sched-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.sched-card-day {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary, #888);
+}
+
+.sched-card-location {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #2980b9;
+  text-decoration: none;
+}
+
+.sched-card-location:hover {
+  text-decoration: underline;
+}
+
+.sched-card-sub {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #999);
+}
+
+.sched-card-divider {
+  border: none;
+  border-top: 1px solid #f0f0f0;
+  margin: 0;
+}
+
+/* Class rows */
+.sched-classes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sched-day-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.sched-day-block-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary, #888);
+  margin-top: 0.4rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px dashed #eee;
+}
+
+.sched-class-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sched-time {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #333;
+  white-space: nowrap;
+}
+
+.sched-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  color: #fff;
+}
+
+.sched-badge-l1 {
+  background: var(--sched-l1);
+}
+.sched-badge-l2 {
+  background: var(--sched-l2);
+}
+.sched-badge-l3 {
+  background: var(--sched-l3);
+}
+.sched-badge-l4 {
+  background: linear-gradient(
+    120deg,
+    var(--sched-l4-a) 45%,
+    var(--sched-l4-b) 45%
+  );
+  font-size: 0.65rem;
+}
+
+/* Maps link */
+.sched-maps-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2980b9;
+  text-decoration: none;
+  margin-top: auto;
+}
+
+.sched-maps-link svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  flex-shrink: 0;
+}
+
+.sched-maps-link:hover {
+  text-decoration: underline;
+}
+
+/* Summer accent */
+.summer-active .schedule-title {
+  color: #e67e22;
+}
+
+/* ── Schedule mobile ────────────────────────────────────────── */
+@media (max-width: 900px) {
+  /* Override the global header{flex} rule that applies to <header> elements */
+  .schedule-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .schedule-section {
+    padding: 1.5rem 0.75rem 2rem;
+  }
+
+  .schedule-title {
+    font-size: 1.5rem;
+  }
+
+  .sched-legend {
+    gap: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .schedule-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .sched-card {
+    padding: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .schedule-season-badge {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.85rem;
+    white-space: nowrap;
+  }
+
+  .schedule-title {
+    font-size: 1.35rem;
+  }
+
+  .sched-toggle-btn {
+    font-size: 0.82rem;
+    padding: 0.55rem 1rem;
+  }
+
+  .sched-legend {
+    gap: 0.4rem 0.85rem;
+    font-size: 0.76rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .schedule-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sched-card {
+    padding: 0.85rem 0.9rem;
+  }
+
+  .sched-time {
+    font-size: 0.82rem;
+  }
+
+  .sched-badge {
+    font-size: 0.67rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .sched-badge-l4 {
+    font-size: 0.6rem;
   }
 }
 

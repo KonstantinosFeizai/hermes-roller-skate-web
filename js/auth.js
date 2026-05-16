@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginFormContainer = document.getElementById("loginForm");
   const signupFormContainer = document.getElementById("signupForm");
   const signupSuccess = document.getElementById("signupSuccess");
+  const termsAcceptanceForm = document.getElementById("termsAcceptanceForm"); // ← νέο
 
   const openSignupLinks = document.querySelectorAll("#openSignupLink");
   const openLoginLinks = document.querySelectorAll(
@@ -38,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loginFormContainer.classList.add("hidden");
     signupFormContainer.classList.remove("hidden");
     signupSuccess.classList.add("hidden");
+    termsAcceptanceForm.classList.add("hidden");
     document.getElementById("signupGeneralError").textContent = "";
   };
 
@@ -45,7 +47,16 @@ document.addEventListener("DOMContentLoaded", () => {
     loginFormContainer.classList.remove("hidden");
     signupFormContainer.classList.add("hidden");
     signupSuccess.classList.add("hidden");
+    termsAcceptanceForm.classList.add("hidden");
     document.getElementById("loginGeneralError").textContent = "";
+  };
+
+  // ← νέο: εμφανίζει το terms panel για παλιούς χρήστες
+  const showTermsForm = () => {
+    loginFormContainer.classList.add("hidden");
+    signupFormContainer.classList.add("hidden");
+    signupSuccess.classList.add("hidden");
+    termsAcceptanceForm.classList.remove("hidden");
   };
 
   const resetModal = () => {
@@ -100,13 +111,30 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------
   // 4. SIGNUP LOGIC
   // ----------------------------------------------------
-  const BASE_URL = window.BASE_URL || "/"; // Παίρνουμε τη BASE_URL
+  const BASE_URL = window.BASE_URL || "/";
+  const i18n = window.AUTH_I18N || {};
 
   signupFormContainer.addEventListener("submit", async (e) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+
+    // ← νέο: προσθήκη accepted_terms ως boolean
+    data.accepted_terms =
+      document.getElementById("acceptTerms")?.checked ?? false;
+
+    // ← νέο: client-side validation για το checkbox
+    const termsError = document.getElementById("signupTermsError");
+    if (!data.accepted_terms) {
+      if (termsError) {
+        termsError.textContent =
+          i18n.terms_required || "You must accept the Terms of Use.";
+        termsError.style.display = "block";
+      }
+      return;
+    }
+    if (termsError) termsError.style.display = "none";
 
     // Απενεργοποίηση κουμπιού και εμφάνιση loading (προαιρετικά)
     document.getElementById("signupBtn").disabled = true;
@@ -130,15 +158,19 @@ document.addEventListener("DOMContentLoaded", () => {
         signupSuccess.classList.remove("hidden");
         document.getElementById("loginBtn").disabled = false;
       } else {
-        // Αποτυχία εγγραφής (Status 400, 409, 500)
-        displayError(
-          "signupForm",
-          "general",
-          result.message || "Παρουσιάστηκε άγνωστο σφάλμα.",
-        );
+        // Αποτυχία εγγραφής (Status 400, 409, 429, 500)
+        const errEl = document.getElementById("signupGeneralError");
+        if (errEl) {
+          errEl.textContent = result.message || i18n.signup_unknown;
+          errEl.style.display = "block";
+        }
       }
     } catch (error) {
-      displayError("signupForm", "general", "Σφάλμα σύνδεσης. Δοκιμάστε ξανά.");
+      const errEl = document.getElementById("signupGeneralError");
+      if (errEl) {
+        errEl.textContent = i18n.signup_network;
+        errEl.style.display = "block";
+      }
     } finally {
       document.getElementById("signupBtn").disabled = false;
     }
@@ -154,7 +186,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = Object.fromEntries(formData.entries());
 
     document.getElementById("loginBtn").disabled = true;
-    document.getElementById("loginFormGeneralError").style.display = "none";
+    document.getElementById("loginGeneralError").style.display = "none";
+    document.getElementById("loginGeneralError").textContent = "";
 
     try {
       const response = await fetch(BASE_URL + "auth/login_handler.php", {
@@ -168,30 +201,83 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await response.json();
 
       if (response.ok) {
-        // Επιτυχής σύνδεση (Status 200 OK)
-        // alert("Welcome, " + result.username + "!"); // Προσωρινή ειδοποίηση
+        // Επιτυχής σύνδεση
+        // ← νέο: αν παλιός χρήστης χωρίς αποδοχή όρων
+        if (result.needs_terms_acceptance) {
+          showTermsForm();
+          return;
+        }
+
         closeModal();
 
         if (result.redirect) {
           window.location.href = result.redirect;
         } else {
-          // Φόρτωση της σελίδας για να εμφανιστεί το κουμπί Logout
           window.location.reload();
         }
       } else {
-        // Αποτυχία σύνδεσης (Status 401 Unauthorized)
-        displayError(
-          "loginForm",
-          "general",
-          result.message || "Λάθος όνομα χρήστη ή κωδικός.",
-        );
+        // Αποτυχία σύνδεσης (Status 401, 429)
+        const errEl = document.getElementById("loginGeneralError");
+        if (errEl) {
+          errEl.textContent = result.message || i18n.login_unknown;
+          errEl.style.display = "block";
+        }
       }
     } catch (error) {
-      displayError("loginForm", "general", "Σφάλμα σύνδεσης. Δοκιμάστε ξανά.");
+      const errEl = document.getElementById("loginGeneralError");
+      if (errEl) {
+        errEl.textContent = i18n.login_network;
+        errEl.style.display = "block";
+      }
     } finally {
       document.getElementById("loginBtn").disabled = false;
     }
   });
+
+  // ── Terms acceptance για παλιούς χρήστες ← νέο ──────────
+  const acceptTermsBtn = document.getElementById("acceptTermsBtn");
+  if (acceptTermsBtn) {
+    acceptTermsBtn.addEventListener("click", async () => {
+      const checkbox = document.getElementById("existingUserTerms");
+      const termsError = document.getElementById("existingTermsError");
+
+      // Client-side validation
+      if (!checkbox?.checked) {
+        if (termsError) {
+          termsError.textContent = "Πρέπει να αποδεχτείς τους Όρους Χρήσης.";
+          termsError.style.display = "block";
+        }
+        return;
+      }
+      if (termsError) termsError.style.display = "none";
+
+      acceptTermsBtn.disabled = true;
+
+      try {
+        const response = await fetch(BASE_URL + "api/accept_terms.php", {
+          method: "POST",
+        });
+        const result = await response.json();
+
+        if (response.ok && result.status === "success") {
+          closeModal();
+          window.location.reload();
+        } else {
+          if (termsError) {
+            termsError.textContent = "Σφάλμα. Παρακαλώ δοκιμάστε ξανά.";
+            termsError.style.display = "block";
+          }
+        }
+      } catch (error) {
+        if (termsError) {
+          termsError.textContent = "Αδυναμία επικοινωνίας με τον server.";
+          termsError.style.display = "block";
+        }
+      } finally {
+        acceptTermsBtn.disabled = false;
+      }
+    });
+  }
 
   // ----------------------------------------------------
   // 6. LOGOUT LOGIC (Στο κουμπί του Navbar)
@@ -199,26 +285,43 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutButton = document.getElementById("logout-button");
 
   if (logoutButton) {
-    logoutButton.addEventListener("click", async () => {
-      if (!confirm("Είστε σίγουροι ότι θέλετε να αποσυνδεθείτε;")) {
-        return;
-      }
+    logoutButton.addEventListener("click", () => {
+      const i18n = window.AUTH_I18N || {};
+      const overlay = document.getElementById("logoutConfirmOverlay");
+      const titleEl = document.getElementById("logoutModalTitle");
+      const msgEl = document.getElementById("logoutModalMsg");
+      const okBtn = document.getElementById("logoutConfirmOk");
+      const cancelBtn = document.getElementById("logoutConfirmCancel");
 
-      try {
-        const response = await fetch(BASE_URL + "auth/logout.php", {
-          method: "POST", // Χρησιμοποιούμε POST όπως συμφωνήσαμε
-        });
+      if (!overlay) return;
 
-        // Επειδή το logout.php επιστρέφει πάντα 200 OK και JSON success
-        if (response.ok) {
-          // Ανακατεύθυνση στη ρίζα ή επαναφόρτωση
-          window.location.href = BASE_URL;
-        } else {
-          alert("Σφάλμα αποσύνδεσης. Δοκιμάστε να ανανεώσετε τη σελίδα.");
+      titleEl.textContent = i18n.logout_confirm_title || "Log Out";
+      msgEl.textContent =
+        i18n.logout_confirm_msg || "Are you sure you want to log out?";
+      okBtn.textContent = i18n.logout_confirm_ok || "Log Out";
+      cancelBtn.textContent = i18n.logout_confirm_cancel || "Cancel";
+
+      overlay.style.display = "flex";
+
+      cancelBtn.onclick = () => {
+        overlay.style.display = "none";
+      };
+
+      okBtn.onclick = async () => {
+        overlay.style.display = "none";
+        try {
+          const response = await fetch(BASE_URL + "auth/logout.php", {
+            method: "POST",
+          });
+          if (response.ok) {
+            window.location.href = BASE_URL;
+          } else {
+            alert("Σφάλμα αποσύνδεσης. Δοκιμάστε να ανανεώσετε τη σελίδα.");
+          }
+        } catch (error) {
+          alert("Αποτυχία επικοινωνίας με τον server.");
         }
-      } catch (error) {
-        alert("Αποτυχία επικοινωνίας με τον server.");
-      }
+      };
     });
   }
 
@@ -330,9 +433,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await response.json();
 
         if (response.ok) {
-          // 2. Επιτυχία: Ανακατεύθυνση στη σελίδα login/index με μήνυμα
-          alert(result.message);
-          window.location.href = BASE_URL;
+          // 2. Επιτυχία: Εμφάνιση styled success modal
+          const overlay = document.getElementById("resetSuccessOverlay");
+          const msg = document.getElementById("resetSuccessMsg");
+          const btn = document.getElementById("resetSuccessBtn");
+          if (overlay && msg && btn) {
+            msg.textContent = result.message;
+            overlay.style.display = "flex";
+            btn.onclick = () => {
+              window.location.href = BASE_URL;
+            };
+          } else {
+            window.location.href = BASE_URL;
+          }
         } else {
           // 3. Αποτυχία: Εμφάνιση σφάλματος από το backend
           if (errorDiv) {

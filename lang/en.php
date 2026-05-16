@@ -95,7 +95,9 @@ return [
             'subject' => 'Subject',
             'message' => 'Message',
             'send' => 'Send Message',
-            'send_another' => 'Send another message'
+            'send_another' => 'Send another message',
+            'privacy_notice' => 'Your personal data will only be used to respond to your inquiry. Please read our',
+            'privacy_link' => 'Privacy Policy',
         ]
     ],
     'benefits' => [
@@ -757,27 +759,59 @@ return [
                 'winter_schedule' => 'Winter Schedule 24/10-24/3'
             ],
             'schedule' => [
+                'title'       => 'Weekly Schedule',
+                'aria_label'  => 'Weekly Schedule',
+                'legend_aria' => 'Level legend',
+                'maps_cta'    => 'View on Google Maps',
+                'location_tbc' => 'Location TBC',
                 'days' => [
-                    'tuesday' => 'Tuesday',
-                    'wednesday' => 'Wednesday',
+                    'monday'          => 'Monday',
+                    'tuesday'         => 'Tuesday',
+                    'wednesday'       => 'Wednesday',
+                    'thursday'        => 'Thursday',
+                    'friday'          => 'Friday',
+                    'saturday'        => 'Saturday',
+                    'sunday'          => 'Sunday',
                     'monday_thursday' => 'Monday & Thursday',
-                    'weekends' => 'Weekends'
+                    'saturday_sunday' => 'Saturday & Sunday',
+                    'weekends'        => 'Weekends',
+                    'multiple'        => 'Multiple Days',
                 ],
                 'levels' => [
                     'private' => 'Private',
                     'l1' => 'Beginners L1',
                     'l2' => 'Basic L2',
                     'l3' => 'Advanced L3',
-                    'l4' => 'Basic-Advanced L2+L3'
+                    'l4' => 'Basic-Advanced L2+L3',
+                ],
+                'season' => [
+                    'winter'       => 'Winter Schedule',
+                    'summer'       => 'Summer Schedule',
+                    'winter_range' => 'Active: 24 October – 12 May',
+                    'summer_range' => 'Active: 13 May – 23 October',
+                ],
+                'toggle' => [
+                    'preview_winter' => 'Preview Winter Schedule',
+                    'preview_summer' => 'Preview Summer Schedule',
+                    'return'         => 'Return to Current Schedule',
                 ],
                 'location_label' => '📍 Location:',
                 'locations' => [
-                    'oaka_marousi' => 'OAKA/Marousi',
-                    'gerakas' => 'Gerakas',
-                    'egaleo' => 'Egaleo',
-                    'zografou,panepistimioupoli' => 'Zografou/University Campus',
-                    'zografou,polutexneioupoli' => 'Zografou/Polytechnic Campus'
-                ]
+                    'zografou'                   => 'Zografou',
+                    'oaka_marousi'               => 'OAKA / Marousi',
+                    'gerakas'                    => 'Gerakas',
+                    'egaleo'                     => 'Egaleo',
+                    'vrilissia'                  => 'Vrilissia',
+                    'megalopolis'                => 'Megalopolis',
+                    'kalamata'                   => 'Kalamata',
+                    'ilioupoli'                  => 'Ilioupoli',
+                    'zografou,panepistimioupoli' => 'Zografou / University Campus',
+                    'zografou,polutexneioupoli'  => 'Zografou / Polytechnic Campus',
+                ],
+                'location_subs' => [
+                    'panepistimioupoli' => 'University Campus',
+                    'polytexneioupoli'  => 'Polytechnic Campus',
+                ],
             ],
             'news' => [
                 'title' => 'Highlights',
@@ -910,6 +944,10 @@ return [
             'password_placeholder' => 'Password',
             'confirm_password_placeholder' => 'Confirm Password',
             'submit' => 'SIGN UP',
+            'terms_prefix' => 'I accept the',
+            'terms_link' => 'Terms of Use',
+            'terms_and' => 'and the',
+            'privacy_link' => 'Privacy Policy',
             'divider' => 'or',
             'have_account' => 'Already have an account?',
             'login' => 'Log In'
@@ -919,6 +957,35 @@ return [
             'message' => 'Thank you for signing up. A confirmation email has been sent to',
             'verify' => 'Please check your inbox and click the link to verify your account.',
             'close' => 'Close'
+        ],
+        'terms' => [
+            'title'      => 'Accept Terms of Use',
+            'notice'     => 'We have updated our Terms of Use and Privacy Policy. Please read and accept them to continue.',
+            'accept_btn' => 'Accept & Continue',
+        ],
+        'errors' => [
+            'signup_unknown'        => 'An unexpected error occurred.',
+            'signup_network'        => 'Connection error. Please try again.',
+            'login_unknown'         => 'Invalid username or password.',
+            'login_network'         => 'Connection error. Please try again.',
+            'terms_required'        => 'You must accept the Terms of Use.',
+            'method_not_allowed'    => 'Method not allowed.',
+            'fill_all_fields'       => 'Please fill in all fields.',
+            'rate_limit_login'      => 'Too many failed attempts. Try again in %d minutes.',
+            'rate_limit_signup'     => 'Too many registrations from this connection. Try again in %d minutes.',
+            'rate_limit_generic'    => 'Too many requests. Try again in %d minutes.',
+            'account_not_active'    => 'Your account has not been activated. Check your email for the verification link.',
+            'invalid_credentials'   => 'Invalid username/email or password.',
+            'login_success'         => 'Login successful.',
+            'db_error'              => 'Database error. Please try again later.',
+            'invalid_email'         => 'Invalid email address.',
+            'passwords_mismatch'    => 'Passwords do not match.',
+            'password_too_short'    => 'Password must be at least 6 characters.',
+            'terms_accept_required' => 'You must accept the Terms of Use and Privacy Policy.',
+            'user_exists'           => 'Username or email is already in use. Please try with different credentials.',
+            'signup_success'        => 'Registration complete! A verification email has been sent.',
+            'rate_limit_forgot'     => 'Too many recovery requests. Try again in %d minutes.',
+            'forgot_success'        => 'If that email exists in our system, you will receive a reset link.',
         ]
     ],
     'footer' => [
@@ -983,6 +1050,10 @@ return [
             'admin_dashboard' => 'Admin Dashboard',
             'profile' => 'Profile / Settings',
             'logout' => 'Logout',
+            'logout_confirm_title'  => 'Log Out',
+            'logout_confirm_msg'    => 'Are you sure you want to log out?',
+            'logout_confirm_ok'     => 'Log Out',
+            'logout_confirm_cancel' => 'Cancel',
             'login' => 'Login'
         ],
         'language' => [
@@ -1016,10 +1087,32 @@ return [
     ],
     'newsletter' => [
         'subscribe' => [
-            'success' => 'Thank you for subscribing!',
-            'error' => 'Subscription failed. Please try again.',
-            'already' => 'You are already subscribed!',
-            'invalid_email' => 'Please enter a valid email address.'
+            'success'      => 'Thank you for subscribing!',
+            'error'        => 'Subscription failed. Please try again.',
+            'already'      => 'You are already subscribed!',
+            'invalid_email' => 'Please enter a valid email address.',
+            'rate_limit'   => 'Too many requests. Try again in %d minutes.',
+        ],
+        'unsubscribe' => [
+            'page_title'     => 'Unsubscribe from Newsletter',
+            'success_title'  => 'Successfully Unsubscribed',
+            'success'        => 'You have been removed from our newsletter list. You will no longer receive updates.',
+            'already_title'  => 'Already Unsubscribed',
+            'already_done'   => 'You have already unsubscribed from our newsletter.',
+            'error_title'    => 'Something Went Wrong',
+            'error'          => 'An error occurred. Please try again later.',
+            'invalid_token'  => 'The unsubscribe link is invalid or has expired.',
+            'back_home'      => 'Back to Home',
+        ]
+    ],
+    'cookies' => [
+        'banner' => [
+            'aria_label'    => 'Cookie Consent',
+            'title'         => 'We use cookies',
+            'description'   => 'We use cookies to enhance your experience. You can accept all cookies or only the essential ones.',
+            'learn_more'    => 'Learn more',
+            'accept_all'    => 'Accept All',
+            'necessary_only' => 'Necessary Only',
         ]
     ]
 ];

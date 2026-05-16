@@ -63,8 +63,6 @@ body {
   margin-bottom: 1rem;
 }
 
-
-
 .contact-form input,
 .contact-form select,
 .contact-form textarea {
@@ -110,7 +108,7 @@ body {
 }
 
 .contact-form button[type="submit"]:hover {
-  background-color: #E08C00;
+  background-color: #e08c00;
 }
 
 #form-response {
@@ -127,7 +125,6 @@ body {
   color: #666;
   text-align: center;
 }
-
 
 .new-message-btn {
   display: none;
@@ -154,11 +151,19 @@ body {
   text-align: center;
   width: 100%;
 }
+.privacy-notice {
+  font-size: 12px;
+  color: #888;
+  margin-top: 8px;
+  text-align: center;
+}
+.privacy-notice a {
+  color: #e63946;
+  text-decoration: underline;
+}
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-
-
   .contact-form {
     padding: 1.5rem;
   }
@@ -184,10 +189,6 @@ body {
 }
 
 @media (max-width: 425px) {
-
-
-
-
   .contact-form {
     padding: 1rem;
     border-radius: 8px;
