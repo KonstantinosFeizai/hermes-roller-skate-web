@@ -144,6 +144,7 @@ $overlaySubtitle = $getEnglishText('home.hero.subtitle', t('home.hero.subtitle')
       advanced: '<?= addslashes(t('home.index.schedule.levels.l2',   'Advanced')) ?>',
       beginners: '<?= addslashes(t('home.index.schedule.levels.l3',   'Beginners')) ?>',
       mixed: '<?= addslashes(t('home.index.schedule.levels.l4',   'Mixed / Pre-competitive')) ?>',
+      precomp: '<?= addslashes(t('home.index.schedule.levels.l5',   'Pre-competitive')) ?>',
       /* ui */
       mapsLabel: '<?= addslashes(t('home.index.schedule.maps_cta',    'View on Google Maps')) ?>',
       locationTbc: '<?= addslashes(t('home.index.schedule.location_tbc', 'Location TBC')) ?>',
@@ -217,6 +218,10 @@ $overlaySubtitle = $getEnglishText('home.hero.subtitle', t('home.hero.subtitle')
         <span class="sched-legend-dot"
           style="background:linear-gradient(120deg,var(--sched-l4-a) 45%,var(--sched-l4-b) 45%)"></span>
         <?= htmlspecialchars(t('home.index.schedule.levels.l4', 'Mixed / Pre-competitive')) ?>
+      </div>
+      <div class="sched-legend-item">
+        <span class="sched-legend-dot" style="background:var(--sched-l5)"></span>
+        <?= htmlspecialchars(t('home.index.schedule.levels.l5', 'Pre-competitive')) ?>
       </div>
     </div>
 

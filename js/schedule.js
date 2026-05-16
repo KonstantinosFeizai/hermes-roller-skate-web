@@ -187,7 +187,7 @@
             { time: "12:45–13:45", level: "l1", text: L.basic },
             { time: "16:45–17:45", level: "l2", text: L.advanced },
             { time: "17:45–18:45", level: "l3", text: L.beginners },
-            { time: "18:45–19:45", level: "l4", text: L.mixed },
+            { time: "18:45–19:45", level: "l5", text: L.precomp },
           ],
         },
       ],

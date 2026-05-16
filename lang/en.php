@@ -783,6 +783,7 @@ return [
                     'l2' => 'Basic L2',
                     'l3' => 'Advanced L3',
                     'l4' => 'Basic-Advanced L2+L3',
+                    'l5' => 'Pre-competitive L5',
                 ],
                 'season' => [
                     'winter'       => 'Winter Schedule',

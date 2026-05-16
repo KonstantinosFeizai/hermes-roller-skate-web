@@ -762,6 +762,7 @@ h3 {
   --sched-l3: #8e44ad;
   --sched-l4-a: #2980b9;
   --sched-l4-b: #8e44ad;
+  --sched-l5: #e67e22;
   --sched-accent-w: #2980b9;
   --sched-accent-s: #e67e22;
 }
@@ -1022,6 +1023,9 @@ h3 {
   );
   font-size: 0.65rem;
 }
+.sched-badge-l5 {
+  background: var(--sched-l5);
+}
 
 /* Maps link */
 .sched-maps-link {
@@ -1124,6 +1128,9 @@ h3 {
   }
 
   .sched-badge-l4 {
+    font-size: 0.6rem;
+  }
+  .sched-badge-l5 {
     font-size: 0.6rem;
   }
 }
