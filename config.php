@@ -48,7 +48,9 @@ function asset(string $path): string
 {
     global $BASE_URL;
     $clean_path = str_replace('.php', '', $path);
-    return rtrim($BASE_URL, '/') . '/' . ltrim($clean_path, '/');
+    $segments   = explode('/', ltrim($clean_path, '/'));
+    $encoded    = array_map('rawurlencode', $segments);
+    return rtrim($BASE_URL, '/') . '/' . implode('/', $encoded);
 }
 
 // Build a versioned asset URL for cache busting (?v=timestamp)

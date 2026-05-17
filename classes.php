@@ -36,7 +36,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
 
         <article class="class-card">
           <figure class="class-card__media">
-            <img src="photo/private lesson.webp" alt="<?= htmlspecialchars(t('classes.private.alt')) ?>">
+            <img src="<?= asset('photo/private lesson.webp') ?>" alt="<?= htmlspecialchars(t('classes.private.alt')) ?>">
           </figure>
           <div class="class-card__body">
             <h2 class="class-card__title">
