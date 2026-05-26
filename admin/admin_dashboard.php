@@ -9,17 +9,21 @@ restrict_access(['admin']);
 
 try {
     // Query: users for Accounts tab
-    $stmt = $pdo->query("SELECT id, username, email, role, is_active, first_name, last_name, phone, region, age, created_at FROM users ORDER BY created_at DESC");
+    $stmt = $pdo->query("SELECT id, username, email, role, role_type, is_active, first_name, last_name, phone, region, age, created_at FROM users ORDER BY created_at DESC");
     $users = $stmt->fetchAll();
 
     // Query: lessons for Classes tab
     $stmt_lessons = $pdo->query("
-    SELECT l.*, COUNT(le.id) as participant_count 
-    FROM lessons l 
-    LEFT JOIN lesson_enrollments le ON l.id = le.lesson_id 
-    GROUP BY l.id 
-    ORDER BY l.lesson_datetime DESC
-");
+        SELECT l.id, l.title, l.lesson_type, l.location_id, l.lesson_datetime,
+               l.weather_condition, l.temperature, l.status, l.notes,
+               loc.name AS location_name,
+               COUNT(la.athlete_id) AS participant_count
+        FROM lessons l
+        LEFT JOIN locations loc ON l.location_id = loc.id
+        LEFT JOIN lesson_athletes la ON l.id = la.lesson_id
+        GROUP BY l.id
+        ORDER BY l.lesson_datetime DESC
+    ");
     $lessons = $stmt_lessons->fetchAll();
     // Query: contact messages for Contact tab
     $stmt = $pdo->query("SELECT * FROM contact_messages ORDER BY created_at DESC");
@@ -42,6 +46,31 @@ try {
     // Query: unread count badge
     $stmt_unread = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_replied = 0");
     $unread_count = $stmt_unread->fetchColumn();
+
+    // Query: athletes for Athletes tab
+    $stmt_athletes = $pdo->query("
+        SELECT a.id, a.user_id, a.parent_id, a.first_name, a.last_name, a.birth_date, a.phone,
+               a.location_id, a.shoe_size, a.shirt_size,
+               a.interest_rides, a.interest_races, a.interest_ski,
+               a.interest_skating, a.interest_hockey,
+               a.amka, a.afm,
+               l.name AS location_name,
+               u.username AS linked_username,
+               CONCAT(p.first_name, ' ', p.last_name) AS parent_full_name,
+               p.phone AS parent_phone,
+               p.email AS parent_email
+        FROM athletes a
+        LEFT JOIN locations l ON a.location_id = l.id
+        LEFT JOIN users u ON a.user_id = u.id
+        LEFT JOIN users p ON a.parent_id = p.id
+        WHERE a.is_active = 1
+        ORDER BY a.last_name ASC, a.first_name ASC
+    ");
+    $athletes = $stmt_athletes->fetchAll();
+
+    // Query: locations for filter chips + dropdown
+    $stmt_locs = $pdo->query("SELECT id, name FROM locations WHERE is_active = 1 ORDER BY sort_order ASC");
+    $locations = $stmt_locs->fetchAll();
 } catch (PDOException $e) {
     die("Σφάλμα βάσης: " . $e->getMessage());
 }
@@ -91,7 +120,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
             <p>Έλεγχος πρόσβασης και ρόλων χρηστών.</p>
 
             <div class="admin-actions-bar">
-                <input type="text" id="userSearchInput" placeholder="Αναζήτηση...">
+                <input type="text" id="userSearchInput" placeholder="Αναζήτηση (όνομα, email, username)...">
                 <select id="roleFilter">
                     <option value="all">Όλοι οι Ρόλοι</option>
                     <option value="admin">Admin</option>
@@ -102,27 +131,62 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <option value="active">Ενεργός</option>
                     <option value="inactive">Εκκρεμεί</option>
                 </select>
+                <a href="export_users_csv.php" class="action-btn btn-success action-link">📥 Export CSV</a>
             </div>
 
             <table class="user-table">
                 <thead id="userTableHeader">
                     <tr>
                         <th data-sort="number">ID <span></span></th>
-                        <th data-sort="string">Username <span></span></th>
+                        <th data-sort="string">Χρήστης <span></span></th>
                         <th data-sort="string">Email <span></span></th>
+                        <th data-sort="string">Τηλέφωνο <span></span></th>
                         <th data-sort="string">Ρόλος <span></span></th>
                         <th data-sort="string">Status <span></span></th>
-                        <th data-sort="date">Ημερ/νία <span></span></th>
+                        <th data-sort="date">Εγγραφή <span></span></th>
                         <th>Ενέργειες</th>
                     </tr>
                 </thead>
                 <tbody id="accounts-table-body">
                     <?php foreach ($users as $user): ?>
-                        <tr>
+                        <?php
+                        $userData = json_encode([
+                            'id'         => $user['id'],
+                            'username'   => $user['username'],
+                            'email'      => $user['email'],
+                            'first_name' => $user['first_name'] ?? '',
+                            'last_name'  => $user['last_name'] ?? '',
+                            'phone'      => $user['phone'] ?? '',
+                            'region'     => $user['region'] ?? '',
+                            'age'        => $user['age'] ?? '',
+                            'role'       => $user['role'],
+                            'role_type'  => $user['role_type'] ?? '',
+                            'is_active'  => (int)$user['is_active'],
+                            'created_at' => $user['created_at'],
+                        ]);
+                        $fullName = trim(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? ''));
+                        ?>
+                        <tr data-user="<?php echo htmlspecialchars($userData, ENT_QUOTES); ?>">
                             <td><?php echo $user['id']; ?></td>
-                            <td><?php echo htmlspecialchars($user['username']); ?></td>
+                            <td>
+                                <?php if ($fullName): ?>
+                                    <span class="user-fullname"><?php echo htmlspecialchars($fullName); ?></span><br>
+                                <?php endif; ?>
+                                <span class="user-username">@<?php echo htmlspecialchars($user['username']); ?></span>
+                            </td>
                             <td><?php echo htmlspecialchars($user['email']); ?></td>
-                            <td><strong><?php echo strtoupper($user['role']); ?></strong></td>
+                            <td><?php echo htmlspecialchars($user['phone'] ?? '—'); ?></td>
+                            <td>
+                                <span class="role-badge role-<?php echo $user['role']; ?>">
+                                    <?php echo strtoupper($user['role']); ?>
+                                </span>
+                                <?php
+                                $rtLabels = ['athlete' => 'Αθλητής', 'parent' => 'Γονέας', 'coach' => 'Προπονητής'];
+                                $rt = $user['role_type'] ?? '';
+                                if (isset($rtLabels[$rt])): ?>
+                                    <span class="role-type-badge role-type-<?php echo $rt; ?>"><?php echo $rtLabels[$rt]; ?></span>
+                                <?php endif; ?>
+                            </td>
                             <td>
                                 <span class="<?php echo $user['is_active'] ? 'status-confirmed' : 'status-pending'; ?>">
                                     <?php echo $user['is_active'] ? 'Ενεργός' : 'Εκκρεμεί'; ?>
@@ -130,8 +194,8 @@ require_once PROJECT_ROOT . 'partials/header.php';
                             </td>
                             <td><?php echo date('d/m/y', strtotime($user['created_at'])); ?></td>
                             <td>
-                                <button class="action-btn role-btn" onclick="changeRole(<?php echo $user['id']; ?>, '<?php echo $user['role']; ?>')">Ρόλος</button>
-                                <button class="action-btn delete-btn" onclick="deleteUser(<?php echo $user['id']; ?>)">Διαγραφή</button>
+                                <button class="action-btn role-btn" onclick="openUserProfile(this); event.stopPropagation()">👤 Προφίλ</button>
+                                <button class="action-btn delete-btn" onclick="deleteUser(<?php echo $user['id']; ?>); event.stopPropagation()">Διαγραφή</button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -144,26 +208,24 @@ require_once PROJECT_ROOT . 'partials/header.php';
             <div class="tab-header">
                 <h2>Διαχείριση Αθλητών</h2>
                 <button class="action-btn btn-success" onclick="openAddAthleteModal()">+ Προσθήκη Αθλητή</button>
-
             </div>
             <div class="table-controls table-controls-inline">
-                <input type="text" id="athleteSearch" onkeyup="searchAthletes()" placeholder="Αναζήτηση αθλητή (Όνομα ή Τηλέφωνο)..."
-                    class="input-compact">
-
+                <input type="text" id="athleteSearch" oninput="filterAthletes()" placeholder="Αναζήτηση αθλητή (Όνομα ή Τηλέφωνο)..." class="input-compact">
                 <select id="athleteSort" onchange="sortAthletes()">
                     <option value="none">Ταξινόμηση ανά...</option>
                     <option value="name_asc">Όνομα (Α-Ω)</option>
                     <option value="name_desc">Όνομα (Ω-Α)</option>
-                    <option value="age_asc">Ηλικία (Μικρότεροι)</option>
-                    <option value="age_desc">Ηλικία (Μεγαλύτεροι)</option>
+                    <option value="birth_asc">Ηλικία (Νεότεροι)</option>
+                    <option value="birth_desc">Ηλικία (Μεγαλύτεροι)</option>
+                    <option value="loc_asc">Περιοχή (Α-Ω)</option>
                 </select>
             </div>
             <div class="region-chips">
-                <button class="chip active" onclick="filterByRegion('all')">Όλοι</button>
-                <button class="chip" onclick="filterByRegion('Μαρούσι')">Μαρούσι</button>
-                <button class="chip" onclick="filterByRegion('ΟΑΚΑ')">ΟΑΚΑ</button>
-                <button class="chip" onclick="filterByRegion('Σχολείο')">Σχολείο</button>
-                <button class="chip" onclick="filterByRegion('ΕΚΠΑ')">ΕΚΠΑ</button>
+                <button class="chip active" onclick="filterByRegion(0)">Όλοι</button>
+                <?php foreach ($locations as $loc): ?>
+                    <button class="chip" onclick="filterByRegion(<?php echo (int)$loc['id']; ?>)"><?php echo htmlspecialchars($loc['name']); ?></button>
+                <?php endforeach; ?>
+                <button class="chip" onclick="filterByRegion(-1)">Χωρίς Περιοχή</button>
             </div>
 
             <table class="user-table" id="athletesTable">
@@ -171,27 +233,68 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <tr>
                         <th>Ονοματεπώνυμο</th>
                         <th>Τηλέφωνο</th>
-                        <th>Ηλικία</th>
+                        <th>Ημ. Γέννησης</th>
                         <th>Περιοχή</th>
+                        <th>Λογαριασμός</th>
                         <th>Ενέργειες</th>
                     </tr>
                 </thead>
                 <tbody id="athletes-table-body">
-                    <?php foreach ($users as $user): ?>
-                        <?php if ($user['role'] !== 'admin'): ?> <tr class="athlete-row" data-region="<?php echo htmlspecialchars($user['region']); ?>">
-                                <td><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></td>
-                                <td><?php echo htmlspecialchars($user['phone'] ?? '-'); ?></td>
-                                <td><?php echo htmlspecialchars($user['age'] ?? '-'); ?></td>
-                                <td><span class="badge-region"><?php echo htmlspecialchars($user['region'] ?? 'Χωρίς Περιοχή'); ?></span></td>
-                                <td>
-                                    <button class="action-btn role-btn" onclick="editAthlete(<?php echo $user['id']; ?>)">Επεξεργασία</button>
-                                    <button class="action-btn delete-btn btn-spaced"
-                                        onclick="deleteAthlete(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?>')">
-                                        Διαγραφή
-                                    </button>
-                                </td>
-                            </tr>
-                        <?php endif; ?>
+                    <?php foreach ($athletes as $a):
+                        $aData = json_encode([
+                            'id'               => $a['id'],
+                            'first_name'       => $a['first_name'],
+                            'last_name'        => $a['last_name'],
+                            'birth_date'       => $a['birth_date'],
+                            'phone'            => $a['phone'],
+                            'location_id'      => $a['location_id'],
+                            'location_name'    => $a['location_name'],
+                            'shoe_size'        => $a['shoe_size'],
+                            'shirt_size'       => $a['shirt_size'],
+                            'interest_rides'   => (bool)$a['interest_rides'],
+                            'interest_races'   => (bool)$a['interest_races'],
+                            'interest_ski'     => (bool)$a['interest_ski'],
+                            'interest_skating' => (bool)$a['interest_skating'],
+                            'interest_hockey'  => (bool)$a['interest_hockey'],
+                            'amka'             => $a['amka'],
+                            'afm'              => $a['afm'],
+                            'linked_username'  => $a['linked_username'],
+                            'parent_id'        => $a['parent_id'],
+                            'parent_full_name' => $a['parent_full_name'],
+                            'parent_phone'     => $a['parent_phone'],
+                            'parent_email'     => $a['parent_email'],
+                        ]);
+                    ?>
+                        <tr class="athlete-row"
+                            data-athlete="<?php echo htmlspecialchars($aData); ?>"
+                            data-location-id="<?php echo (int)$a['location_id']; ?>"
+                            data-location-name="<?php echo htmlspecialchars($a['location_name'] ?? ''); ?>">
+                            <td><?php echo htmlspecialchars($a['first_name'] . ' ' . $a['last_name']); ?></td>
+                            <td><?php echo htmlspecialchars($a['phone'] ?? '—'); ?></td>
+                            <td><?php echo $a['birth_date'] ? htmlspecialchars($a['birth_date']) : '—'; ?></td>
+                            <td>
+                                <?php if ($a['location_name']): ?>
+                                    <span class="badge-region"><?php echo htmlspecialchars($a['location_name']); ?></span>
+                                <?php else: ?>
+                                    <span class="badge-region badge-region--none">—</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if ($a['linked_username']): ?>
+                                    <span class="status-confirmed">@<?php echo htmlspecialchars($a['linked_username']); ?></span>
+                                <?php else: ?>
+                                    <span class="status-pending">Χωρίς λογαριασμό</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <button class="action-btn btn-info"
+                                    onclick="openAthleteProfile(this)">👤 Προφίλ</button>
+                                <button class="action-btn delete-btn btn-spaced"
+                                    onclick="deleteAthlete(<?php echo $a['id']; ?>, '<?php echo htmlspecialchars(addslashes($a['first_name'] . ' ' . $a['last_name'])); ?>')">
+                                    🗑 Διαγραφή
+                                </button>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -206,29 +309,226 @@ require_once PROJECT_ROOT . 'partials/header.php';
 
             <div id="classes-container" class="classes-container">
                 <?php if (empty($lessons)): ?>
-                    <p>Δεν υπάρχουν προγραμματισμένες προπονήσεις.</p>
+                    <p class="empty-state">Δεν υπάρχουν προγραμματισμένες προπονήσεις.</p>
                 <?php else: ?>
-                    <?php foreach ($lessons as $lesson): ?>
-                        <div class="class-card">
-                            <h3><?php echo htmlspecialchars($lesson['title']); ?></h3>
-                            <p><strong>Περιοχή:</strong> <?php echo htmlspecialchars($lesson['location']); ?></p>
+                    <?php
+                    $typeLabels = [
+                        'rollers'  => ['label' => 'Rollers',   'icon' => '🛼'],
+                        'iceskate' => ['label' => 'Ice Skate', 'icon' => '⛸️'],
+                        'hockey'   => ['label' => 'Hockey',    'icon' => '🏒'],
+                        'ski'      => ['label' => 'Ski',       'icon' => '⛷️'],
+                        'fitness'  => ['label' => 'Fitness',   'icon' => '🏋️'],
+                    ];
+                    $statusLabels = [
+                        'scheduled'  => ['label' => 'Προγραμματισμένη', 'class' => 'status-scheduled'],
+                        'completed'  => ['label' => 'Ολοκληρώθηκε',    'class' => 'status-completed'],
+                        'cancelled'  => ['label' => 'Ακυρώθηκε',       'class' => 'status-cancelled'],
+                    ];
+                    $weatherIcons = [
+                        'sunny'   => '☀️',
+                        'cloudy' => '☁️',
+                        'rainy' => '🌧️',
+                        'snowy'   => '❄️',
+                        'windy'  => '💨',
+                        'foggy' => '🌫️',
+                    ];
+                    foreach ($lessons as $lesson):
+                        $dt       = new DateTime($lesson['lesson_datetime']);
+                        $typeInfo = $typeLabels[$lesson['lesson_type']] ?? ['label' => $lesson['lesson_type'], 'icon' => '📋'];
+                        $stInfo   = $statusLabels[$lesson['status']]     ?? ['label' => $lesson['status'], 'class' => 'status-scheduled'];
+                        $lData    = json_encode([
+                            'id'                => $lesson['id'],
+                            'title'             => $lesson['title'],
+                            'lesson_type'       => $lesson['lesson_type'],
+                            'location_id'       => $lesson['location_id'],
+                            'location_name'     => $lesson['location_name'],
+                            'lesson_datetime'   => $lesson['lesson_datetime'],
+                            'weather_condition' => $lesson['weather_condition'],
+                            'temperature'       => $lesson['temperature'],
+                            'notes'             => $lesson['notes'],
+                            'status'            => $lesson['status'],
+                        ]);
+                    ?>
+                        <div class="class-card lesson-type-<?php echo $lesson['lesson_type']; ?>"
+                            data-lesson="<?php echo htmlspecialchars($lData, ENT_QUOTES); ?>">
+                            <div class="class-card-header">
+                                <div class="class-card-type">
+                                    <span class="lesson-type-badge lesson-type-<?php echo $lesson['lesson_type']; ?>">
+                                        <?php echo $typeInfo['icon'] . ' ' . $typeInfo['label']; ?>
+                                    </span>
+                                    <span class="lesson-status-badge <?php echo $stInfo['class']; ?>">
+                                        <?php echo $stInfo['label']; ?>
+                                    </span>
+                                </div>
+                                <button class="card-delete-btn" onclick="deleteLesson(<?php echo $lesson['id']; ?>)" title="Διαγραφή">✕</button>
+                            </div>
 
-                            <?php
-                            // Format date for display (e.g. 24/01/2026 12:00)
-                            $date = new DateTime($lesson['lesson_datetime']);
-                            ?>
-                            <p><strong>Ημερομηνία:</strong> <?php echo $date->format('d/m/Y'); ?></p>
-                            <p><strong>Ώρα:</strong> <?php echo $date->format('H:i'); ?></p>
+                            <?php if ($lesson['title']): ?>
+                                <h3 class="class-card-title"><?php echo htmlspecialchars($lesson['title']); ?></h3>
+                            <?php endif; ?>
+
+                            <div class="class-card-meta">
+                                <div class="meta-row">
+                                    <span class="meta-icon">📅</span>
+                                    <span><?php echo $dt->format('d/m/Y'); ?></span>
+                                    <span class="meta-sep">·</span>
+                                    <span class="meta-icon">🕐</span>
+                                    <span><?php echo $dt->format('H:i'); ?></span>
+                                </div>
+                                <?php if ($lesson['location_name']): ?>
+                                    <div class="meta-row">
+                                        <span class="meta-icon">📍</span>
+                                        <span><?php echo htmlspecialchars($lesson['location_name']); ?></span>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if ($lesson['weather_condition'] || $lesson['temperature'] !== null): ?>
+                                    <div class="meta-row">
+                                        <span class="meta-icon"><?php echo $weatherIcons[$lesson['weather_condition']] ?? '🌤️'; ?></span>
+                                        <span>
+                                            <?php
+                                            $parts = [];
+                                            if ($lesson['weather_condition']) $parts[] = ucfirst($lesson['weather_condition']);
+                                            if ($lesson['temperature'] !== null) $parts[] = $lesson['temperature'] . '°C';
+                                            echo implode(', ', $parts);
+                                            ?>
+                                        </span>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
 
                             <div class="class-card-footer">
-                                <span id="card-count-<?php echo $lesson['id']; ?>" class="class-card-count">
-                                    Συμμετοχές: <?php echo $lesson['participant_count']; ?>
+                                <span class="class-card-count" id="card-count-<?php echo $lesson['id']; ?>">
+                                    👥 <?php echo $lesson['participant_count']; ?> αθλητές
                                 </span>
-                                <button class="action-btn role-btn" onclick="manageClass(<?php echo $lesson['id']; ?>)">Διαχείριση</button>
+                                <div class="card-actions">
+                                    <button class="action-btn btn-edit-sm" onclick="editLesson(this)">✏️ Επεξεργασία</button>
+                                    <button class="action-btn btn-info" onclick="manageClass(<?php echo $lesson['id']; ?>)">👥 Αθλητές</button>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- ── Create / Edit Lesson Modal ─────────────────── -->
+        <div id="addClassModal" class="modal-overlay" style="display:none;">
+            <div class="modal-box modal-box-md">
+                <div class="modal-header">
+                    <h3 id="classModalTitle">Νέα Προπόνηση</h3>
+                    <button class="modal-close-btn" onclick="closeAddClassModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="addClassForm">
+                        <input type="hidden" id="cf_lesson_id">
+
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Τύπος Προπόνησης</label>
+                                <select id="cf_lesson_type" class="form-control" required>
+                                    <option value="rollers">🛼 Rollers</option>
+                                    <option value="iceskate">⛸️ Ice Skate</option>
+                                    <option value="hockey">🏒 Hockey</option>
+                                    <option value="ski">⛷️ Ski</option>
+                                    <option value="fitness">🏋️ Fitness</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Τοποθεσία</label>
+                                <select id="cf_location_id" class="form-control">
+                                    <option value="">— Επιλογή —</option>
+                                    <?php foreach ($locations as $loc): ?>
+                                        <option value="<?php echo $loc['id']; ?>"><?php echo htmlspecialchars($loc['name']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Τίτλος / Περιγραφή <span class="form-hint">(προαιρετικό)</span></label>
+                            <input type="text" id="cf_title" class="form-control" placeholder="π.χ. Προπόνηση Αρχαρίων">
+                        </div>
+
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Ημερομηνία &amp; Ώρα</label>
+                                <input type="datetime-local" id="cf_datetime" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Κατάσταση</label>
+                                <select id="cf_status" class="form-control">
+                                    <option value="scheduled">Προγραμματισμένη</option>
+                                    <option value="completed">Ολοκληρώθηκε</option>
+                                    <option value="cancelled">Ακυρώθηκε</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Καιρός</label>
+                                <select id="cf_weather" class="form-control">
+                                    <option value="">— —</option>
+                                    <option value="sunny">☀️ Ηλιοφάνεια</option>
+                                    <option value="cloudy">☁️ Συννεφιά</option>
+                                    <option value="rainy">🌧️ Βροχή</option>
+                                    <option value="snowy">❄️ Χιόνι</option>
+                                    <option value="windy">💨 Αέρας</option>
+                                    <option value="foggy">🌫️ Ομίχλη</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Θερμοκρασία (°C)</label>
+                                <input type="number" id="cf_temperature" class="form-control" placeholder="π.χ. 18" min="-30" max="50" step="0.5">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Σημειώσεις <span class="form-hint">(προαιρετικό)</span></label>
+                            <textarea id="cf_notes" class="form-control" rows="2" placeholder="Επιπλέον πληροφορίες..."></textarea>
+                        </div>
+
+                        <div id="classFormMessage" style="display:none;" class="form-message"></div>
+
+                        <div class="modal-footer-btns">
+                            <button type="button" class="action-btn btn-secondary" onclick="closeAddClassModal()">Άκυρο</button>
+                            <button type="submit" class="action-btn btn-success">Αποθήκευση</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Manage Class Modal (Athletes + Attendance) ─── -->
+        <div id="manageClassModal" class="modal-overlay" style="display:none;">
+            <div class="modal-box modal-box-lg">
+                <div class="modal-header">
+                    <div>
+                        <h3 id="manageClassTitle">Διαχείριση Προπόνησης</h3>
+                        <p id="manageClassSubtitle" class="modal-subtitle"></p>
+                    </div>
+                    <button class="modal-close-btn" onclick="closeManageClassModal()">✕</button>
+                </div>
+                <div class="modal-body manage-class-body">
+
+                    <!-- Left: search + add athletes -->
+                    <div class="manage-col manage-col-search">
+                        <h4>Προσθήκη Αθλητή</h4>
+                        <div class="athlete-search-wrap">
+                            <input type="text" id="athleteSearchInput"
+                                placeholder="Αναζήτηση αθλητή..."
+                                oninput="searchAthletesForLesson()"
+                                class="form-control">
+                        </div>
+                        <div id="athleteSearchResults" class="athlete-search-results"></div>
+                    </div>
+
+                    <!-- Right: enrolled athletes + attendance -->
+                    <div class="manage-col manage-col-enrolled">
+                        <h4>Εγγεγραμμένοι Αθλητές <span id="enrolledCount" class="count-badge">0</span></h4>
+                        <div id="enrolledAthletesList" class="enrolled-list"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -306,84 +606,155 @@ require_once PROJECT_ROOT . 'partials/header.php';
         </div>
 
         <div id="finance-tab" class="tab-content">
-            <div class="finance-card">
-                <div class="finance-header">
-                    <h2 class="finance-title">Οικονομική Διαχείριση</h2>
-                    <div class="finance-actions">
-                        <button class="action-btn btn-primary" onclick="refreshFinanceTable()">
-                            🔄 Ανανέωση
-                        </button>
-
-                        <a href="export_payments_csv.php" class="action-btn btn-success action-link">
-                            📊 Εξαγωγή σε Excel
-                        </a>
-                    </div>
-
-                </div>
-                <div class="finance-search">
-                    <input type="text" id="financeSearch" onkeyup="filterFinanceTable()" placeholder="Αναζήτηση αθλητή (Όνομα ή Επώνυμο)..."
-                        class="finance-search-input">
-                </div>
-                <table class="user-table finance-table">
-                    <thead>
-                        <tr>
-                            <th>Αθλητής</th>
-                            <th>Πληρωμένα</th>
-                            <th>Εκτελεσμένα</th>
-                            <th>Υπόλοιπο</th>
-                            <th>Ενέργειες</th>
-                        </tr>
-                    </thead>
-                    <tbody id="finance-table-body">
-                    </tbody>
-                </table>
-                <div id="pagination-controls" class="pagination-controls pagination-controls--wide">
-                    <button onclick="prevPage()" id="btn-prev" class="pagination-btn">Προηγούμενη</button>
-                    <span id="page-info" class="page-info">Σελίδα 1</span>
-                    <button onclick="nextPage()" id="btn-next" class="pagination-btn">Επόμενη</button>
-                </div>
-                <div class="finance-balance-note">
-                    <h4>💡 Πώς διαβάζεται το Υπόλοιπο:</h4>
-                    <div class="finance-balance-grid">
-                        <div class="finance-balance-item">
-                            <span class="finance-balance-label positive">Θετικό (+)</span>
-                            <span>Ο αθλητής έχει προπληρωμένα μαθήματα "στην κάβα" (π.χ. +3 σημαίνει 3 απομένουν).</span>
-                        </div>
-                        <div class="finance-balance-item">
-                            <span class="finance-balance-label neutral">Μηδέν (0)</span>
-                            <span>Ο αθλητής έχει καταναλώσει όλα τα πληρωμένα του μαθήματα. Πρέπει να πληρώσει σήμερα.</span>
-                        </div>
-                        <div class="finance-balance-item">
-                            <span class="finance-balance-label negative">Αρνητικό (-)</span>
-                            <span>Ο αθλητής χρωστάει μαθήματα (π.χ. -1 σημαίνει ήρθε σε ένα μάθημα χωρίς να έχει πληρώσει).</span>
-                        </div>
-                    </div>
-                    <hr>
-                    <p>
-                        * Το υπόλοιπο υπολογίζεται αυτόματα: <strong>Πληρωμένα Μαθήματα</strong> (από καταχωρήσεις) μείον <strong>Παρουσίες</strong> (όπου έχετε τσεκάρει "Ήρθε").
-                    </p>
+            <div class="fin-header">
+                <h2 class="fin-title">Οικονομικά</h2>
+                <div class="fin-header-actions">
+                    <button class="action-btn btn-primary" onclick="refreshFinanceTab()">🔄 Ανανέωση</button>
+                    <button class="action-btn btn-secondary" onclick="openMonthlyReportModal()">📅 Μηνιαία Αναφορά</button>
+                    <a href="export_payments_csv.php" class="action-btn btn-success action-link">📊 Export CSV</a>
                 </div>
             </div>
 
-            <div id="paymentModal" class="modal modal--payment">
-                <div class="modal-content modal-content--sm modal-content--centered">
-                    <span class="close" onclick="closePaymentModal()">&times;</span>
-                    <h3>Προσθήκη Πληρωμής</h3>
-                    <p id="paymentStudentName" class="payment-student-name"></p>
+            <!-- Monthly summary bar -->
+            <div class="fin-summary-bar" id="finSummaryBar">
+                <div class="fin-stat">
+                    <span class="fin-stat-label">Εισπράξεις μήνα</span>
+                    <span class="fin-stat-val" id="finMonthRevenue">—</span>
+                </div>
+                <div class="fin-stat">
+                    <span class="fin-stat-label">Πακέτα μήνα</span>
+                    <span class="fin-stat-val" id="finMonthLessons">—</span>
+                </div>
+                <div class="fin-stat">
+                    <span class="fin-stat-label">Αθλητές με χρέος</span>
+                    <span class="fin-stat-val fin-stat-debt" id="finDebtCount">—</span>
+                </div>
+                <div class="fin-stat">
+                    <span class="fin-stat-label">Θετικό υπόλοιπο</span>
+                    <span class="fin-stat-val fin-stat-ok" id="finCreditCount">—</span>
+                </div>
+            </div>
 
-                    <div class="payment-form">
-                        <label>Ποσό (€):</label>
-                        <input type="number" id="payAmount" value="25" class="form-input">
+            <!-- Location filter -->
+            <div class="fin-search-bar">
+                <select id="financeLocationFilter" onchange="filterFinanceCards()" class="form-control fin-location-filter">
+                    <option value="">Όλες οι τοποθεσίες</option>
+                </select>
+            </div>
 
-                        <label>Μαθήματα Πακέτου:</label>
-                        <input type="number" id="payLessons" value="4" class="form-input">
+            <!-- Athlete balance cards -->
+            <div id="financeCardsGrid" class="fin-cards-grid">
+                <p class="loading-msg">Φόρτωση...</p>
+            </div>
+        </div>
 
-                        <label>Σημειώσεις (προαιρετικό):</label>
-                        <input type="text" id="payNotes" placeholder="π.χ. Αδέρφια, Private" class="form-input">
+        <!-- ── Add Payment Modal ──────────────────────── -->
+        <div id="paymentModal" class="modal-overlay" style="display:none;">
+            <div class="modal-box modal-box-md">
+                <div class="modal-header">
+                    <div>
+                        <h3>Προσθήκη Πληρωμής</h3>
+                        <p id="paymentAthleteLabel" class="modal-subtitle"></p>
+                    </div>
+                    <button class="modal-close-btn" onclick="closePaymentModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="paymentForm">
+                        <input type="hidden" id="pf_athlete_id">
 
-                        <button class="action-btn btn-success btn-block" onclick="submitPayment()">
-                            Καταχώρηση Πληρωμής
-                        </button>
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Τύπος Πληρωμής</label>
+                                <select id="pf_type" class="form-control" onchange="onPayTypeChange()">
+                                    <option value="prepaid">💳 Προπληρωμή</option>
+                                    <option value="free">🎁 Δωρεάν</option>
+                                    <option value="gift">🎀 Δώρο</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Τρόπος Πληρωμής</label>
+                                <select id="pf_method" class="form-control">
+                                    <option value="cash">💵 Μετρητά</option>
+                                    <option value="card">💳 Κάρτα</option>
+                                    <option value="transfer">🏦 Τραπεζική Μεταφορά</option>
+                                    <option value="other">Άλλο</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Αριθμός Μαθημάτων</label>
+                                <input type="number" id="pf_lessons" class="form-control"
+                                    value="4" min="1" max="100" oninput="calcPricePerLesson()">
+                            </div>
+                            <div class="form-group" id="pf_amount_group">
+                                <label>Αξία (€) <span id="pf_price_hint" class="form-hint"></span></label>
+                                <input type="number" id="pf_amount" class="form-control"
+                                    value="100" min="0" step="0.5" oninput="calcPricePerLesson()">
+                            </div>
+                        </div>
+
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Ημερομηνία</label>
+                                <input type="date" id="pf_date" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Σημειώσεις <span class="form-hint">(προαιρετικό)</span></label>
+                                <input type="text" id="pf_notes" class="form-control" placeholder="π.χ. Αδέρφια, Private">
+                            </div>
+                        </div>
+
+                        <div id="paymentFormMessage" style="display:none;" class="form-message"></div>
+
+                        <div class="modal-footer-btns">
+                            <button type="button" class="action-btn btn-secondary" onclick="closePaymentModal()">Άκυρο</button>
+                            <button type="submit" class="action-btn btn-success">💾 Αποθήκευση</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Athlete History Modal ──────────────────── -->
+        <div id="athleteHistoryModal" class="modal-overlay" style="display:none;">
+            <div class="modal-box modal-box-lg">
+                <div class="modal-header">
+                    <div>
+                        <h3 id="historyAthleteName">Καρτέλα Αθλητή</h3>
+                        <p id="historySummaryLine" class="modal-subtitle"></p>
+                    </div>
+                    <button class="modal-close-btn" onclick="closeHistoryModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Balance strip -->
+                    <div id="historyBalanceStrip" class="history-balance-strip"></div>
+
+                    <div class="history-cols">
+                        <div class="history-col">
+                            <h4 class="history-col-title">💳 Πληρωμές</h4>
+                            <div id="historyPaymentsList" class="history-list"></div>
+                        </div>
+                        <div class="history-col">
+                            <h4 class="history-col-title">✅ Παρουσίες</h4>
+                            <div id="historyAttendanceList" class="history-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Monthly Report Modal ──────────────────── -->
+        <div id="monthlyReportModal" class="modal-overlay" style="display:none;">
+            <div class="modal-box modal-box-md">
+                <div class="modal-header">
+                    <h3>📅 Μηνιαία Αναφορά (12 μήνες)</h3>
+                    <button class="modal-close-btn" onclick="closeMonthlyReportModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div id="monthlyReportContent">
+                        <p class="loading-msg">Φόρτωση...</p>
                     </div>
                 </div>
             </div>
@@ -506,148 +877,257 @@ require_once PROJECT_ROOT . 'partials/header.php';
     <div id="addAthleteModal" class="modal modal--add-athlete">
         <div class="modal-content modal-content--md modal-content--centered">
             <span class="close" onclick="closeAddAthleteModal()">&times;</span>
-            <h3>Νέα Καταχώρηση Αθλητή</h3>
+            <h3 id="athleteModalTitle">Νέα Καταχώρηση Αθλητή</h3>
             <hr>
             <form id="addAthleteForm" class="form-stack">
+                <input type="hidden" id="af_athlete_id">
                 <div class="form-row">
-                    <input type="text" name="first_name" placeholder="Όνομα" required class="form-input">
-                    <input type="text" name="last_name" placeholder="Επίθετο" required class="form-input">
+                    <input type="text" id="af_first_name" placeholder="Όνομα *" required class="form-input">
+                    <input type="text" id="af_last_name" placeholder="Επίθετο *" required class="form-input">
                 </div>
-                <input type="text" name="phone" placeholder="Τηλέφωνο Επικοινωνίας" class="form-input">
                 <div class="form-row">
-                    <input type="number" name="age" placeholder="Ηλικία" class="form-input">
-                    <select name="region" required class="form-input">
-                        <option value="">Επιλογή Περιοχής</option>
-                        <option value="Μαρούσι">Μαρούσι</option>
-                        <option value="ΟΑΚΑ">ΟΑΚΑ</option>
-                        <option value="Σχολείο">Σχολείο</option>
-                        <option value="ΕΚΠΑ">ΕΚΠΑ</option>
+                    <input type="date" id="af_birth_date" class="form-input" placeholder="Ημ. Γέννησης">
+                    <input type="text" id="af_phone" placeholder="Τηλέφωνο" class="form-input">
+                </div>
+                <div class="form-row">
+                    <select id="af_location" class="form-input">
+                        <option value="">— Περιοχή —</option>
+                        <?php foreach ($locations as $loc): ?>
+                            <option value="<?php echo (int)$loc['id']; ?>"><?php echo htmlspecialchars($loc['name']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <input type="text" id="af_shoe_size" placeholder="Νούμερο παπουτσιού" class="form-input">
+                </div>
+                <div class="form-row">
+                    <select id="af_shirt_size" class="form-input">
+                        <option value="">— Μέγεθος μπλούζας —</option>
+                        <option value="XS">XS</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
                     </select>
                 </div>
-                <button type="submit" class="action-btn btn-success btn-block">Αποθήκευση</button>
-                <form id="addAthleteForm">
-                    <input type="hidden" id="athlete_id" name="athlete_id">
-
-                    <h3 id="modalTitle">Νέα Καταχώρηση Αθλητή</h3>
-                </form>
-            </form>
-            <div id="addAthleteMessage" class="form-message"></div>
-        </div>
-    </div>
-
-    <!-- Class Modal -->
-    <div id="addClassModal" class="modal modal--add-class">
-        <div class="modal-content modal-content--sm modal-content--centered">
-            <h3>Δημιουργία Νέας Προπόνησης</h3>
-            <form id="addClassForm">
-                <div class="form-group">
-                    <label>Τίτλος Τμήματος:</label><br>
-                    <input type="text" name="title" placeholder="π.χ. Αρχάριοι Α1" required class="form-input">
-                </div>
-                <div class="form-group">
-                    <label>Περιοχή:</label><br>
-                    <select name="location" required class="form-input">
-                        <option value="Μαρούσι">Μαρούσι</option>
-                        <option value="ΟΑΚΑ">ΟΑΚΑ</option>
-                        <option value="Σχολείο">Σχολείο</option>
-                        <option value="ΕΚΠΑ">ΕΚΠΑ</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Ημερομηνία & Ώρα:</label><br>
-                    <input type="datetime-local" name="lesson_datetime" required class="form-input">
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="action-btn btn-muted" onclick="closeAddClassModal()">Άκυρο</button>
-                    <button type="submit" class="action-btn btn-success">Δημιουργία</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Manage Class Modal -->
-    <div id="manageClassModal" class="modal modal--manage">
-        <div class="modal-content modal-content--lg">
-            <span class="close" onclick="closeManageClassModal()">&times;</span>
-
-            <div class="modal-header-row">
-                <div id="editableHeader">
-                    <div class="modal-title-group">
-                        <h2 id="modalClassTitle" class="modal-title"></h2>
-                        <span class="icon-edit" onclick="toggleEditMode(true)" title="Επεξεργασία">✏️</span>
+                <div class="form-group" style="margin-top:8px;">
+                    <label class="profile-info-label" style="margin-bottom:6px;display:block;">Ενδιαφέροντα</label>
+                    <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                        <label><input type="checkbox" id="af_rides"> 🛼 Βόλτες</label>
+                        <label><input type="checkbox" id="af_races"> 🏁 Αγώνες</label>
+                        <label><input type="checkbox" id="af_ski"> ⛷️ Σκι</label>
+                        <label><input type="checkbox" id="af_skating"> ⛸️ Πατινάζ</label>
+                        <label><input type="checkbox" id="af_hockey"> 🏒 Χόκεϊ</label>
                     </div>
-                    <p id="modalClassDetails" class="modal-subtitle"></p>
                 </div>
+                <div class="form-row" style="margin-top:8px;">
+                    <input type="text" id="af_amka" placeholder="ΑΜΚΑ" class="form-input">
+                    <input type="text" id="af_afm" placeholder="ΑΦΜ" class="form-input">
+                </div>
+                <div id="addAthleteMessage" class="form-message" style="display:none;margin-top:8px;"></div>
+                <div class="form-actions" style="margin-top:12px;">
+                    <button type="button" class="action-btn btn-muted" onclick="closeAddAthleteModal()">Άκυρο</button>
+                    <button type="submit" class="action-btn btn-success">Αποθήκευση</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                <button class="btn-danger-outline" onclick="deleteCurrentLesson()">
-                    <span>🗑</span> Διαγραφή
-                </button>
+    <!-- Athlete Profile Modal -->
+    <div id="athleteProfileModal" class="modal" style="display:none;">
+        <div class="modal-content modal-content--md">
+            <span class="close" onclick="closeAthleteProfileModal()">&times;</span>
+
+            <div class="profile-modal-header">
+                <div class="profile-avatar" id="apAvatar">?</div>
+                <div>
+                    <div class="profile-modal-name" id="apFullName">—</div>
+                    <div class="profile-modal-username" id="apAccount">—</div>
+                </div>
             </div>
 
-            <div id="editFieldsContainer" class="edit-fields">
-                <div class="form-grid">
-                    <div>
-                        <label class="form-label">Τίτλος:</label>
-                        <input type="text" id="editTitle" class="form-input">
+            <hr class="divider">
+
+            <div class="profile-info-grid ap-info-grid">
+                <div class="profile-info-item">
+                    <span class="profile-info-label">📞 Τηλέφωνο</span>
+                    <span id="apPhone" class="profile-info-value ap-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">🎂 Ημ. Γέννησης</span>
+                    <span id="apBirth" class="profile-info-value ap-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">📍 Περιοχή</span>
+                    <span id="apLocation" class="profile-info-value ap-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">👟 Νούμερο παπουτσιού</span>
+                    <span id="apShoe" class="profile-info-value ap-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">👕 Μέγεθος μπλούζας</span>
+                    <span id="apShirt" class="profile-info-value ap-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">🪪 ΑΜΚΑ</span>
+                    <span id="apAmka" class="profile-info-value ap-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">🧾 ΑΦΜ</span>
+                    <span id="apAfm" class="profile-info-value ap-value"></span>
+                </div>
+                <div class="profile-info-item profile-info-item--full">
+                    <span class="profile-info-label">🏅 Ενδιαφέροντα</span>
+                    <span id="apInterests" class="profile-info-value ap-value"></span>
+                </div>
+            </div>
+
+            <!-- Parent section (shown only when parent exists) -->
+            <div id="apParentSection" style="display:none;">
+                <hr class="divider">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <span style="font-weight:700;font-size:0.88rem;color:#374151;">👨‍👧 Στοιχεία Γονέα</span>
+                    <button class="action-btn btn-info" style="padding:3px 10px;font-size:0.78rem;" onclick="toggleParentInfo()">Εμφάνιση</button>
+                </div>
+                <div id="apParentInfo" style="display:none;" class="profile-info-grid ap-info-grid">
+                    <div class="profile-info-item">
+                        <span class="profile-info-label">👤 Όνομα</span>
+                        <span id="apParentName" class="profile-info-value ap-value"></span>
                     </div>
-                    <div>
-                        <label class="form-label">Περιοχή:</label>
-                        <select id="editLocation" class="form-input">
+                    <div class="profile-info-item">
+                        <span class="profile-info-label">📞 Τηλέφωνο</span>
+                        <span id="apParentPhone" class="profile-info-value ap-value"></span>
+                    </div>
+                    <div class="profile-info-item profile-info-item--full">
+                        <span class="profile-info-label">📧 Email</span>
+                        <span id="apParentEmail" class="profile-info-value ap-value"></span>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="profile-modal-actions">
+                <button class="action-btn role-btn" onclick="editAthleteFromProfile()">✏️ Επεξεργασία</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- User Profile Modal -->
+    <div id="userProfileModal" class="modal modal--profile">
+        <div class="modal-content modal-content--md modal-content--centered">
+            <span class="close" onclick="closeUserProfileModal()">&times;</span>
+
+            <div class="profile-modal-header">
+                <div class="profile-avatar" id="profileAvatar"></div>
+                <div class="profile-modal-title">
+                    <h2 id="profileFullName" class="profile-name"></h2>
+                    <span id="profileUsernameDisplay" class="profile-username-tag"></span>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <!-- View Mode -->
+            <div id="profileInfoGrid" class="profile-info-grid">
+                <div class="profile-info-item">
+                    <span class="profile-info-label">📧 Email</span>
+                    <span id="profileEmail" class="profile-info-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">📞 Τηλέφωνο</span>
+                    <span id="profilePhone" class="profile-info-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">📍 Περιοχή</span>
+                    <span id="profileRegion" class="profile-info-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">🎂 Ηλικία</span>
+                    <span id="profileAge" class="profile-info-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">🎭 Ρόλος</span>
+                    <span id="profileRoleDisplay" class="profile-info-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">🏅 Τύπος</span>
+                    <span id="profileRoleTypeDisplay" class="profile-info-value"></span>
+                </div>
+                <div class="profile-info-item">
+                    <span class="profile-info-label">✅ Κατάσταση</span>
+                    <span id="profileStatusDisplay" class="profile-info-value"></span>
+                </div>
+                <div class="profile-info-item profile-info-item--full">
+                    <span class="profile-info-label">📅 Εγγραφή</span>
+                    <span id="profileCreatedAt" class="profile-info-value"></span>
+                </div>
+            </div>
+
+            <!-- Edit Mode (hidden by default) -->
+            <div id="profileEditForm" style="display:none">
+                <div class="profile-info-grid">
+                    <div class="profile-info-item">
+                        <label class="profile-info-label" for="editFirstName">Όνομα</label>
+                        <input type="text" id="editFirstName" class="form-input form-input--sm" placeholder="Όνομα">
+                    </div>
+                    <div class="profile-info-item">
+                        <label class="profile-info-label" for="editLastName">Επίθετο</label>
+                        <input type="text" id="editLastName" class="form-input form-input--sm" placeholder="Επίθετο">
+                    </div>
+                    <div class="profile-info-item">
+                        <label class="profile-info-label" for="editEmail">📧 Email</label>
+                        <input type="email" id="editEmail" class="form-input form-input--sm" placeholder="email@example.com">
+                    </div>
+                    <div class="profile-info-item">
+                        <label class="profile-info-label" for="editPhone">📞 Τηλέφωνο</label>
+                        <input type="text" id="editPhone" class="form-input form-input--sm" placeholder="69xxxxxxxx">
+                    </div>
+                    <div class="profile-info-item">
+                        <label class="profile-info-label" for="editRegion">📍 Περιοχή</label>
+                        <select id="editRegion" class="form-input form-input--sm">
+                            <option value="">— Χωρίς Περιοχή —</option>
                             <option value="Μαρούσι">Μαρούσι</option>
                             <option value="ΟΑΚΑ">ΟΑΚΑ</option>
                             <option value="Σχολείο">Σχολείο</option>
                             <option value="ΕΚΠΑ">ΕΚΠΑ</option>
                         </select>
                     </div>
-                    <div class="form-grid-span">
-                        <label class="form-label">Ημερομηνία & Ώρα:</label>
-                        <input type="datetime-local" id="editDatetime" class="form-input">
+                    <div class="profile-info-item">
+                        <label class="profile-info-label" for="editAge">🎂 Ηλικία</label>
+                        <input type="number" id="editAge" class="form-input form-input--sm" placeholder="π.χ. 25" min="1" max="99">
                     </div>
                 </div>
-                <div class="form-actions">
-                    <button class="action-btn btn-muted" onclick="toggleEditMode(false)">Άκυρο</button>
-                    <button class="action-btn btn-primary" onclick="saveClassChanges()">Αποθήκευση</button>
-                </div>
+                <div id="profileEditMessage" class="form-message" style="display:none; margin-top:10px;"></div>
             </div>
 
             <hr class="divider">
 
-            <div class="dual-column">
-                <div class="dual-column-left">
-                    <h3>Προσθήκη Αθλητών</h3>
-                    <input type="text" id="memberSearch" placeholder="Αναζήτηση αθλητή..." class="form-input">
-                    <div id="suggestedAthletes" class="list-box">
-                        <p class="muted-text">Φόρτωση προτάσεων...</p>
-                    </div>
+            <!-- Athletes Section -->
+            <div id="profileAthletesSection">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <span style="font-weight:700;font-size:0.9rem;color:#374151;">🏅 Καρτέλες Αθλητή</span>
+                    <button class="action-btn btn-info" style="padding:4px 12px;font-size:0.8rem;" onclick="loadUserAthletes()">Εμφάνιση</button>
                 </div>
-
-                <div>
-                    <h3>Συμμετέχοντες (<span id="participantCount">0</span>)</h3>
-                    <div id="currentParticipants" class="list-scroll">
-                    </div>
-                </div>
+                <div id="profileAthletesList"></div>
             </div>
-        </div>
-    </div>
 
-    <!-- finance tab , athlete card modal -->
-    <div id="athleteHistoryModal" class="modal modal--history">
-        <div class="modal-content modal-content--xl">
-            <span class="close" onclick="closeHistoryModal()">&times;</span>
+            <hr class="divider">
 
-            <h2 id="historyStudentName" class="history-title">Καρτέλα Αθλητή</h2>
-            <p id="historySummary" class="history-summary"></p>
+            <!-- View Mode Actions -->
+            <div id="profileViewActions" class="profile-modal-actions">
+                <button class="action-btn role-btn" onclick="enterProfileEditMode()">✏️ Επεξεργασία</button>
+                <button class="action-btn btn-info" onclick="sendPasswordResetFromProfile()">🔑 Reset Password</button>
+                <button id="profileToggleRoleBtn" class="action-btn btn-secondary" onclick="changeRoleFromProfile()">🔄 Ρόλος</button>
+                <button id="profileToggleStatusBtn" class="action-btn btn-warning" onclick="toggleUserStatusFromProfile()">⏸ Απενεργοποίηση</button>
+                <button id="profileDeleteBtn" class="action-btn delete-btn" onclick="deleteUserFromProfile()">🗑 Διαγραφή</button>
+            </div>
 
-            <div class="history-grid">
-                <div>
-                    <h4 class="history-heading history-heading--primary">🗓️ Ιστορικό Παρουσιών</h4>
-                    <div id="attendanceList" class="history-list"></div>
-                </div>
-
-                <div>
-                    <h4 class="history-heading history-heading--success">💰 Ιστορικό Πληρωμών</h4>
-                    <div id="paymentsList" class="history-list"></div>
-                </div>
+            <!-- Edit Mode Actions (hidden by default) -->
+            <div id="profileEditActions" class="profile-modal-actions" style="display:none">
+                <button class="action-btn btn-success" onclick="saveProfileEdit()">💾 Αποθήκευση</button>
+                <button class="action-btn btn-muted" onclick="exitProfileEditMode()">✗ Άκυρο</button>
             </div>
         </div>
     </div>
@@ -695,6 +1175,18 @@ require_once PROJECT_ROOT . 'partials/header.php';
     document.addEventListener('DOMContentLoaded', function() {
         // Τρέχουμε τη συνάρτηση από το ui-manager.js για τα Tabs
         // showTabFromStorage();
+
+        // Auto-update lesson statuses on page load
+        fetch(BASE_URL + "admin/update_lesson_statuses.php", {
+                method: "POST"
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.updated > 0) {
+                    location.reload();
+                }
+            })
+            .catch(() => {});
 
         // Αν θέλεις να φορτώνουν τα οικονομικά με το που ανοίγει η σελίδα (αν είναι το ενεργό tab)
         if (localStorage.getItem('activeTab') === 'finance-tab') {

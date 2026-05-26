@@ -1,38 +1,34 @@
 <?php
-// delete_payment.php
-// Purpose: Delete a payment record (admin only).
-require_once  __DIR__ . '/../config.php';
-session_start();
+// admin/delete_payment.php
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../access_control.php';
+
 header('Content-Type: application/json');
+restrict_access('admin');
 
-// 1. Require admin session
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-    echo json_encode(['status' => 'error', 'message' => 'Δεν έχετε δικαίωμα πρόσβασης.']);
+$data       = json_decode(file_get_contents('php://input'), true) ?? [];
+$payment_id = !empty($data['payment_id']) ? (int)$data['payment_id'] : 0;
+
+if (!$payment_id) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Μη έγκυρο payment_id.']);
     exit;
 }
-
-// 2. Read JSON payload
-$input = file_get_contents("php://input");
-$data = json_decode($input, true);
-
-// Validate payment_id
-if (!isset($data['payment_id']) || empty($data['payment_id'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Λείπει το ID πληρωμής.']);
-    exit;
-}
-
-$payment_id = $data['payment_id'];
 
 try {
-    // 3. Delete payment
-    $stmt = $pdo->prepare("DELETE FROM payments_history WHERE id = ?");
+    $stmt = $pdo->prepare("DELETE FROM payments WHERE id = ?");
     $stmt->execute([$payment_id]);
 
-    if ($stmt->rowCount() > 0) {
-        echo json_encode(['status' => 'success']);
+    if ($stmt->rowCount()) {
+        echo json_encode(['status' => 'success', 'message' => 'Η πληρωμή διαγράφηκε.']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Η πληρωμή δεν βρέθηκε στη βάση.']);
+        echo json_encode(['status' => 'error', 'message' => 'Η πληρωμή δεν βρέθηκε.']);
     }
 } catch (PDOException $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
+    error_log('delete_payment error: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Σφάλμα βάσης δεδομένων.']);
 }
+exit;

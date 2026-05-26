@@ -1,30 +1,38 @@
 <?php
-// get_finance_overview.php
-// Purpose: Return payment/attendance balance overview per athlete.
-require_once  __DIR__ . '/../config.php';
-session_start();
+// admin/get_finance_overview.php
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../access_control.php';
+
 header('Content-Type: application/json');
+restrict_access('admin');
 
 try {
-    // This query:
-    // 1. Counts total paid lessons
-    // 2. Counts attended lessons (attended = 1)
-    // 3. Produces the balance per athlete
-    $stmt = $pdo->query("
-        SELECT 
-            u.id, 
-            u.first_name, 
-            u.last_name, 
-            u.phone,
-            IFNULL((SELECT SUM(lessons_added) FROM payments_history WHERE user_id = u.id), 0) as total_paid,
-            IFNULL((SELECT COUNT(*) FROM lesson_enrollments WHERE user_id = u.id AND attended = 1), 0) as total_attended
-        FROM users u
-        WHERE u.role = 'user'
-        ORDER BY u.last_name ASC
-    ");
-    $athletes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // All athletes with balance from the view
+    $athletes = $pdo->query("
+        SELECT * FROM athlete_balance ORDER BY athlete_name ASC
+    ")->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode(['status' => 'success', 'data' => $athletes]);
+    // Monthly summary (current month)
+    $summary = $pdo->query("
+        SELECT
+            COALESCE(SUM(CASE WHEN payment_type = 'prepaid' THEN amount ELSE 0 END), 0)     AS month_revenue,
+            COALESCE(SUM(lessons_purchased), 0)                                              AS month_lessons_sold,
+            COUNT(DISTINCT athlete_id)                                                       AS month_athletes_paying
+        FROM payments
+        WHERE YEAR(payment_date)  = YEAR(CURDATE())
+          AND MONTH(payment_date) = MONTH(CURDATE())
+    ")->fetch(PDO::FETCH_ASSOC);
+
+    echo json_encode([
+        'status'   => 'success',
+        'athletes' => $athletes,
+        'summary'  => $summary,
+    ]);
 } catch (PDOException $e) {
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    error_log('get_finance_overview error: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Σφάλμα βάσης δεδομένων.']);
 }
+exit;

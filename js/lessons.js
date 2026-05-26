@@ -1,356 +1,394 @@
-// lessons.js
-// Purpose: Admin UI logic for managing classes, participants, and attendance.
+// js/lessons.js
+// Classes tab: create/edit lessons, manage athletes, attendance.
 
-// Open/Close Class Modal
+// ── State ─────────────────────────────────────────────────────
+let _currentLessonId = null;
+
+// ── Create / Edit Modal ───────────────────────────────────────
+
 function openAddClassModal() {
-  document.getElementById("addClassModal").style.display = "block";
+  document.getElementById("cf_lesson_id").value = "";
+  document.getElementById("addClassForm").reset();
+  document.getElementById("classFormMessage").style.display = "none";
+  document.getElementById("classModalTitle").textContent = "Νέα Προπόνηση";
+  document.getElementById("addClassModal").style.display = "flex";
 }
 
-// Close the add-class modal
 function closeAddClassModal() {
   document.getElementById("addClassModal").style.display = "none";
 }
 
-// Handle Class Form Submission
+function editLesson(btn) {
+  const card = btn.closest(".class-card");
+  let l = {};
+  try {
+    l = JSON.parse(card.getAttribute("data-lesson") || "{}");
+  } catch (_) {}
+
+  document.getElementById("cf_lesson_id").value = l.id || "";
+  document.getElementById("cf_lesson_type").value = l.lesson_type || "rollers";
+  document.getElementById("cf_location_id").value = l.location_id || "";
+  document.getElementById("cf_title").value = l.title || "";
+  document.getElementById("cf_status").value = l.status || "scheduled";
+  document.getElementById("cf_weather").value = l.weather_condition || "";
+  document.getElementById("cf_temperature").value =
+    l.temperature !== null && l.temperature !== undefined ? l.temperature : "";
+  document.getElementById("cf_notes").value = l.notes || "";
+
+  // datetime-local needs "YYYY-MM-DDTHH:mm"
+  document.getElementById("cf_datetime").value = l.lesson_datetime
+    ? l.lesson_datetime.slice(0, 16)
+    : "";
+
+  document.getElementById("classFormMessage").style.display = "none";
+  document.getElementById("classModalTitle").textContent =
+    "✏️ Επεξεργασία Προπόνησης";
+  document.getElementById("addClassModal").style.display = "flex";
+}
+
 document
   .getElementById("addClassForm")
-  .addEventListener("submit", function (e) {
-    e.preventDefault(); // Σταματάμε το κλασικό refresh της φόρμας
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    const formData = {
-      title: this.title.value,
-      location: this.location.value,
-      lesson_datetime: this.lesson_datetime.value,
+    const msgEl = document.getElementById("classFormMessage");
+    const btn = e.target.querySelector('[type="submit"]');
+    btn.disabled = true;
+
+    const tempVal = document.getElementById("cf_temperature").value;
+    const payload = {
+      lesson_id: document.getElementById("cf_lesson_id").value || null,
+      title: document.getElementById("cf_title").value.trim(),
+      lesson_type: document.getElementById("cf_lesson_type").value,
+      location_id: document.getElementById("cf_location_id").value || null,
+      lesson_datetime: document.getElementById("cf_datetime").value,
+      weather_condition: document.getElementById("cf_weather").value,
+      temperature: tempVal !== "" ? tempVal : null,
+      notes: document.getElementById("cf_notes").value.trim(),
+      status: document.getElementById("cf_status").value,
     };
 
-    fetch("add_class_handler.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === "success") {
-          alert(data.message);
-          location.reload(); // Προσωρινά κάνουμε reload για να δούμε αν μπήκε
-        } else {
-          alert("Σφάλμα: " + data.message);
-        }
-      })
-      .catch((error) => console.error("Error:", error));
+    try {
+      const res = await fetch("save_lesson.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await res.json();
+
+      msgEl.textContent = result.message;
+      msgEl.style.color = result.status === "success" ? "#27ae60" : "#e74c3c";
+      msgEl.style.display = "";
+
+      if (result.status === "success") {
+        setTimeout(() => location.reload(), 1000);
+      }
+    } catch {
+      msgEl.textContent = "Σφάλμα επικοινωνίας.";
+      msgEl.style.color = "#e74c3c";
+      msgEl.style.display = "";
+    } finally {
+      btn.disabled = false;
+    }
   });
 
-// Manage Class Modal Functions
-let currentOpenClassId = null; // Κρατάμε το ID του μαθήματος που δουλεύουμε
+// ── Delete Lesson ─────────────────────────────────────────────
 
-// Open the manage modal for a specific class
-function manageClass(classId) {
-  currentOpenClassId = classId;
-  document.getElementById("manageClassModal").style.display = "block";
+async function deleteLesson(id) {
+  if (
+    !confirm("Διαγραφή προπόνησης; Θα αφαιρεθούν και όλες οι εγγραφές αθλητών.")
+  )
+    return;
 
-  // Εδώ θα καλούμε μια συνάρτηση που θα φέρνει τους αθλητές μέσω AJAX
-  // Για τώρα, απλά καθαρίζουμε τις λίστες
-  document.getElementById("currentParticipants").innerHTML = "Φόρτωση...";
-  loadClassData(classId);
+  try {
+    const res = await fetch("delete_lesson.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lesson_id: id }),
+    });
+    const result = await res.json();
+    if (result.status === "success") location.reload();
+    else alert(result.message || "Σφάλμα διαγραφής.");
+  } catch {
+    alert("Σφάλμα επικοινωνίας.");
+  }
 }
 
-// Close the manage modal and clear selection
+// ── Manage Athletes Modal ─────────────────────────────────────
+
+async function manageClass(lessonId) {
+  _currentLessonId = lessonId;
+
+  document.getElementById("manageClassTitle").textContent = "Φόρτωση…";
+  document.getElementById("manageClassSubtitle").textContent = "";
+  document.getElementById("enrolledAthletesList").innerHTML =
+    '<p class="loading-msg">Φόρτωση αθλητών…</p>';
+  document.getElementById("athleteSearchInput").value = "";
+  document.getElementById("athleteSearchResults").innerHTML = "";
+  document.getElementById("manageClassModal").style.display = "flex";
+
+  try {
+    const res = await fetch("get_lesson_details.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lesson_id: lessonId }),
+    });
+    const result = await res.json();
+    if (result.status !== "success") {
+      alert(result.message);
+      return;
+    }
+
+    const l = result.lesson;
+    const dt = new Date(l.lesson_datetime);
+    const dateStr = dt.toLocaleDateString("el-GR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    const timeStr = dt.toLocaleTimeString("el-GR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    const typeLabels = {
+      rollers: "🛼 Rollers",
+      iceskate: "⛸️ Ice Skate",
+      hockey: "🏒 Hockey",
+      ski: "⛷️ Ski",
+      fitness: "🏋️ Fitness",
+    };
+
+    document.getElementById("manageClassTitle").textContent =
+      typeLabels[l.lesson_type] || l.lesson_type;
+    document.getElementById("manageClassSubtitle").textContent =
+      (l.location_name ? l.location_name + "  ·  " : "") +
+      dateStr +
+      "  " +
+      timeStr;
+
+    renderEnrolledAthletes(result.athletes);
+    _doSearch(); // pre-load available athletes
+  } catch {
+    document.getElementById("enrolledAthletesList").innerHTML =
+      '<p style="color:red">Σφάλμα φόρτωσης.</p>';
+  }
+}
+
+function renderEnrolledAthletes(athletes) {
+  const list = document.getElementById("enrolledAthletesList");
+  document.getElementById("enrolledCount").textContent = athletes.length;
+
+  if (!athletes.length) {
+    list.innerHTML =
+      '<p class="empty-enrolled">Δεν υπάρχουν εγγεγραμμένοι αθλητές.</p>';
+    return;
+  }
+
+  list.innerHTML = athletes
+    .map(
+      (a) => `
+    <div class="enrolled-athlete-row" id="enrolled-${a.id}">
+      <label class="attendance-label">
+        <input type="checkbox" class="attendance-cb"
+               ${a.attended ? "checked" : ""}
+               onchange="toggleAttendance(${a.id}, this.checked)">
+        <span class="attendance-dot ${a.attended ? "present" : "absent"}"></span>
+      </label>
+      <div class="enrolled-info">
+        <span class="enrolled-name">${escHtml(a.first_name + " " + a.last_name)}</span>
+        ${a.location_name ? `<span class="enrolled-meta">${escHtml(a.location_name)}</span>` : ""}
+      </div>
+      <button class="remove-athlete-btn" onclick="removeAthleteFromLesson(${a.id})" title="Αφαίρεση">✕</button>
+    </div>
+  `,
+    )
+    .join("");
+}
+
 function closeManageClassModal() {
   document.getElementById("manageClassModal").style.display = "none";
-  currentOpenClassId = null;
+  _currentLessonId = null;
 }
 
-// Load class details, suggestions, and participants
-function loadClassData(classId) {
-  fetch(`get_class_details.php?id=${classId}`)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success") {
-        // 1. Ενημέρωση στατικών στοιχείων
-        document.getElementById("modalClassTitle").innerText =
-          data.lesson.title;
-        document.getElementById("modalClassDetails").innerText =
-          `${data.lesson.location} | ${data.lesson.lesson_datetime}`;
+// ── Search & Add Athletes ─────────────────────────────────────
 
-        // 2. Προετοιμασία πεδίων επεξεργασίας (Input fields)
-        document.getElementById("editTitle").value = data.lesson.title;
-        document.getElementById("editLocation").value = data.lesson.location;
-        // Μετατροπή ημερομηνίας για το input datetime-local
-        const dt = data.lesson.lesson_datetime
-          .replace(" ", "T")
-          .substring(0, 16);
-        document.getElementById("editDatetime").value = dt;
+let _searchTimer = null;
 
-        // 3. Εμφάνιση Προτάσεων & Συμμετεχόντων (τα είχαμε ήδη)
-        renderSuggestions(data.suggestions);
-        renderParticipants(data.participants);
-      }
-    });
+function searchAthletesForLesson() {
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(_doSearch, 280);
 }
 
-// Render participant list with attendance/payment controls
-function renderParticipants(participants) {
-  let partHTML = "";
-  participants.forEach((p) => {
-    // Ελέγχουμε αν είναι τσεκαρισμένα βάσει των δεδομένων από τη βάση
-    const attendedChecked = p.attended == 1 ? "checked" : "";
-    const paidChecked = p.payment_status === "paid" ? "checked" : "";
+async function _doSearch() {
+  const term = document.getElementById("athleteSearchInput").value.trim();
+  const resultsEl = document.getElementById("athleteSearchResults");
 
-    partHTML += `
-            <div style="padding: 10px; background: #f9f9f9; margin-bottom: 5px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid ${p.attended == 1 ? "#27ae60" : "#ccc"};">
-                <span style="font-weight: bold;">${p.first_name} ${p.last_name}</span>
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <label style="font-size: 0.85em; cursor:pointer;">
-                        <input type="checkbox" ${attendedChecked} onchange="updateStatus(${p.id}, 'attended', this.checked)"> Ήρθε
-                    </label>
-                    <label style="font-size: 0.85em; cursor:pointer;">
-                        <input type="checkbox" ${paidChecked} onchange="updateStatus(${p.id}, 'payment', this.checked)"> Πληρώθηκε
-                    </label>
-                    <button onclick="removeFromClass(${p.id})" style="background: none; color: #e74c3c; border: none; cursor: pointer; font-weight: bold; margin-left: 10px;">&times;</button>
-                </div>
-            </div>`;
-  });
-  document.getElementById("currentParticipants").innerHTML =
-    partHTML || "<p>Κανένας αθλητής ακόμα.</p>";
-  document.getElementById("participantCount").innerText = participants.length;
-}
-
-// Add athlete to current class and refresh UI
-function addAthleteToClass(athleteId) {
-  if (!currentOpenClassId) return;
-
-  fetch("add_athlete_to_class.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      lesson_id: currentOpenClassId,
-      user_id: athleteId,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success") {
-        const searchInput = document.getElementById("memberSearch");
-
-        // 1. Αν ο χρήστης έχει γράψει κάτι στην αναζήτηση (πάνω από 1 χαρακτήρα)
-        if (searchInput.value.trim().length >= 2) {
-          // "Πυροδοτούμε" ξανά την αναζήτηση για να ανανεωθεί η αριστερή λίστα
-          // χωρίς να χαθούν τα αποτελέσματα του 'Γιώργος'
-          searchInput.dispatchEvent(new Event("input"));
-
-          // Φέρνουμε μόνο τους συμμετέχοντες για να ανανεωθεί η δεξιά λίστα
-          fetch(`get_class_details.php?id=${currentOpenClassId}`)
-            .then((res) => res.json())
-            .then((resData) => {
-              renderParticipants(resData.participants);
-              // Ενημέρωση του μετρητή στην κάρτα (στο background)
-              const countSpan = document.getElementById(
-                `card-count-${currentOpenClassId}`,
-              );
-              if (countSpan) {
-                countSpan.innerText = `Συμμετοχές: ${resData.participants.length}`;
-              }
-            });
-        } else {
-          // 2. Αν δεν υπάρχει αναζήτηση, κάνουμε το κλασικό loadClassData
-          loadClassData(currentOpenClassId);
-
-          // Μικρή καθυστέρηση για να προλάβει το DOM να κάνει render πριν μετρήσουμε
-          setTimeout(() => {
-            const countSpan = document.getElementById(
-              `card-count-${currentOpenClassId}`,
-            );
-            const currentCount = document.querySelectorAll(
-              "#currentParticipants > div",
-            ).length;
-            if (countSpan) {
-              countSpan.innerText = `Συμμετοχές: ${currentCount}`;
-            }
-          }, 100);
-        }
-      } else {
-        alert(data.message);
-      }
-    });
-}
-
-// Remove athlete from current class
-function removeFromClass(athleteId) {
-  if (!confirm("Σίγουρα θέλετε να αφαιρέσετε τον αθλητή από το μάθημα;"))
-    return;
-
-  fetch("remove_athlete_from_class.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      lesson_id: currentOpenClassId,
-      user_id: athleteId,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success") {
-        const countSpan = document.getElementById(
-          `card-count-${currentOpenClassId}`,
-        );
-        const currentCount = document.querySelectorAll(
-          "#currentParticipants > div",
-        ).length;
-        if (countSpan) {
-          countSpan.innerText = `Συμμετοχές: ${currentCount}`;
-        }
-        loadClassData(currentOpenClassId);
-      }
-    });
-}
-
-// Update attendance or payment status for an athlete
-function updateStatus(athleteId, type, isChecked) {
-  fetch("update_enrollment_status.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      lesson_id: currentOpenClassId,
-      user_id: athleteId,
-      type: type,
-      value: isChecked,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success") {
-        // Προαιρετικά: Ξαναφορτώνουμε τα δεδομένα για να ενημερωθεί το UI (π.χ. το χρώμα στο border)
-        loadClassData(currentOpenClassId);
-      } else {
-        alert("Σφάλμα κατά την ενημέρωση");
-      }
-    });
-}
-
-// Live search athletes as user types
-document.getElementById("memberSearch").addEventListener("input", function (e) {
-  const query = e.target.value;
-
-  // Αν το πεδίο είναι άδειο, ξαναφόρτωσε τις προτάσεις περιοχής
-  if (query.length < 2) {
-    loadClassData(currentOpenClassId);
+  if (term.length === 1) {
+    resultsEl.innerHTML = "";
     return;
   }
 
-  fetch(`search_athletes.php?q=${query}&class_id=${currentOpenClassId}`)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success") {
-        let resultsHTML = "";
-        data.results.forEach((athlete) => {
-          resultsHTML += `
-                    <div style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; background: #fff4e6;">
-                        <span>${athlete.first_name} ${athlete.last_name} <small>(${athlete.region})</small></span>
-                        <button onclick="addAthleteToClass(${athlete.id})" style="background: #e67e22; color: white; border: none; padding: 2px 8px; border-radius: 3px; cursor: pointer;">+</button>
-                    </div>`;
-        });
-        document.getElementById("suggestedAthletes").innerHTML =
-          resultsHTML || '<p style="padding:10px;">Δεν βρέθηκε αθλητής.</p>';
-      }
+  resultsEl.innerHTML = '<p class="loading-msg">Αναζήτηση…</p>';
+
+  try {
+    const res = await fetch("search_athletes_for_lesson.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ term, lesson_id: _currentLessonId }),
+    });
+    const result = await res.json();
+
+    if (!result.athletes.length) {
+      resultsEl.innerHTML = '<p class="no-results">Δεν βρέθηκαν αθλητές.</p>';
+      return;
+    }
+
+    resultsEl.innerHTML = result.athletes
+      .map(
+        (a) => `
+      <div class="search-result-row" onclick="addAthleteToLesson(${a.id}, '${escAttr(a.full_name)}')">
+        <span class="search-result-name">${escHtml(a.full_name)}</span>
+        ${a.location_name ? `<span class="search-result-meta">${escHtml(a.location_name)}</span>` : ""}
+      </div>
+    `,
+      )
+      .join("");
+  } catch {
+    resultsEl.innerHTML = '<p style="color:red">Σφάλμα αναζήτησης.</p>';
+  }
+}
+
+async function addAthleteToLesson(athleteId) {
+  try {
+    const res = await fetch("add_athlete_to_lesson.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        lesson_id: _currentLessonId,
+        athlete_id: athleteId,
+      }),
+    });
+    const result = await res.json();
+    if (result.status !== "success") {
+      alert(result.message);
+      return;
+    }
+
+    await _refreshEnrolled();
+    _doSearch(); // refresh available list (removes just-added athlete)
+    _updateCardCount();
+  } catch {
+    alert("Σφάλμα επικοινωνίας.");
+  }
+}
+
+async function removeAthleteFromLesson(athleteId) {
+  try {
+    const res = await fetch("remove_athlete_from_lesson.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        lesson_id: _currentLessonId,
+        athlete_id: athleteId,
+      }),
+    });
+    const result = await res.json();
+    if (result.status !== "success") {
+      alert(result.message);
+      return;
+    }
+
+    const row = document.getElementById("enrolled-" + athleteId);
+    if (row) row.remove();
+
+    const enrolled = document.querySelectorAll(
+      "#enrolledAthletesList .enrolled-athlete-row",
+    );
+    document.getElementById("enrolledCount").textContent = enrolled.length;
+    if (!enrolled.length) {
+      document.getElementById("enrolledAthletesList").innerHTML =
+        '<p class="empty-enrolled">Δεν υπάρχουν εγγεγραμμένοι αθλητές.</p>';
+    }
+    _doSearch(); // refresh available list (re-adds removed athlete)
+    _updateCardCount();
+  } catch {
+    alert("Σφάλμα επικοινωνίας.");
+  }
+}
+
+// ── Attendance ────────────────────────────────────────────────
+
+async function toggleAttendance(athleteId, attended) {
+  const dot = document.querySelector(`#enrolled-${athleteId} .attendance-dot`);
+
+  try {
+    const res = await fetch("toggle_attendance.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        lesson_id: _currentLessonId,
+        athlete_id: athleteId,
+        attended,
+      }),
+    });
+    const result = await res.json();
+    if (result.status === "success" && dot) {
+      dot.className = "attendance-dot " + (attended ? "present" : "absent");
+    }
+  } catch {
+    const cb = document.querySelector(`#enrolled-${athleteId} .attendance-cb`);
+    if (cb) cb.checked = !attended;
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+
+async function _refreshEnrolled() {
+  try {
+    const res = await fetch("get_lesson_details.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lesson_id: _currentLessonId }),
+    });
+    const result = await res.json();
+    if (result.status === "success") renderEnrolledAthletes(result.athletes);
+  } catch {
+    /* silent */
+  }
+}
+
+function _updateCardCount() {
+  const count = document.querySelectorAll(
+    "#enrolledAthletesList .enrolled-athlete-row",
+  ).length;
+  const span = document.getElementById("card-count-" + _currentLessonId);
+  if (span) span.textContent = "👥 " + count + " αθλητές";
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+function escAttr(str) {
+  return String(str).replace(/'/g, "\\'");
+}
+
+// ── Init ──────────────────────────────────────────────────────
+
+document.addEventListener("DOMContentLoaded", () => {
+  const addModal = document.getElementById("addClassModal");
+  if (addModal)
+    addModal.addEventListener("click", (e) => {
+      if (e.target === addModal) closeAddClassModal();
+    });
+
+  const manageModal = document.getElementById("manageClassModal");
+  if (manageModal)
+    manageModal.addEventListener("click", (e) => {
+      if (e.target === manageModal) closeManageClassModal();
     });
 });
-
-// Delete the currently selected lesson
-function deleteCurrentLesson() {
-  if (!currentOpenClassId) return;
-
-  if (
-    !confirm(
-      "ΠΡΟΣΟΧΗ: Θέλετε να διαγράψετε οριστικά αυτή την προπόνηση και όλα τα δεδομένα παρουσιών;",
-    )
-  ) {
-    return;
-  }
-
-  fetch("delete_lesson.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      lesson_id: currentOpenClassId,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success") {
-        alert(data.message);
-        location.reload(); // Ανανέωση για να εξαφανιστεί η κάρτα
-      } else {
-        alert("Σφάλμα: " + data.message);
-      }
-    });
-}
-
-// Placeholder for additional edit logic (currently unused)
-function editClassInfo() {
-  const currentTitle = document.getElementById("modalClassTitle").innerText;
-  const headerContainer = document.querySelector(
-    "#manageClassModal .modal-content div:nth-child(2)",
-  );
-}
-
-// Toggle between view and edit mode in the manage modal
-function toggleEditMode(show) {
-  document.getElementById("editableHeader").style.display = show
-    ? "none"
-    : "block";
-  document.getElementById("editFieldsContainer").style.display = show
-    ? "block"
-    : "none";
-}
-
-// Save changes to the class details
-function saveClassChanges() {
-  const updatedData = {
-    id: currentOpenClassId,
-    title: document.getElementById("editTitle").value,
-    location: document.getElementById("editLocation").value,
-    datetime: document.getElementById("editDatetime").value,
-  };
-
-  fetch("update_class_details.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(updatedData),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success") {
-        toggleEditMode(false);
-        loadClassData(currentOpenClassId); // Φρεσκάρισμα δεδομένων στο Modal
-        // Προαιρετικά alert('Ενημερώθηκε!');
-      } else {
-        alert("Σφάλμα: " + data.message);
-      }
-    });
-}
-
-// Render suggested athletes list
-function renderSuggestions(suggestions) {
-  let suggHTML = "";
-  suggestions.forEach((athlete) => {
-    suggHTML += `
-            <div style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
-                <span>${athlete.first_name} ${athlete.last_name} <small>(${athlete.region})</small></span>
-                <button onclick="addAthleteToClass(${athlete.id})" style="background: #27ae60; color: white; border: none; padding: 2px 8px; border-radius: 3px; cursor: pointer;">+</button>
-            </div>`;
-  });
-  document.getElementById("suggestedAthletes").innerHTML =
-    suggHTML || '<p style="padding:10px;">Δεν βρέθηκαν προτεινόμενοι.</p>';
-}

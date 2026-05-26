@@ -1,23 +1,29 @@
 <?php
-// delete_lesson.php
-// Purpose: Delete a lesson (admin only).
-require_once  __DIR__ . '/../config.php';
-session_start();
+// admin/delete_lesson.php
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../access_control.php';
+
 header('Content-Type: application/json');
+restrict_access('admin');
 
-// Require admin session
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-    exit(json_encode(['status' => 'error', 'message' => 'Unauthorized']));
+$data      = json_decode(file_get_contents('php://input'), true) ?? [];
+$lesson_id = !empty($data['lesson_id']) ? (int)$data['lesson_id'] : 0;
+
+if (!$lesson_id) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Μη έγκυρο lesson_id.']);
+    exit;
 }
-
-// Read JSON payload
-$data = json_decode(file_get_contents("php://input"), true);
-$lesson_id = $data['lesson_id'] ?? 0;
 
 try {
-    $stmt = $pdo->prepare("DELETE FROM lessons WHERE id = ?");
-    $stmt->execute([$lesson_id]);
+    $pdo->prepare("DELETE FROM lesson_athletes WHERE lesson_id = ?")->execute([$lesson_id]);
+    $pdo->prepare("DELETE FROM lessons WHERE id = ?")->execute([$lesson_id]);
     echo json_encode(['status' => 'success', 'message' => 'Η προπόνηση διαγράφηκε.']);
 } catch (PDOException $e) {
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    error_log('delete_lesson error: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Σφάλμα βάσης δεδομένων.']);
 }
+exit;

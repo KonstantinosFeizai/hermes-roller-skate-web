@@ -45,7 +45,7 @@ function restrict_access($required_roles, $redirect_page = 'index.php')
     if ($current_role === 'user') {
         $current_page = basename($_SERVER['PHP_SELF']);
 
-        if ($current_page !== 'profile.php') {
+        if (!in_array($current_page, ['profile.php', 'onboarding.php'])) {
             $user_id = $_SESSION['user_id'] ?? null;
 
             if ($user_id) {
@@ -62,7 +62,7 @@ function restrict_access($required_roles, $redirect_page = 'index.php')
                     || trim($profile['region'] ?? '') === '';
 
                 if ($is_incomplete) {
-                    header("Location: " . asset('user/profile.php') . '#profile');
+                    header("Location: " . asset('user/onboarding'));
                     exit;
                 }
             }

@@ -88,7 +88,7 @@ try {
             ];
 
             if ($profile_incomplete && !$needs_terms) {
-                $response['redirect'] = asset('user/profile.php') . '#profile';
+                $response['redirect'] = asset('user/onboarding');
             }
 
             // Successful login: clear failed-attempt history

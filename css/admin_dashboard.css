@@ -137,12 +137,25 @@ body {
 }
 
 .status-confirmed {
-  color: green;
-  font-weight: bold;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
 }
 
 .status-pending {
-  color: orange;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffe0b2;
 }
 
 /* Buttons */
@@ -1392,4 +1405,1125 @@ select:focus,
 textarea:focus {
   outline: 2px solid #3498db;
   outline-offset: 2px;
+}
+
+/* ============================================================
+   ACCOUNTS TAB — user table enhancements & profile modal
+   ============================================================ */
+
+.user-fullname {
+  font-weight: 600;
+  color: #374c52;
+  font-size: 0.9rem;
+}
+
+.user-username {
+  font-size: 0.78rem;
+  color: #171b1b;
+}
+
+/* Athlete profile modal — darker text on white background */
+.ap-value {
+  color: #1e293b !important;
+  font-weight: 600;
+}
+
+#athleteProfileModal .profile-info-label {
+  color: #64748b;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.role-badge.role-admin {
+  background: rgba(231, 76, 60, 0.18);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.4);
+}
+
+.role-badge.role-user {
+  background: rgba(52, 152, 219, 0.15);
+  color: #3498db;
+  border: 1px solid rgba(52, 152, 219, 0.35);
+}
+
+/* Profile modal */
+.modal--profile {
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 4px;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3498db, #2ecc71);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: 1px;
+}
+
+.profile-modal-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ecf0f1;
+  margin: 0;
+}
+
+.profile-username-tag {
+  font-size: 0.82rem;
+  color: #95a5a6;
+}
+
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+  margin: 16px 0;
+}
+
+.profile-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.profile-info-item--full {
+  grid-column: 1 / -1;
+}
+
+.profile-info-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #7f8c8d;
+  font-weight: 600;
+}
+
+.profile-info-value {
+  font-size: 0.9rem;
+  color: #000;
+  font-weight: 500;
+}
+
+.profile-modal-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.btn-info {
+  background: rgba(52, 152, 219, 0.15);
+  color: #3498db;
+  border: 1px solid rgba(52, 152, 219, 0.35);
+}
+
+.btn-info:hover {
+  background: rgba(52, 152, 219, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(149, 165, 166, 0.15);
+  color: #95a5a6;
+  border: 1px solid rgba(149, 165, 166, 0.35);
+}
+
+.btn-secondary:hover {
+  background: rgba(149, 165, 166, 0.28);
+}
+
+/* Compact inputs inside the profile edit form */
+.form-input--sm {
+  padding: 6px 10px;
+  font-size: 0.88rem;
+  height: auto;
+}
+
+/* Error message in the edit form */
+.form-message--error {
+  background: rgba(231, 76, 60, 0.12);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.35);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+/* Success message in the edit form */
+.form-message--success {
+  background: rgba(46, 204, 113, 0.12);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.35);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+/* Role-type badge (next to Ρόλος column and in profile modal) */
+.role-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.role-type-athlete {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+}
+.role-type-parent {
+  background: rgba(124, 58, 237, 0.12);
+  color: #6d28d9;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+}
+.role-type-coach {
+  background: rgba(5, 150, 105, 0.12);
+  color: #047857;
+  border: 1px solid rgba(5, 150, 105, 0.25);
+}
+
+/* Athlete cards inside the profile modal */
+.modal-athlete-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+.modal-athlete-name {
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+.modal-athlete-meta {
+  color: #64748b;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .profile-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-modal-actions {
+    justify-content: stretch;
+  }
+
+  .profile-modal-actions .action-btn {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* ===================================================
+   CLASSES TAB
+   =================================================== */
+
+/* ── Generic modal overlay (used by addClassModal + manageClassModal) ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(2, 6, 23, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(2, 6, 23, 0.22);
+  width: 100%;
+  overflow: hidden;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--admin-border);
+  flex-shrink: 0;
+}
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--admin-text);
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+.modal-close-btn:hover {
+  color: #e74c3c;
+  background: #fff1f2;
+}
+
+.modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.classes-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 4px 0 24px;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  color: var(--admin-muted);
+  font-size: 0.95rem;
+  padding: 40px 0;
+  text-align: center;
+}
+
+/* Lesson card */
+.class-card {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  padding: 18px 20px 16px;
+  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition:
+    box-shadow 0.18s,
+    transform 0.18s;
+}
+.class-card:hover {
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.1);
+  transform: translateY(-2px);
+}
+
+.class-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.class-card-type {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Lesson type badge */
+.lesson-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.lesson-type-rollers {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+.lesson-type-iceskate {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+.lesson-type-hockey {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.lesson-type-ski {
+  background: #f5f3ff;
+  color: #5b21b6;
+  border: 1px solid #ddd6fe;
+}
+.lesson-type-fitness {
+  background: #fff1f2;
+  color: #9f1239;
+  border: 1px solid #fecdd3;
+}
+
+/* Lesson status badge */
+.lesson-status-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.status-scheduled {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+.status-completed {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+.status-cancelled {
+  background: #fff1f2;
+  color: #9f1239;
+  border: 1px solid #fecdd3;
+}
+
+.card-delete-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  line-height: 1;
+  transition:
+    color 0.15s,
+    background 0.15s;
+  flex-shrink: 0;
+}
+.card-delete-btn:hover {
+  color: #e74c3c;
+  background: #fff1f2;
+}
+
+.class-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--admin-text);
+  margin: 0;
+}
+
+.class-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.83rem;
+  color: var(--admin-muted);
+}
+.meta-icon {
+  font-size: 0.9rem;
+}
+.meta-sep {
+  color: #cbd5e1;
+}
+
+.class-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--admin-border);
+}
+
+.class-card-count {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--admin-muted);
+}
+
+.card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-edit-sm {
+  font-size: 0.78rem;
+  padding: 5px 10px;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+.btn-edit-sm:hover {
+  background: #e2e8f0;
+}
+
+/* ── Form helpers ─── */
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.form-group label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+}
+.form-hint {
+  font-weight: 400;
+  color: #94a3b8;
+  font-size: 0.78rem;
+}
+.form-control {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.87rem;
+  background: #fff;
+  color: #1e293b;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.form-control:focus {
+  outline: none;
+  border-color: var(--admin-brand);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+textarea.form-control {
+  resize: vertical;
+}
+
+.form-message {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.modal-footer-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+.btn-secondary {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+.btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+/* ── Modal sizes ─── */
+.modal-box-md {
+  max-width: 560px;
+}
+.modal-box-lg {
+  max-width: 820px;
+}
+
+.modal-subtitle {
+  font-size: 0.82rem;
+  color: var(--admin-muted);
+  margin: 2px 0 0;
+}
+
+/* ── Manage class modal layout ─── */
+.manage-class-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 20px;
+}
+
+.manage-col h4 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #334155;
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.count-badge {
+  background: var(--admin-brand);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.athlete-search-wrap {
+  margin-bottom: 10px;
+}
+
+.athlete-search-results {
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  overflow-y: auto;
+  max-height: 300px;
+  background: #fff;
+}
+
+.search-result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.13s;
+  gap: 8px;
+}
+.search-result-row:last-child {
+  border-bottom: none;
+}
+.search-result-row:hover {
+  background: #f0f9ff;
+}
+
+.search-result-name {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+.search-result-meta {
+  font-size: 0.76rem;
+  color: var(--admin-muted);
+}
+
+.no-results,
+.loading-msg {
+  padding: 12px;
+  font-size: 0.83rem;
+  color: var(--admin-muted);
+  text-align: center;
+}
+
+/* Enrolled athletes */
+.enrolled-list {
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  overflow-y: auto;
+  max-height: 380px;
+}
+
+.enrolled-athlete-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.13s;
+}
+.enrolled-athlete-row:last-child {
+  border-bottom: none;
+}
+.enrolled-athlete-row:hover {
+  background: #f8fafc;
+}
+
+.attendance-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.attendance-cb {
+  display: none;
+}
+
+.attendance-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.18s;
+}
+.attendance-dot.present {
+  background: #22c55e;
+}
+.attendance-dot.absent {
+  background: #e2e8f0;
+  border: 2px solid #cbd5e1;
+}
+
+.enrolled-info {
+  flex: 1;
+  min-width: 0;
+}
+.enrolled-name {
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.enrolled-meta {
+  font-size: 0.76rem;
+  color: var(--admin-muted);
+}
+
+.empty-enrolled {
+  padding: 20px;
+  font-size: 0.83rem;
+  color: var(--admin-muted);
+  text-align: center;
+}
+
+.remove-athlete-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  border-radius: 6px;
+  line-height: 1;
+  transition:
+    color 0.15s,
+    background 0.15s;
+  flex-shrink: 0;
+}
+.remove-athlete-btn:hover {
+  color: #e74c3c;
+  background: #fff1f2;
+}
+
+@media (max-width: 700px) {
+  .manage-class-body {
+    grid-template-columns: 1fr;
+  }
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+  .classes-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===================================================
+   FINANCE TAB
+   =================================================== */
+
+.fin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.fin-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--admin-text);
+}
+.fin-header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Monthly summary bar */
+.fin-summary-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.fin-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.fin-stat-label {
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: var(--admin-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.fin-stat-val {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--admin-text);
+}
+.fin-stat-debt {
+  color: #e74c3c;
+}
+.fin-stat-ok {
+  color: #16a34a;
+}
+
+/* Search */
+.fin-search-bar {
+  margin-bottom: 18px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.fin-search-input {
+  max-width: 320px;
+}
+
+/* Cards grid */
+.fin-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.fin-card {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  padding: 18px 18px 14px;
+  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition:
+    box-shadow 0.18s,
+    transform 0.18s;
+}
+.fin-card:hover {
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.1);
+  transform: translateY(-2px);
+}
+
+.fin-card-top {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.fin-card-name {
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--admin-text);
+}
+.fin-card-location {
+  font-size: 0.78rem;
+  color: var(--admin-muted);
+}
+
+.fin-balance-row {
+  display: flex;
+}
+.fin-balance-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+.balance-positive {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+.balance-zero {
+  background: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fde68a;
+}
+.balance-negative {
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+}
+
+.fin-card-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--admin-muted);
+}
+.fin-card-meta strong {
+  color: var(--admin-text);
+}
+
+.fin-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--admin-border);
+}
+.fin-card-actions .action-btn {
+  font-size: 0.78rem;
+  padding: 6px 12px;
+  flex: 1;
+  text-align: center;
+}
+
+/* History balance strip */
+.history-balance-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.hbs-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+}
+.hbs-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--admin-muted);
+  text-transform: uppercase;
+}
+.hbs-item strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--admin-text);
+}
+
+/* History two-column layout */
+.history-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.history-col-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 10px;
+}
+.history-list {
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  overflow-y: auto;
+  max-height: 320px;
+}
+.empty-history {
+  padding: 16px;
+  font-size: 0.83rem;
+  color: var(--admin-muted);
+  text-align: center;
+}
+
+/* Payment rows in history */
+.history-pay-row {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: opacity 0.2s;
+}
+.history-pay-row:last-child {
+  border-bottom: none;
+}
+.hpr-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.hpr-lessons {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #16a34a;
+}
+.hpr-amount {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--admin-text);
+}
+.hpr-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--admin-muted);
+}
+.hpr-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+.hpr-btn {
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--admin-border);
+  background: #f8fafc;
+  cursor: pointer;
+  color: #334155;
+  transition: background 0.13s;
+}
+.hpr-btn:hover {
+  background: #e2e8f0;
+}
+.hpr-delete:hover {
+  background: #fff1f2;
+  color: #e11d48;
+  border-color: #fecdd3;
+}
+
+/* Attendance rows */
+.history-att-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.83rem;
+}
+.history-att-row:last-child {
+  border-bottom: none;
+}
+.hat-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.hat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hat-date {
+  font-weight: 600;
+  color: var(--admin-text);
+}
+.hat-loc {
+  color: var(--admin-muted);
+  font-size: 0.75rem;
+}
+
+@media (max-width: 700px) {
+  .fin-summary-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fin-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .history-cols {
+    grid-template-columns: 1fr;
+  }
+  .history-balance-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fin-search-bar {
+    flex-direction: column;
+  }
+  .fin-location-filter {
+    width: 100%;
+  }
+}
+
+/* ── Location filter ─────────────────────────────────────── */
+.fin-search-input {
+  flex: 1 1 auto;
+}
+.fin-location-filter {
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+/* ── Monthly Report table ────────────────────────────────── */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.report-table th {
+  background: #f1f5f9;
+  color: var(--admin-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 2px solid var(--admin-border);
+}
+.report-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: var(--admin-text);
+}
+.report-table tfoot td {
+  border-top: 2px solid var(--admin-border);
+  border-bottom: none;
+  background: #f8fafc;
+}
+.report-table tbody tr:hover {
+  background: #f8fafc;
+}
+.report-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }

@@ -26,7 +26,19 @@ function showTab(event, tabId) {
   if (tabId === "athletes-tab") {
     // Use a short delay so the tab is rendered before filtering
     setTimeout(() => {
-      filterByRegion("all");
+      filterByRegion(0);
     }, 50);
+  }
+
+  // 6. If classes tab, update lesson statuses (auto-complete past lessons)
+  if (tabId === "classes-tab") {
+    fetch(BASE_URL + "admin/update_lesson_statuses.php", { method: "POST" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.updated > 0) {
+          location.reload();
+        }
+      })
+      .catch(() => {});
   }
 }

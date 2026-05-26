@@ -1,252 +1,316 @@
+// js/athletes.js
+// Athletes tab: search, filter (by location), sort, add/edit/delete, profile modal.
+// All data comes from the athletes table; rows carry data-athlete JSON.
+
+// ── Athlete Profile Modal ─────────────────────────────────────
+
+let _activeAthlete = null;
+
+function openAthleteProfile(btn) {
+  const row = btn.closest("tr");
+  let a = {};
+  try {
+    a = JSON.parse(row.getAttribute("data-athlete") || "{}");
+  } catch (_) {}
+  _activeAthlete = a;
+
+  const initials =
+    ((a.first_name?.[0] || "") + (a.last_name?.[0] || "")).toUpperCase() || "?";
+  document.getElementById("apAvatar").textContent = initials;
+  document.getElementById("apFullName").textContent =
+    (a.first_name + " " + a.last_name).trim() || "—";
+  document.getElementById("apAccount").textContent = a.linked_username
+    ? "@" + a.linked_username
+    : "Χωρίς λογαριασμό";
+
+  document.getElementById("apPhone").textContent = a.phone || "—";
+  document.getElementById("apBirth").textContent = a.birth_date || "—";
+  document.getElementById("apLocation").textContent = a.location_name || "—";
+  document.getElementById("apShoe").textContent = a.shoe_size || "—";
+  document.getElementById("apShirt").textContent = a.shirt_size || "—";
+  document.getElementById("apAmka").textContent = a.amka || "—";
+  document.getElementById("apAfm").textContent = a.afm || "—";
+
+  const interests = [];
+  if (a.interest_rides) interests.push("🛼 Βόλτες");
+  if (a.interest_races) interests.push("🏁 Αγώνες");
+  if (a.interest_ski) interests.push("⛷️ Σκι");
+  if (a.interest_skating) interests.push("⛸️ Πατινάζ");
+  if (a.interest_hockey) interests.push("🏒 Χόκεϊ");
+  document.getElementById("apInterests").textContent = interests.length
+    ? interests.join("  ·  ")
+    : "—";
+
+  // Parent section
+  const parentSection = document.getElementById("apParentSection");
+  const parentInfo = document.getElementById("apParentInfo");
+  if (a.parent_id && a.parent_full_name) {
+    document.getElementById("apParentName").textContent =
+      a.parent_full_name || "—";
+    document.getElementById("apParentPhone").textContent =
+      a.parent_phone || "—";
+    document.getElementById("apParentEmail").textContent =
+      a.parent_email || "—";
+    parentSection.style.display = "";
+    parentInfo.style.display = "none";
+    const toggleBtn = parentSection.querySelector("button");
+    if (toggleBtn) toggleBtn.textContent = "Εμφάνιση";
+  } else {
+    parentSection.style.display = "none";
+  }
+
+  document.getElementById("athleteProfileModal").style.display = "flex";
+}
+
+function toggleParentInfo() {
+  const info = document.getElementById("apParentInfo");
+  const btn = document.querySelector("#apParentSection button");
+  const shown = info.style.display !== "none";
+  info.style.display = shown ? "none" : "";
+  if (btn) btn.textContent = shown ? "Εμφάνιση" : "Απόκρυψη";
+}
+
+function closeAthleteProfileModal() {
+  document.getElementById("athleteProfileModal").style.display = "none";
+  _activeAthlete = null;
+}
+
+function editAthleteFromProfile() {
+  if (!_activeAthlete) return;
+  const a = _activeAthlete; // save before close nullifies it
+  closeAthleteProfileModal();
+  editAthleteData(a);
+}
+
+// ── Add / Edit modal open/close ───────────────────────────────
+
 function openAddAthleteModal() {
-  document.getElementById("addAthleteModal").style.display = "block";
+  document.getElementById("af_athlete_id").value = "";
+  document.getElementById("addAthleteForm").reset();
+  document.getElementById("addAthleteMessage").style.display = "none";
+  document.getElementById("athleteModalTitle").textContent =
+    "Νέα Καταχώρηση Αθλητή";
+  document.getElementById("addAthleteModal").style.display = "flex";
 }
 
 function closeAddAthleteModal() {
   document.getElementById("addAthleteModal").style.display = "none";
-  document.getElementById("addAthleteForm").reset();
-  document.getElementById("addAthleteMessage").style.display = "none";
 }
 
-// Διαχείριση της υποβολής της φόρμας
+function editAthlete(btn) {
+  const row = btn.closest("tr");
+  let a = {};
+  try {
+    a = JSON.parse(row.getAttribute("data-athlete") || "{}");
+  } catch (_) {}
+  editAthleteData(a);
+}
+
+function editAthleteData(a) {
+  document.getElementById("af_athlete_id").value = a.id || "";
+  document.getElementById("af_first_name").value = a.first_name || "";
+  document.getElementById("af_last_name").value = a.last_name || "";
+  document.getElementById("af_birth_date").value = a.birth_date || "";
+  document.getElementById("af_phone").value = a.phone || "";
+  document.getElementById("af_location").value = a.location_id || "";
+  document.getElementById("af_shoe_size").value = a.shoe_size || "";
+  document.getElementById("af_shirt_size").value = a.shirt_size || "";
+  document.getElementById("af_rides").checked = !!a.interest_rides;
+  document.getElementById("af_races").checked = !!a.interest_races;
+  document.getElementById("af_ski").checked = !!a.interest_ski;
+  document.getElementById("af_skating").checked = !!a.interest_skating;
+  document.getElementById("af_hockey").checked = !!a.interest_hockey;
+  document.getElementById("af_amka").value = a.amka || "";
+  document.getElementById("af_afm").value = a.afm || "";
+
+  document.getElementById("addAthleteMessage").style.display = "none";
+  document.getElementById("athleteModalTitle").textContent =
+    "✏️ Επεξεργασία Αθλητή";
+  document.getElementById("addAthleteModal").style.display = "flex";
+}
+
+// ── Save (add / update) ──────────────────────────────────────
+
 document
   .getElementById("addAthleteForm")
   .addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
+    const msgEl = document.getElementById("addAthleteMessage");
+    const btn = e.target.querySelector('[type="submit"]');
+    btn.disabled = true;
 
-    // Ορισμός του messageDiv για να μην πετάξει error αν δεν έχει οριστεί έξω
-    const messageDiv = document.getElementById("addAthleteMessage");
-
-    // Επιλογή αρχείου: αν έχει ID πάμε για update, αλλιώς για add
-    const targetFile = data.athlete_id
-      ? "update_athlete_handler.php"
-      : "add_athlete_handler.php";
+    const payload = {
+      athlete_id: document.getElementById("af_athlete_id").value || null,
+      first_name: document.getElementById("af_first_name").value.trim(),
+      last_name: document.getElementById("af_last_name").value.trim(),
+      birth_date: document.getElementById("af_birth_date").value || null,
+      phone: document.getElementById("af_phone").value.trim(),
+      location_id: document.getElementById("af_location").value || null,
+      shoe_size: document.getElementById("af_shoe_size").value.trim(),
+      shirt_size: document.getElementById("af_shirt_size").value,
+      interest_rides: document.getElementById("af_rides").checked,
+      interest_races: document.getElementById("af_races").checked,
+      interest_ski: document.getElementById("af_ski").checked,
+      interest_skating: document.getElementById("af_skating").checked,
+      interest_hockey: document.getElementById("af_hockey").checked,
+      amka: document.getElementById("af_amka").value.trim() || null,
+      afm: document.getElementById("af_afm").value.trim() || null,
+    };
 
     try {
-      const response = await fetch(targetFile, {
+      const res = await fetch("save_admin_athlete.php", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
+      const result = await res.json();
 
-      const result = await response.json();
+      msgEl.textContent = result.message;
+      msgEl.style.color = result.status === "success" ? "#27ae60" : "#e74c3c";
+      msgEl.style.display = "";
 
-      messageDiv.style.display = "block";
-      messageDiv.textContent = result.message;
-      messageDiv.style.color = response.ok ? "green" : "red";
-
-      if (response.ok) {
-        // Περιμένουμε 1.5 δευτερόλεπτο για να δει ο χρήστης το πράσινο μήνυμα
-        setTimeout(() => {
-          location.reload();
-        }, 1500);
+      if (result.status === "success") {
+        setTimeout(() => location.reload(), 1200);
       }
-    } catch (error) {
-      messageDiv.style.display = "block";
-      messageDiv.textContent = "Σφάλμα επικοινωνίας.";
-      messageDiv.style.color = "red";
-      console.error("Fetch error:", error);
+    } catch {
+      msgEl.textContent = "Σφάλμα επικοινωνίας.";
+      msgEl.style.color = "#e74c3c";
+      msgEl.style.display = "";
+    } finally {
+      btn.disabled = false;
     }
   });
 
-function editAthlete(id) {
-  // 1. Βρίσκουμε τη γραμμή του πίνακα
-  const row = event.target.closest("tr");
-
-  // 2. Παίρνουμε τα δεδομένα από τα κελιά (ή attributes)
-  // Υποθέτουμε ότι το ονοματεπώνυμο είναι στο 1ο κελί (index 0)
-  const fullName = row.cells[0].innerText.split(" ");
-  const firstName = fullName[0];
-  const lastName = fullName.slice(1).join(" "); // Για περιπτώσεις με διπλό επίθετο
-  const phone = row.cells[1].innerText;
-  const age = row.cells[2].innerText;
-  const region = row.getAttribute("data-region");
-
-  // 3. Συμπληρώνουμε τη φόρμα
-  document.getElementById("athlete_id").value = id;
-  document.querySelector('[name="first_name"]').value = firstName;
-  document.querySelector('[name="last_name"]').value = lastName;
-  document.querySelector('[name="phone"]').value = phone === "-" ? "" : phone;
-  document.querySelector('[name="age"]').value = age === "-" ? "" : age;
-  document.querySelector('[name="region"]').value = region;
-
-  // 4. Αλλάζουμε την εμφάνιση του Modal
-  document.getElementById("modalTitle").innerText = "Επεξεργασία Αθλητή";
-  document.getElementById("addAthleteModal").style.display = "block";
-}
-
-// Μην ξεχάσεις να καθαρίζεις το ID όταν ανοίγεις για "Νέα Προσθήκη"
-function openAddAthleteModal() {
-  document.getElementById("athlete_id").value = ""; // Καθαρισμός ID
-  document.getElementById("addAthleteForm").reset();
-  document.getElementById("modalTitle").innerText = "Νέα Καταχώρηση Αθλητή";
-  document.getElementById("addAthleteModal").style.display = "block";
-}
+// ── Delete ───────────────────────────────────────────────────
 
 async function deleteAthlete(id, name) {
-  if (
-    confirm(
-      `Είστε σίγουροι ότι θέλετε να διαγράψετε οριστικά τον αθλητή: ${name};`,
-    )
-  ) {
-    try {
-      const response = await fetch("delete_athlete_handler.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          athlete_id: id,
-        }),
-      });
+  if (!confirm(`Διαγραφή αθλητή "${name}";`)) return;
 
-      const result = await response.json();
-
-      if (response.ok) {
-        alert(result.message);
-        location.reload(); // Ανανέωση για να φύγει η γραμμή
-      } else {
-        alert("Σφάλμα: " + result.message);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Σφάλμα επικοινωνίας με τον διακομιστή.");
-    }
+  try {
+    const res = await fetch("delete_admin_athlete.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ athlete_id: id }),
+    });
+    const result = await res.json();
+    if (result.status === "success") location.reload();
+    else alert(result.message || "Σφάλμα διαγραφής.");
+  } catch {
+    alert("Σφάλμα επικοινωνίας.");
   }
 }
 
-// Αυτό εκτελείται αμέσως μόλις διαβαστεί το script
-const savedTab = localStorage.getItem("activeTab") || "accounts-tab";
-const menuLink = document.querySelector(`li[onclick*="${savedTab}"]`);
+// ── Filter + Search ──────────────────────────────────────────
 
-if (menuLink) {
-  // Καλούμε τη showTab για να γίνουν όλα τα απαραίτητα
-  showTab(
-    {
-      currentTarget: menuLink,
-    },
-    savedTab,
-  );
-} else {
-  showTab(null, "accounts-tab");
-}
+let _activeLocationId = 0; // 0 = all, -1 = no location
 
-// --- ΑΝΑΖΗΤΗΣΗ ΑΘΛΗΤΩΝ ---
-function searchAthletes() {
-  const input = document.getElementById("athleteSearch").value.toLowerCase();
-  // Παίρνουμε μόνο τις γραμμές του tbody για να μην κρύψουμε την κεφαλίδα
-  const rows = document.querySelectorAll("#athletesTable tbody tr.athlete-row");
+function filterByRegion(locationId) {
+  _activeLocationId = locationId;
 
-  rows.forEach((row) => {
-    const name = row.cells[0].innerText.toLowerCase();
-    const phone = row.cells[1].innerText.toLowerCase();
-
-    // Αν το όνομα ή το τηλέφωνο περιέχει αυτό που γράφουμε
-    if (name.includes(input) || phone.includes(input)) {
-      row.style.display = "";
-    } else {
-      row.style.display = "none";
+  document.querySelectorAll(".region-chips .chip").forEach((chip) => {
+    chip.classList.remove("active");
+    if (
+      parseInt(chip.getAttribute("onclick")?.match(/-?\d+/)?.[0]) === locationId
+    ) {
+      chip.classList.add("active");
     }
   });
+
+  filterAthletes();
 }
 
-// --- ΤΑΞΙΝΟΜΗΣΗ ΑΘΛΗΤΩΝ ---
-function sortAthletes() {
-  const table = document.getElementById("athletesTable");
-  const tbody = table.querySelector("tbody");
-  const rows = Array.from(tbody.querySelectorAll("tr.athlete-row"));
-  const sortBy = document.getElementById("athleteSort").value;
+function filterAthletes() {
+  const term = document.getElementById("athleteSearch").value.toLowerCase();
+  const locId = _activeLocationId;
 
+  const rows = document.querySelectorAll("#athletes-table-body tr.athlete-row");
+  rows.forEach((row) => {
+    const name = row.cells[0].textContent.toLowerCase();
+    const phone = row.cells[1].textContent.toLowerCase();
+    const rowLoc = parseInt(row.getAttribute("data-location-id") || "0");
+
+    const matchSearch = !term || name.includes(term) || phone.includes(term);
+    const matchLoc =
+      locId === 0 ||
+      (locId === -1 && rowLoc === 0) ||
+      (locId > 0 && rowLoc === locId);
+
+    row.setAttribute(
+      "data-filtered",
+      matchSearch && matchLoc ? "false" : "true",
+    );
+    if (!matchSearch || !matchLoc) row.style.display = "none";
+  });
+
+  athleteCurrentPage = 1;
+  displayAthletesPage();
+}
+
+function searchAthletes() {
+  filterAthletes();
+}
+
+// ── Sort ─────────────────────────────────────────────────────
+
+function sortAthletes() {
+  const sortBy = document.getElementById("athleteSort").value;
   if (sortBy === "none") return;
 
-  const sortedRows = rows.sort((a, b) => {
-    let valA, valB;
+  const tbody = document.getElementById("athletes-table-body");
+  const rows = Array.from(tbody.querySelectorAll("tr.athlete-row"));
 
-    if (sortBy.includes("name")) {
-      // Κελί 0: Ονοματεπώνυμο
-      valA = a.cells[0].innerText.toLowerCase();
-      valB = b.cells[0].innerText.toLowerCase();
-    } else if (sortBy.includes("age")) {
-      // Κελί 2: Ηλικία (μετατροπή σε αριθμό)
-      valA = parseInt(a.cells[2].innerText) || 0;
-      valB = parseInt(b.cells[2].innerText) || 0;
+  rows.sort((a, b) => {
+    if (sortBy === "name_asc" || sortBy === "name_desc") {
+      const va = a.cells[0].textContent.trim();
+      const vb = b.cells[0].textContent.trim();
+      return sortBy === "name_asc"
+        ? va.localeCompare(vb, "el")
+        : vb.localeCompare(va, "el");
     }
-
-    if (sortBy.endsWith("asc")) {
-      return valA > valB ? 1 : -1;
-    } else {
-      return valA < valB ? 1 : -1;
+    if (sortBy === "birth_asc" || sortBy === "birth_desc") {
+      const va = a.cells[2].textContent.trim();
+      const vb = b.cells[2].textContent.trim();
+      const da = va === "—" ? 0 : new Date(va).getTime();
+      const db = vb === "—" ? 0 : new Date(vb).getTime();
+      return sortBy === "birth_asc" ? db - da : da - db;
     }
+    if (sortBy === "loc_asc") {
+      const va = a.getAttribute("data-location-name") || "";
+      const vb = b.getAttribute("data-location-name") || "";
+      return va.localeCompare(vb, "el");
+    }
+    return 0;
   });
 
-  // Καθαρισμός και επανατοποθέτηση των ταξινομημένων γραμμών
-  rows.forEach((row) => tbody.removeChild(row));
-  sortedRows.forEach((row) => tbody.appendChild(row));
+  rows.forEach((row) => tbody.appendChild(row));
+  displayAthletesPage();
 }
+
+// ── Pagination ───────────────────────────────────────────────
 
 let athleteCurrentPage = 1;
 const athleteRowsPerPage = 10;
 
-// Κεντρική συνάρτηση που ελέγχει ΤΑ ΠΑΝΤΑ (Search + Chips)
-function filterAthletes() {
-  const searchTerm = document
-    .getElementById("athleteSearch")
-    .value.toLowerCase();
-  // Βρίσκουμε ποιο chip είναι ενεργό
-  const activeChip = document.querySelector(".chip.active").innerText;
-  const tbody = document.getElementById("athletes-table-body");
-  const rows = Array.from(tbody.querySelectorAll("tr"));
-
-  rows.forEach((row) => {
-    const name = row.cells[0].textContent.toLowerCase();
-    const phone = row.cells[1].textContent.toLowerCase();
-    const rowRegion = row.getAttribute("data-region");
-
-    const matchesSearch =
-      name.includes(searchTerm) || phone.includes(searchTerm);
-    const matchesRegion = activeChip === "Όλοι" || rowRegion === activeChip;
-
-    // Αντί για style.display, βάζουμε το attribute για το pagination
-    if (matchesSearch && matchesRegion) {
-      row.setAttribute("data-filtered", "false");
-    } else {
-      row.setAttribute("data-filtered", "true");
-      row.style.display = "none";
-    }
-  });
-
-  athleteCurrentPage = 1; // Επαναφορά στην 1η σελίδα
-  displayAthletesPage();
-}
-
-// Εμφάνιση της συγκεκριμένης σελίδας
 function displayAthletesPage() {
   const tbody = document.getElementById("athletes-table-body");
-  const allVisibleRows = Array.from(tbody.querySelectorAll("tr")).filter(
-    (row) => row.getAttribute("data-filtered") !== "true",
+  const visible = Array.from(tbody.querySelectorAll("tr.athlete-row")).filter(
+    (r) => r.getAttribute("data-filtered") !== "true",
   );
 
   const start = (athleteCurrentPage - 1) * athleteRowsPerPage;
   const end = start + athleteRowsPerPage;
-
-  allVisibleRows.forEach((row, index) => {
-    row.style.display = index >= start && index < end ? "" : "none";
+  visible.forEach((row, i) => {
+    row.style.display = i >= start && i < end ? "" : "none";
   });
 
-  updateAthletesPagination(allVisibleRows.length);
+  updateAthletesPagination(visible.length);
 }
 
-// Δημιουργία των κουμπιών Pagination
-function updateAthletesPagination(totalRows) {
-  const totalPages = Math.ceil(totalRows / athleteRowsPerPage);
+function updateAthletesPagination(total) {
+  const totalPages = Math.ceil(total / athleteRowsPerPage);
   const container = document.getElementById("athletesPagination");
   container.innerHTML = "";
-
   if (totalPages <= 1) return;
 
   for (let i = 1; i <= totalPages; i++) {
@@ -265,49 +329,30 @@ function updateAthletesPagination(totalRows) {
   }
 }
 
-// Η νέα filterByRegion που καλεί την κεντρική filterAthletes
-function filterByRegion(region) {
-  const chips = document.querySelectorAll(".chip");
-  chips.forEach((chip) => {
-    chip.classList.remove("active");
-    if (
-      chip.innerText === region ||
-      (region === "all" && chip.innerText === "Όλοι")
-    ) {
-      chip.classList.add("active");
-    }
-  });
+// ── Init ─────────────────────────────────────────────────────
 
-  filterAthletes(); // Καλεί την κεντρική λογική
+const savedTab = localStorage.getItem("activeTab") || "accounts-tab";
+const menuLink = document.querySelector(`li[onclick*="${savedTab}"]`);
+if (menuLink) {
+  showTab({ currentTarget: menuLink }, savedTab);
+} else {
+  showTab(null, "accounts-tab");
 }
 
-// Συνάρτηση για το Search
-function searchAthletes() {
+document.addEventListener("DOMContentLoaded", () => {
   filterAthletes();
-}
 
-// Ταξινόμηση (Sorting)
-function sortAthletes() {
-  const sortBy = document.getElementById("athleteSort").value;
-  const tbody = document.getElementById("athletes-table-body");
-  const rows = Array.from(tbody.querySelectorAll("tr"));
+  const addModal = document.getElementById("addAthleteModal");
+  if (addModal) {
+    addModal.addEventListener("click", (e) => {
+      if (e.target === addModal) closeAddAthleteModal();
+    });
+  }
 
-  rows.sort((a, b) => {
-    let valA, valB;
-    if (sortBy.includes("name")) {
-      valA = a.cells[0].textContent;
-      valB = b.cells[0].textContent;
-      return sortBy === "name_asc"
-        ? valA.localeCompare(valB, "el")
-        : valB.localeCompare(valA, "el");
-    } else if (sortBy.includes("age")) {
-      valA = parseInt(a.cells[2].textContent) || 0;
-      valB = parseInt(b.cells[2].textContent) || 0;
-      return sortBy === "age_asc" ? valA - valB : valB - valA;
-    }
-    return 0;
-  });
-
-  rows.forEach((row) => tbody.appendChild(row));
-  displayAthletesPage(); // Ανανεώνουμε τη σελίδα μετά την ταξινόμηση
-}
+  const profileModal = document.getElementById("athleteProfileModal");
+  if (profileModal) {
+    profileModal.addEventListener("click", (e) => {
+      if (e.target === profileModal) closeAthleteProfileModal();
+    });
+  }
+});
