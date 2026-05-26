@@ -104,6 +104,8 @@ return [
             'athlete_afm' => 'ΑΦΜ',
             'athlete_save' => 'Αποθήκευση',
             'athlete_cancel' => 'Άκυρο',
+            'athlete_no_card_required' => 'Δεν απαιτείται καρτέλα αθλητή για τον ρόλο σου.',
+            'athlete_not_added' => 'Δεν έχεις προσθέσει αθλητή ακόμα.',
             // Finance tab
             'fin_no_athletes'    => 'Δεν υπάρχουν αθλητές συνδεδεμένοι με τον λογαριασμό σου.',
             'fin_purchased'      => 'Αγοράστηκαν',

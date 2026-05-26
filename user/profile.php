@@ -292,6 +292,8 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     'athletes_edit'      => t('profile.labels.athletes_edit'),
                     'athletes_delete'    => t('profile.labels.athletes_delete'),
                     'athlete_form_edit'  => '✏️ ' . t('profile.labels.athlete_form_edit'),
+                    'athlete_no_card_required' => t('profile.labels.athlete_no_card_required'),
+                    'athlete_not_added'  => t('profile.labels.athlete_not_added'),
                 ], JSON_UNESCAPED_UNICODE) ?>;
 </script>
 <script src="<?= getVersionedAssetUrl('js/auth.js') ?>"></script>

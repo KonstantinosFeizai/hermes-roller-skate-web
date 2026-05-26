@@ -104,6 +104,8 @@ return [
             'athlete_afm' => 'AFM',
             'athlete_save' => 'Save',
             'athlete_cancel' => 'Cancel',
+            'athlete_no_card_required' => 'Athlete card is not required for your role.',
+            'athlete_not_added' => 'You haven\'t added an athlete yet.',
             // Finance tab
             'fin_no_athletes'    => 'No athletes linked to your account.',
             'fin_purchased'      => 'Purchased',

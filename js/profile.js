@@ -162,8 +162,10 @@ async function loadAthletes() {
       listEl.innerHTML = `<p style="color:#888;font-size:.9rem;">
                 ${
                   roleType === "none" || roleType === "coach"
-                    ? "Δεν απαιτείται καρτέλα αθλητή για τον ρόλο σου."
-                    : "Δεν έχεις προσθέσει αθλητή ακόμα."
+                    ? window.PT?.athlete_no_card_required ||
+                      "Δεν απαιτείται καρτέλα αθλητή για τον ρόλο σου."
+                    : window.PT?.athlete_not_added ||
+                      "Δεν έχεις προσθέσει αθλητή ακόμα."
                 }
             </p>`;
       return;
