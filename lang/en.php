@@ -778,7 +778,7 @@ return [
                 'head_person' => 'Price / Person',
                 'varies' => 'Depends',
                 'note_title' => 'Note 1:',
-                'note' => 'Equipment rental is 8€ per person (skates, helmet, protective gear). Scheduling is done by phone. Payment after the lesson.'
+                'note' => 'Equipment rental is 10€ (size 26-36) & 15€ (size 37-46) per person (skates, helmet, protective gear). Scheduling is done by phone. Payment after the lesson.'
             ],
             'workshops' => [
                 'title' => 'Special Workshop Pricing',
