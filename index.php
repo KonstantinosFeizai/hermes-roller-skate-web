@@ -63,7 +63,7 @@ $overlaySubtitle = $getEnglishText('home.hero.subtitle', t('home.hero.subtitle')
 ?>
 
 <!-- HOME PAGE CONTENT -->
-<div id="welcome-overlay">
+<!-- <div id="welcome-overlay">
   <div class="welcome-logo-wrap">
 
     <?php include __DIR__ . '/photo/welcome-intro.php'; ?>
@@ -73,7 +73,8 @@ $overlaySubtitle = $getEnglishText('home.hero.subtitle', t('home.hero.subtitle')
     </div>
 
   </div>
-</div>
+</div> -->
+
 <!-- One-time alert message -->
 <?php if ($alert_message): ?>
   <div class="alert alert-<?php echo htmlspecialchars($alert_type); ?>" role="alert">
@@ -121,11 +122,6 @@ $overlaySubtitle = $getEnglishText('home.hero.subtitle', t('home.hero.subtitle')
         <?= htmlspecialchars(t('home.index.announcement.p5')) ?>
       </p>
 
-      <a class="button-link"        
-        href="https://docs.google.com/forms/d/e/1FAIpQLSeAawGRiqE58WiY_K6jB6JIRDhrlj6ZxK-g9eXLRipInN01IA/viewform"      
-        target="_blank" rel="noopener">
-        <?= htmlspecialchars(t('home.index.announcement.cta_team')) ?>
-      </a>
       <br>
       <a class="button-link" href="https://calendly.com/hermesrollerskate/private-lesson-zografou?month=2025-09"  
         target="_blank" rel="noopener">
