@@ -42,7 +42,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
           <figcaption><?= htmlspecialchars(t('benefits.sections.europe.fig1')) ?></figcaption>
         </figure>
         <figure class="modern-card">
-          <div class="img-wrapper"><img src="<?= asset('photo/Barcelona.jpg') ?>" alt="Barcelona"></div>
+          <div class="img-wrapper"><img src="<?= asset('photo/barcelona.jpg') ?>" alt="Barcelona"></div>
           <figcaption><?= htmlspecialchars(t('benefits.sections.europe.fig2')) ?></figcaption>
         </figure>
       </div>
