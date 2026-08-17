@@ -9,7 +9,7 @@ restrict_access(['admin']);
 
 try {
     // Query: users for Accounts tab
-    $stmt = $pdo->query("SELECT id, username, email, role, role_type, is_active, first_name, last_name, phone, region, age, created_at FROM users ORDER BY created_at DESC");
+    $stmt = $pdo->query("SELECT u.id, u.username, u.email, u.role, u.role_type, u.is_active, u.first_name, u.last_name, u.phone, u.region, u.location_id, u.age, u.created_at, loc.name AS location_name FROM users u LEFT JOIN locations loc ON u.location_id = loc.id ORDER BY u.created_at DESC");
     $users = $stmt->fetchAll();
 
     // Query: lessons for Classes tab
@@ -76,7 +76,7 @@ try {
 }
 
 // Include necessary CSS and JS files
-$pageCss = ['css/admin_dashboard.css'];
+$pageCss = ['css/admin_dashboard.css', 'css/thread.css'];
 $pageScripts = [
     'js/accounts.js',
     'js/ui-manager.js',
@@ -85,12 +85,22 @@ $pageScripts = [
     'js/finance.js',
     'js/contact-admin.js',
     'js/table-labels.js',
-    'js/newsletter-admin.js'
+    'js/newsletter-admin.js',
+    'js/thread.js',
+    'js/admin_messages.js'
 ];
 
 // Shared header
 require_once PROJECT_ROOT . 'partials/header.php';
 ?>
+
+<script>
+    // Thread translations for admin
+    window.PT = window.PT || {};
+    window.PT.reply = <?= json_encode(t('profile.labels.reply')) ?>;
+    window.PT.send = <?= json_encode(t('profile.labels.send')) ?>;
+    window.PT.cancel = <?= json_encode(t('profile.labels.cancel')) ?>;
+</script>
 
 <div class="admin-wrapper">
     <nav class="admin-sidebar">
@@ -110,6 +120,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <?php endif; ?>
                 </a></li>
             <li onclick="showTab(event, 'newsletter-tab')" id="newsletter-tab-link">Newsletter</li>
+            <li onclick="showTab(event, 'messages-tab')" id="messages-tab-link">✉️ Μηνύματα</li>
         </ul>
     </nav>
 
@@ -158,6 +169,8 @@ require_once PROJECT_ROOT . 'partials/header.php';
                             'last_name'  => $user['last_name'] ?? '',
                             'phone'      => $user['phone'] ?? '',
                             'region'     => $user['region'] ?? '',
+                            'location_id' => $user['location_id'] ?? null,
+                            'location_name' => $user['location_name'] ?? '',
                             'age'        => $user['age'] ?? '',
                             'role'       => $user['role'],
                             'role_type'  => $user['role_type'] ?? '',
@@ -209,8 +222,21 @@ require_once PROJECT_ROOT . 'partials/header.php';
                 <h2>Διαχείριση Αθλητών</h2>
                 <button class="action-btn btn-success" onclick="openAddAthleteModal()">+ Προσθήκη Αθλητή</button>
             </div>
+
             <div class="table-controls table-controls-inline">
-                <input type="text" id="athleteSearch" oninput="filterAthletes()" placeholder="Αναζήτηση αθλητή (Όνομα ή Τηλέφωνο)..." class="input-compact">
+                <div class="search-input-wrapper" style="position: relative; display: inline-block;">
+                    <input type="text" id="athleteSearch" oninput="filterAthletes()" placeholder="Αναζήτηση (ID, Όνομα ή Τηλέφωνο)..." class="input-compact" style="padding-right: 25px;">
+                    <span id="clearSearchBtn" onclick="clearAthleteSearch()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none; color: #888; font-weight: bold;">✕</span>
+                </div>
+                <!-- Dropdown περιοχών αντί για chips για εξοικονόμηση χώρου -->
+                <select id="regionFilter" onchange="filterByRegion(this.value)" class="form-control fin-location-filter">
+                    <option value="0">Όλες οι περιοχές</option>
+                    <?php foreach ($locations as $loc): ?>
+                        <option value="<?php echo (int)$loc['id']; ?>"><?php echo htmlspecialchars($loc['name']); ?></option>
+                    <?php endforeach; ?>
+                    <option value="-1">Χωρίς Περιοχή</option>
+                </select>
+
                 <select id="athleteSort" onchange="sortAthletes()">
                     <option value="none">Ταξινόμηση ανά...</option>
                     <option value="name_asc">Όνομα (Α-Ω)</option>
@@ -220,17 +246,11 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <option value="loc_asc">Περιοχή (Α-Ω)</option>
                 </select>
             </div>
-            <div class="region-chips">
-                <button class="chip active" onclick="filterByRegion(0)">Όλοι</button>
-                <?php foreach ($locations as $loc): ?>
-                    <button class="chip" onclick="filterByRegion(<?php echo (int)$loc['id']; ?>)"><?php echo htmlspecialchars($loc['name']); ?></button>
-                <?php endforeach; ?>
-                <button class="chip" onclick="filterByRegion(-1)">Χωρίς Περιοχή</button>
-            </div>
 
             <table class="user-table" id="athletesTable">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Ονοματεπώνυμο</th>
                         <th>Τηλέφωνο</th>
                         <th>Ημ. Γέννησης</th>
@@ -269,6 +289,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
                             data-athlete="<?php echo htmlspecialchars($aData); ?>"
                             data-location-id="<?php echo (int)$a['location_id']; ?>"
                             data-location-name="<?php echo htmlspecialchars($a['location_name'] ?? ''); ?>">
+                            <td><strong>#<?php echo (int)$a['id']; ?></strong></td>
                             <td><?php echo htmlspecialchars($a['first_name'] . ' ' . $a['last_name']); ?></td>
                             <td><?php echo htmlspecialchars($a['phone'] ?? '—'); ?></td>
                             <td><?php echo $a['birth_date'] ? htmlspecialchars($a['birth_date']) : '—'; ?></td>
@@ -287,10 +308,8 @@ require_once PROJECT_ROOT . 'partials/header.php';
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <button class="action-btn btn-info"
-                                    onclick="openAthleteProfile(this)">👤 Προφίλ</button>
-                                <button class="action-btn delete-btn btn-spaced"
-                                    onclick="deleteAthlete(<?php echo $a['id']; ?>, '<?php echo htmlspecialchars(addslashes($a['first_name'] . ' ' . $a['last_name'])); ?>')">
+                                <button class="action-btn btn-info" onclick="openAthleteProfile(this)">👤 Προφίλ</button>
+                                <button class="action-btn delete-btn btn-spaced" onclick="deleteAthlete(<?php echo $a['id']; ?>, '<?php echo htmlspecialchars(addslashes($a['first_name'] . ' ' . $a['last_name'])); ?>')">
                                     🗑 Διαγραφή
                                 </button>
                             </td>
@@ -515,10 +534,25 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <div class="manage-col manage-col-search">
                         <h4>Προσθήκη Αθλητή</h4>
                         <div class="athlete-search-wrap">
-                            <input type="text" id="athleteSearchInput"
-                                placeholder="Αναζήτηση αθλητή..."
-                                oninput="searchAthletesForLesson()"
-                                class="form-control">
+                            <select id="athleteSearchLocation" onchange="searchAthletesForLesson()" class="form-control" style="margin-bottom: 8px;">
+                                <option value="">Όλες οι περιοχές</option>
+                                <?php foreach ($locations as $loc): ?>
+                                    <option value="<?php echo (int)$loc['id']; ?>"><?php echo htmlspecialchars($loc['name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="search-input-container" style="position: relative; display: flex; align-items: center;">
+                                <input type="text" id="athleteSearchInput"
+                                    placeholder="Αναζήτηση αθλητή..."
+                                    oninput="debouncedSearch()"
+                                    class="form-control"
+                                    style="padding-right: 30px;">
+                                <span id="clearAthleteSearch"
+                                    onclick="clearSearchInput()"
+                                    style="position: absolute; right: 10px; cursor: pointer; display: none; color: #888; font-weight: bold; font-size: 16px;">
+                                    &times;
+                                </span>
+                            </div>
+
                         </div>
                         <div id="athleteSearchResults" class="athlete-search-results"></div>
                     </div>
@@ -595,7 +629,11 @@ require_once PROJECT_ROOT . 'partials/header.php';
                                 </td>
                                 <td>
                                     <a class="action-btn" href="<?= asset('admin/edit_post') ?>?id=<?php echo $post['id']; ?>">Επεξεργασία</a>
-                                    <a class="action-btn delete-btn" href="<?= asset('admin/delete_post') ?>?id=<?php echo $post['id']; ?>">Διαγραφή</a>
+                                    <a class="action-btn delete-btn"
+                                        onclick="return confirm('Are you sure you want to delete this post?');"
+                                        href="<?= asset('admin/delete_post') ?>?id=<?php echo $post['id']; ?>">
+                                        Διαγραφή
+                                    </a>
                                     <a class="action-btn" target="_blank" href="<?= asset('post') ?>?slug=<?php echo htmlspecialchars($post['slug']); ?>">Προβολή</a>
                                 </td>
                             </tr>
@@ -609,7 +647,6 @@ require_once PROJECT_ROOT . 'partials/header.php';
             <div class="fin-header">
                 <h2 class="fin-title">Οικονομικά</h2>
                 <div class="fin-header-actions">
-                    <button class="action-btn btn-primary" onclick="refreshFinanceTab()">🔄 Ανανέωση</button>
                     <button class="action-btn btn-secondary" onclick="openMonthlyReportModal()">📅 Μηνιαία Αναφορά</button>
                     <a href="export_payments_csv.php" class="action-btn btn-success action-link">📊 Export CSV</a>
                 </div>
@@ -635,17 +672,45 @@ require_once PROJECT_ROOT . 'partials/header.php';
                 </div>
             </div>
 
-            <!-- Location filter -->
+            <!-- Location, Period & Name search bar -->
             <div class="fin-search-bar">
+                <div class="fin-search-input-wrapper">
+                    <input type="text" id="financeNameSearch"
+                        placeholder="Αναζήτηση ονόματος ή ID..."
+                        oninput="debouncedFinanceSearch()"
+                        class="form-control fin-name-search">
+                    <span id="clearFinanceSearch"
+                        onclick="clearFinanceSearchInput()"
+                        class="fin-search-clear-btn">&times;</span>
+                </div>
+
                 <select id="financeLocationFilter" onchange="filterFinanceCards()" class="form-control fin-location-filter">
                     <option value="">Όλες οι τοποθεσίες</option>
                 </select>
+
+                <!-- Χρονική Περίοδος -->
+                <select id="financePeriodFilter" onchange="onFinancePeriodChange()" class="form-control fin-period-select">
+                    <option value="current_month" selected>Τρέχων Μήνας</option>
+                    <option value="last_3_months">Τελευταίο 3μηνο</option>
+                    <option value="last_6_months">Τελευταίο 6μηνο</option>
+                    <option value="current_year">Τρέχον Έτος</option>
+                    <option value="custom">Προσαρμοσμένο...</option>
+                </select>
+
+                <!-- Πεδία Ημερομηνιών (Εμφανίζονται μόνο στο "Προσαρμοσμένο") -->
+                <div id="finCustomDateRange" class="fin-date-range-container" style="display: none;">
+                    <input type="date" id="finStartDate" onchange="refreshFinanceSummary()" class="form-control fin-date-input">
+                    <input type="date" id="finEndDate" onchange="refreshFinanceSummary()" class="form-control fin-date-input">
+                </div>
             </div>
 
             <!-- Athlete balance cards -->
             <div id="financeCardsGrid" class="fin-cards-grid">
                 <p class="loading-msg">Φόρτωση...</p>
             </div>
+
+            <!-- Pagination controls -->
+            <div id="financePagination"></div>
         </div>
 
         <!-- ── Add Payment Modal ──────────────────────── -->
@@ -691,7 +756,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
                             <div class="form-group" id="pf_amount_group">
                                 <label>Αξία (€) <span id="pf_price_hint" class="form-hint"></span></label>
                                 <input type="number" id="pf_amount" class="form-control"
-                                    value="100" min="0" step="0.5" oninput="calcPricePerLesson()">
+                                    value="32" min="0" step="0.5" oninput="calcPricePerLesson()">
                             </div>
                         </div>
 
@@ -722,7 +787,10 @@ require_once PROJECT_ROOT . 'partials/header.php';
             <div class="modal-box modal-box-lg">
                 <div class="modal-header">
                     <div>
-                        <h3 id="historyAthleteName">Καρτέλα Αθλητή</h3>
+                        <div class="history-title-wrapper">
+                            <h3 id="historyAthleteName" class="history-athlete-name">Καρτέλα Αθλητή</h3>
+                            <span id="historyAthleteId" class="fin-card-id"></span>
+                        </div>
                         <p id="historySummaryLine" class="modal-subtitle"></p>
                     </div>
                     <button class="modal-close-btn" onclick="closeHistoryModal()">✕</button>
@@ -871,6 +939,151 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <button type="submit" class="action-btn btn-success" id="newsletterSendBtn">Αποστολή</button>
                     <div id="newsletterSendStatus" class="form-message" style="display:none;"></div>
                 </form>
+            </div>
+        </div>
+
+        <!-- ── Messages Tab ─────────────────────────────────── -->
+        <div id="messages-tab" class="tab-content">
+            <div class="tab-header">
+                <h2>✉️ Αποστολή Μηνύματος σε Χρήστες</h2>
+            </div>
+
+            <div class="messages-compose-grid">
+
+                <!-- LEFT: Compose form -->
+                <div class="finance-card messages-compose-card">
+                    <div class="finance-header">
+                        <h3 class="finance-title">Σύνταξη Μηνύματος</h3>
+                    </div>
+
+                    <div class="form-stack">
+
+                        <div class="form-group">
+                            <label class="form-label">Θέμα *</label>
+                            <input type="text" id="msg-subject" class="form-input" placeholder="π.χ. Νέο πρόγραμμα προπονήσεων">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Μήνυμα *</label>
+                            <textarea id="msg-body" class="form-input" rows="6" placeholder="Γράψε το μήνυμά σου εδώ..."></textarea>
+                        </div>
+
+                        <!-- Filters -->
+                        <fieldset class="messages-filters-fieldset">
+                            <legend>Παραλήπτες</legend>
+
+                            <label class="messages-filter-all">
+                                <input type="checkbox" id="filter-all">
+                                <strong>Όλοι οι χρήστες</strong>
+                            </label>
+
+                            <div class="messages-filter-sections">
+
+                                <div class="messages-filter-group" id="filter-locations">
+                                    <span class="messages-filter-label">📍 Τοποθεσία</span>
+                                    <?php foreach ($locations as $loc): ?>
+                                        <label>
+                                            <input type="checkbox" value="<?= (int)$loc['id'] ?>">
+                                            <?= htmlspecialchars($loc['name']) ?>
+                                        </label>
+                                    <?php endforeach; ?>
+                                </div>
+
+                                <div class="messages-filter-group" id="filter-interests">
+                                    <span class="messages-filter-label">🎯 Ενδιαφέροντα</span>
+                                    <label><input type="checkbox" value="interest_rides"> 🛼 Βόλτες</label>
+                                    <label><input type="checkbox" value="interest_races"> 🏁 Αγώνες</label>
+                                    <label><input type="checkbox" value="interest_ski"> ⛷️ Σκι</label>
+                                    <label><input type="checkbox" value="interest_skating"> ⛸️ Πατινάζ</label>
+                                    <label><input type="checkbox" value="interest_hockey"> 🏒 Χόκεϊ</label>
+                                </div>
+
+                                <div class="messages-filter-group" id="filter-roles">
+                                    <span class="messages-filter-label">👤 Τύπος</span>
+                                    <label><input type="checkbox" value="athlete"> Αθλητής</label>
+                                    <label><input type="checkbox" value="parent"> Γονέας</label>
+                                    <label><input type="checkbox" value="coach"> Προπονητής</label>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group" style="margin-top:12px;">
+                                <label class="form-label">✋ Χειροκίνητη Επιλογή Χρηστών</label>
+                                <div id="manual-users-wrapper" class="manual-users-wrapper">
+                                    <input type="text" id="user-search-input" class="form-input"
+                                        placeholder="Αναζήτηση ονόματος, username ή ID...">
+                                    <div id="user-search-dropdown" class="user-search-dropdown" style="display:none;"></div>
+                                </div>
+                                <div id="selected-users-chips" class="selected-users-chips"></div>
+                            </div>
+
+                        </fieldset>
+
+                        <!-- Preview -->
+                        <div id="recipients-preview" class="messages-preview-box"></div>
+
+                        <label class="messages-email-toggle">
+                            <input type="checkbox" id="msg-send-email">
+                            Αποστολή και με <strong>Email</strong>
+                        </label>
+
+                        <div id="msg-send-status" class="form-message" style="display:none;"></div>
+
+                        <button id="msg-send-btn" class="action-btn btn-success messages-send-btn"
+                            onclick="sendAdminMessage()">
+                            ✉️ Αποστολή Μηνύματος
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Sent messages history -->
+                <div class="finance-card messages-history-card">
+                    <div class="finance-header" style="display:flex;justify-content:space-between;align-items:center;">
+                        <h3 class="finance-title">Ιστορικό Αποστολών</h3>
+                        <button class="action-btn btn-primary" style="padding:5px 12px;font-size:.8rem;"
+                            onclick="loadSentMessages()">🔄 Ανανέωση</button>
+                    </div>
+                    <div id="sent-messages-list">
+                        <p style="color:#888;font-size:.9rem;">Φόρτωση...</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── Message Threads Modal ───────────────────────── -->
+        <div id="threadsModal" class="modal-overlay" style="display:none;">
+            <div class="modal-box modal-box-lg">
+                <div class="modal-header">
+                    <div>
+                        <h3>💬 Απαντήσεις Παραληπτών</h3>
+                        <p id="threadsModalSubject" class="modal-subtitle"></p>
+                    </div>
+                    <button class="modal-close-btn" onclick="closeThreadsModal()">✕</button>
+                </div>
+                <div class="modal-body threads-modal-body">
+
+                    <!-- Λίστα recipients -->
+                    <div class="threads-recipients-col">
+                        <h4>Παραλήπτες</h4>
+                        <div id="threads-recipients-list" class="threads-recipients-list"></div>
+                    </div>
+
+                    <!-- Επιλεγμένο thread -->
+                    <div class="threads-active-col">
+                        <h4 id="threads-active-recipient-name">Επίλεξε παραλήπτη</h4>
+                        <div id="threads-active-container" class="threads-active-messages">
+                            <p class="thread-empty">Επίλεξε έναν παραλήπτη αριστερά για να δεις τη συζήτηση.</p>
+                        </div>
+                        <div class="threads-reply-bar" id="threads-reply-bar" style="display:none;">
+                            <textarea class="threads-reply-input" id="threads-reply-input" placeholder="Γράψε απάντηση..." rows="1"></textarea>
+                            <button class="threads-reply-send-btn" onclick="sendAdminThreadReply()">
+                                <i class="fa-solid fa-paper-plane fa-sm"></i> Αποστολή
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </main>
@@ -1085,13 +1298,12 @@ require_once PROJECT_ROOT . 'partials/header.php';
                         <input type="text" id="editPhone" class="form-input form-input--sm" placeholder="69xxxxxxxx">
                     </div>
                     <div class="profile-info-item">
-                        <label class="profile-info-label" for="editRegion">📍 Περιοχή</label>
-                        <select id="editRegion" class="form-input form-input--sm">
+                        <label class="profile-info-label" for="editLocationId">📍 Περιοχή</label>
+                        <select id="editLocationId" class="form-input form-input--sm">
                             <option value="">— Χωρίς Περιοχή —</option>
-                            <option value="Μαρούσι">Μαρούσι</option>
-                            <option value="ΟΑΚΑ">ΟΑΚΑ</option>
-                            <option value="Σχολείο">Σχολείο</option>
-                            <option value="ΕΚΠΑ">ΕΚΠΑ</option>
+                            <?php foreach ($locations as $loc): ?>
+                                <option value="<?= (int)$loc['id'] ?>"><?= htmlspecialchars($loc['name']) ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="profile-info-item">
@@ -1170,6 +1382,18 @@ require_once PROJECT_ROOT . 'partials/header.php';
     </div>
 </div>
 
+
+<script>
+    window.ADMIN_USERS = <?= json_encode(array_map(function ($u) {
+                                $name = trim(($u['first_name'] ?? '') . ' ' . ($u['last_name'] ?? ''));
+                                return [
+                                    'id'       => (int)$u['id'],
+                                    'name'     => $name ?: $u['username'],
+                                    'username' => $u['username'],
+                                    'email'    => $u['email'],
+                                ];
+                            }, $users), JSON_UNESCAPED_UNICODE) ?>;
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

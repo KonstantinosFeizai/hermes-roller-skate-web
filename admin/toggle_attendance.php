@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../access_control.php';
+require_once PROJECT_ROOT . 'includes/createNotification.php';
 
 header('Content-Type: application/json');
 restrict_access('admin');
@@ -25,6 +26,9 @@ try {
         WHERE lesson_id = ? AND athlete_id = ?
     ");
     $stmt->execute([$attended, $lesson_id, $athlete_id]);
+
+    syncNegativeBalanceNotifications($pdo, $athlete_id);
+
     echo json_encode(['status' => 'success', 'attended' => $attended]);
 } catch (PDOException $e) {
     error_log('toggle_attendance error: ' . $e->getMessage());

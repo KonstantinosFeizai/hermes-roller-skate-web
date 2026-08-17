@@ -22,7 +22,7 @@ try {
     $stmtP = $pdo->prepare("
         SELECT id, lessons_purchased, amount, price_per_lesson,
                payment_type, payment_method, payment_date,
-               notes, receipt_number
+               notes, receipt_number, receipt_file_path, receipt_uploaded_at
         FROM payments
         WHERE athlete_id = ?
         ORDER BY payment_date DESC, created_at DESC

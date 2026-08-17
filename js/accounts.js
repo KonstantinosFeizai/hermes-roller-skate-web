@@ -92,7 +92,7 @@ function enterProfileEditMode() {
   document.getElementById("editLastName").value = u.last_name || "";
   document.getElementById("editEmail").value = u.email || "";
   document.getElementById("editPhone").value = u.phone || "";
-  document.getElementById("editRegion").value = u.region || "";
+  document.getElementById("editLocationId").value = u.location_id || "";
   document.getElementById("editAge").value = u.age || "";
 
   const msgEl = document.getElementById("profileEditMessage");
@@ -121,7 +121,7 @@ async function saveProfileEdit() {
     last_name: document.getElementById("editLastName").value.trim(),
     email: document.getElementById("editEmail").value.trim(),
     phone: document.getElementById("editPhone").value.trim(),
-    region: document.getElementById("editRegion").value,
+    location_id: document.getElementById("editLocationId").value || "",
     age: document.getElementById("editAge").value || "",
   };
 

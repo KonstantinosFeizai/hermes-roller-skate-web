@@ -1,2 +1,5 @@
 .env
 vendor/
+/assets/uploads/receipts/*
+!/assets/uploads/receipts/.gitkeep
+!/assets/uploads/receipts/.htaccess

@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
     )
       return S.btn_finish || "Ολοκλήρωση";
     if (currentStep === 1) return S.btn_next || "Επόμενο →";
-    return S.btn_save_continue || "Αποθήκευση & Συνέχεια";
+    return S.btn_next || "Συνέχεια";
   }
 
   function updateUI(stepKey) {
@@ -128,15 +128,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Next button
     if (stepKey === "success") {
-      btnNext.textContent = S.btn_home || "🏠 Μεταφορά στην Αρχική";
+      const extraFinish = document.getElementById("ob-btn-finish");
+      if (extraFinish) extraFinish.remove();
+      btnNext.innerHTML = `<i class="fa-solid fa-house"></i> ${S.btn_home || "Μεταφορά στην Αρχική"}`;
       btnNext.disabled = false;
+    } else if (stepKey === "3-parent") {
+      // ✨ ΕΙΔΙΚΗ ΛΟΓΙΚΗ ΓΙΑ STEP 3b (Parent) ✨
+      const parentForm = document.getElementById("parent-athlete-form");
+      const isFormHidden = parentForm && parentForm.style.display === "none";
+
+      if (athletesAdded > 0 && isFormHidden) {
+        // Αν υπάρχει ήδη 1 αθλητής και η φόρμα είναι κρυμμένη -> Finish
+        btnNext.textContent = S.btn_finish || "Finish";
+      } else {
+        // Αν η φόρμα είναι ανοιχτή -> Next / Save & Continue
+        btnNext.textContent = nextLabel();
+      }
     } else {
       btnNext.textContent = nextLabel();
     }
 
     footer.style.display = "flex";
   }
-
   // ── STEP 1 — Αποθήκευση βασικών στοιχείων ──────────────
   async function saveStep1() {
     hideError("step1-error");
@@ -147,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const age = document.getElementById("ob_age").value.trim();
     const region = document.getElementById("ob_region").value.trim();
 
-    if (!first_name || !last_name || !phone || !region) {
+    if (!first_name || !last_name || !phone) {
       showError(
         "step1-error",
         S.error_required_step1 ||
@@ -225,17 +238,159 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  async function goToStep3Athlete() {
+    // Αυτόματη συμπλήρωση τηλεφώνου από το Step 1
+    const step1Phone = document.getElementById("ob_phone").value.trim();
+    const athletePhoneInput = document.getElementById("ob_athlete_phone");
+    const banner = document.getElementById("ob-athlete-exists-banner");
+    const obAthleteId = document.getElementById("ob_athlete_id");
+
+    if (athletePhoneInput && !athletePhoneInput.value.trim() && step1Phone) {
+      athletePhoneInput.value = step1Phone;
+    }
+
+    // Ελέγχουμε στο backend αν υπάρχει ήδη ενεργή self-athlete κάρτα για αυτόν τον χρήστη
+    try {
+      const res = await fetch(`${BASE_URL}api/get_athletes.php`);
+      if (!res.ok) return;
+      const list = await res.json();
+      if (!Array.isArray(list)) return;
+
+      const selfActive = list.find(
+        (a) =>
+          a.user_id &&
+          (a.parent_id === null || a.parent_id === "" || a.parent_id === 0) &&
+          Number(a.is_active) === 1,
+      );
+
+      if (selfActive) {
+        // Εμφάνιση banner με επιλογές
+        if (banner) {
+          banner.style.display = "block";
+          banner.innerHTML = `
+            <div style="background:#fff3cd;border:1px solid #ffeeba;padding:10px;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+              <div style="flex:1;color:#856404">Υπάρχει ήδη ενεργή κάρτα αθλητή για αυτόν τον λογαριασμό. Μπορείτε να επεξεργαστείτε την υπάρχουσα κάρτα ή να δημιουργήσετε καινούργια (αν επιτρέπεται).</div>
+              <div style="display:flex;gap:8px;">
+                <button id="ob-edit-existing" class="ob-btn ob-btn-ghost">Επεξεργασία υπάρχουσας</button>
+                <button id="ob-create-new" class="ob-btn ob-btn-primary">Δημιουργία νέας</button>
+              </div>
+            </div>
+          `;
+
+          document
+            .getElementById("ob-edit-existing")
+            .addEventListener("click", (e) => {
+              // Γεμίζουμε τη φόρμα με τα δεδομένα του υπάρχοντος αθλητή και θέτουμε hidden athlete_id
+              obAthleteId.value = selfActive.id;
+              document.getElementById("ob_birth_date").value =
+                selfActive.birth_date || "";
+              document.getElementById("ob_athlete_phone").value =
+                selfActive.phone || step1Phone || "";
+              document.getElementById("ob_location").value =
+                selfActive.location_id || "";
+              document.getElementById("ob_shoe_size").value =
+                selfActive.shoe_size || "";
+              document.getElementById("ob_shirt_size").value =
+                selfActive.shirt_size || "";
+              document.getElementById("ob_interest_rides").checked =
+                !!selfActive.interest_rides;
+              document.getElementById("ob_interest_races").checked =
+                !!selfActive.interest_races;
+              document.getElementById("ob_interest_ski").checked =
+                !!selfActive.interest_ski;
+              document.getElementById("ob_interest_skating").checked =
+                !!selfActive.interest_skating;
+              document.getElementById("ob_interest_hockey").checked =
+                !!selfActive.interest_hockey;
+              document.getElementById("ob_amka").value = selfActive.amka || "";
+              document.getElementById("ob_afm").value = selfActive.afm || "";
+
+              // Κρύβουμε το banner μετά την επιλογή
+              banner.style.display = "none";
+            });
+
+          document
+            .getElementById("ob-create-new")
+            .addEventListener("click", (e) => {
+              // Δημιουργία νέας: διαγραφή hidden athlete_id και φόρμα καθαρή
+              obAthleteId.value = "";
+              // Δεν καθαρίζουμε τα ονόματα γιατί παίρνονται από step1
+              document.getElementById("ob_birth_date").value = "";
+              document.getElementById("ob_athlete_phone").value =
+                step1Phone || "";
+              document.getElementById("ob_location").value = "";
+              document.getElementById("ob_shoe_size").value = "";
+              document.getElementById("ob_shirt_size").value = "";
+              document.getElementById("ob_interest_rides").checked = false;
+              document.getElementById("ob_interest_races").checked = false;
+              document.getElementById("ob_interest_ski").checked = false;
+              document.getElementById("ob_interest_skating").checked = false;
+              document.getElementById("ob_interest_hockey").checked = false;
+              document.getElementById("ob_amka").value = "";
+              document.getElementById("ob_afm").value = "";
+
+              banner.style.display = "none";
+            });
+        }
+      } else {
+        if (banner) banner.style.display = "none";
+      }
+    } catch (err) {
+      // ignore errors - non blocking
+      console.warn("goToStep3Athlete check failed", err);
+    }
+  }
+
   // ── STEP 3a — Αποθήκευση αθλητή (ο ίδιος) ──────────────
   async function saveStep3Athlete() {
     hideError("step3a-error");
 
+    const phone = document.getElementById("ob_athlete_phone").value.trim();
+    const location_id = document.getElementById("ob_location").value;
+    const obAthleteId = document.getElementById("ob_athlete_id").value || null;
+
+    // 1. Έλεγχος Υποχρεωτικού Location
+    if (!location_id) {
+      showError(
+        "step3a-error",
+        (window.pt && window.pt.error_required_location) ||
+          S.error_required_location ||
+          "Παρακαλώ επιλέξτε περιοχή/τοποθεσία.",
+      );
+      return false;
+    }
+
+    // 2. Έλεγχος Υποχρεωτικού Τηλεφώνου
+    if (!phone) {
+      showError(
+        "step3a-error",
+        (window.pt && window.pt.error_required_phone) ||
+          S.error_required_phone ||
+          "Παρακαλώ συμπληρώστε το τηλέφωνο επικοινωνίας.",
+      );
+      return false;
+    }
+
+    // 3. Έλεγχος Μορφής Τηλεφώνου (π.χ. 7 έως 20 ψηφία/συμβολα ή 10ψηφιο)
+    const phoneRegex = /^[0-9+\s\-]{7,20}$/;
+    if (!phoneRegex.test(phone)) {
+      showError(
+        "step3a-error",
+        (window.pt && window.pt.error_invalid_phone) ||
+          S.error_invalid_phone ||
+          "Παρακαλώ εισάγετε έναν έγκυρο αριθμό τηλεφώνου.",
+      );
+      return false;
+    }
+
     const payload = {
+      athlete_id: obAthleteId,
       first_name: document.getElementById("ob_first_name").value.trim(),
       last_name: document.getElementById("ob_last_name").value.trim(),
       birth_date: document.getElementById("ob_birth_date").value || null,
-      phone: document.getElementById("ob_athlete_phone").value.trim(),
+      phone: phone,
       region: document.getElementById("ob_region").value.trim(),
-      location_id: document.getElementById("ob_location").value || null,
+      location_id: location_id,
       shoe_size: document.getElementById("ob_shoe_size").value.trim(),
       shirt_size: document.getElementById("ob_shirt_size").value,
       interest_rides: document.getElementById("ob_interest_rides").checked,
@@ -255,14 +410,86 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (data.status !== "success") {
-        showError(
-          "step3a-error",
-          data.message || S.error_save || "Σφάλμα αποθήκευσης.",
-        );
-        return false;
+
+      if (data.status === "success") {
+        return true;
       }
-      return true;
+
+      // If backend says 'exists' (active self-athlete already present), set athlete_id and auto-retry as an UPDATE
+      if (data.status === "exists") {
+        const existingId = data.athlete_id;
+        document.getElementById("ob_athlete_id").value = existingId;
+
+        // Optional: try to prefill details (non-blocking)
+        try {
+          const r2 = await fetch(`${BASE_URL}api/get_athletes.php`);
+          if (r2.ok) {
+            const all = await r2.json();
+            const self = all.find((x) => Number(x.id) === Number(existingId));
+            if (self) {
+              document.getElementById("ob_birth_date").value =
+                self.birth_date || "";
+              document.getElementById("ob_athlete_phone").value =
+                self.phone || "";
+              document.getElementById("ob_location").value =
+                self.location_id || "";
+              document.getElementById("ob_shoe_size").value =
+                self.shoe_size || "";
+              document.getElementById("ob_shirt_size").value =
+                self.shirt_size || "";
+              document.getElementById("ob_interest_rides").checked =
+                !!self.interest_rides;
+              document.getElementById("ob_interest_races").checked =
+                !!self.interest_races;
+              document.getElementById("ob_interest_ski").checked =
+                !!self.interest_ski;
+              document.getElementById("ob_interest_skating").checked =
+                !!self.interest_skating;
+              document.getElementById("ob_interest_hockey").checked =
+                !!self.interest_hockey;
+              document.getElementById("ob_amka").value = self.amka || "";
+              document.getElementById("ob_afm").value = self.afm || "";
+            }
+          }
+        } catch (err) {
+          // ignore
+        }
+
+        // Immediately retry as an UPDATE by including athlete_id in payload
+        const retryPayload = Object.assign({}, payload, {
+          athlete_id: existingId,
+        });
+        try {
+          const r3 = await fetch(`${BASE_URL}api/save_athlete.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(retryPayload),
+          });
+          const d3 = await r3.json();
+          if (d3.status === "success") {
+            return true; // proceed to success
+          }
+
+          // If retry failed, display message and stop
+          showError(
+            "step3a-error",
+            d3.message || S.error_save || "Σφάλμα αποθήκευσης.",
+          );
+          return false;
+        } catch (err) {
+          showError(
+            "step3a-error",
+            S.error_connection || "Αδυναμία σύνδεσης. Δοκιμάστε ξανά.",
+          );
+          return false;
+        }
+      }
+
+      showError(
+        "step3a-error",
+        data.message || S.error_save || "Σφάλμα αποθήκευσης.",
+      );
+      return false;
     } catch {
       showError(
         "step3a-error",
@@ -271,6 +498,15 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     } finally {
       setLoading(false);
+    }
+  }
+
+  function goToStep3Parent() {
+    const step1Phone = document.getElementById("ob_phone").value.trim();
+    const childPhoneInput = document.getElementById("ob_child_phone");
+
+    if (childPhoneInput && !childPhoneInput.value.trim() && step1Phone) {
+      childPhoneInput.value = step1Phone;
     }
   }
 
@@ -284,7 +520,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const last_name = document
       .getElementById("ob_child_last_name")
       .value.trim();
+    const location_id = document.getElementById("ob_child_location").value;
+    const phone = document.getElementById("ob_child_phone").value.trim();
 
+    // 1. Validation Υποχρεωτικών Πεδίων
     if (!first_name || !last_name) {
       showError(
         "step3b-error",
@@ -293,12 +532,35 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     }
 
+    if (!location_id) {
+      showError(
+        "step3b-error",
+        S.error_required_location || "Παρακαλώ επιλέξτε περιοχή/τοποθεσία.",
+      );
+      return false;
+    }
+
+    // 2. Validation Τηλεφώνου
+    if (phone) {
+      const phoneRegex = /^[0-9+\s\-]{7,20}$/;
+      if (!phoneRegex.test(phone)) {
+        showError(
+          "step3b-error",
+          S.error_invalid_phone ||
+            "Παρακαλώ εισάγετε έναν έγκυρο αριθμό τηλεφώνου.",
+        );
+        return false;
+      }
+    }
+
+    // 3. Προετοιμασία Payload
     const payload = {
       first_name,
       last_name,
       birth_date: document.getElementById("ob_child_birth_date").value || null,
-      phone: document.getElementById("ob_child_phone").value.trim(),
-      location_id: document.getElementById("ob_child_location").value || null,
+      phone: phone,
+      region: null,
+      location_id: location_id,
       shoe_size: document.getElementById("ob_child_shoe_size").value.trim(),
       shirt_size: document.getElementById("ob_child_shirt_size").value,
       interest_rides: document.getElementById("ob_child_rides").checked,
@@ -306,6 +568,8 @@ document.addEventListener("DOMContentLoaded", () => {
       interest_ski: document.getElementById("ob_child_ski").checked,
       interest_skating: document.getElementById("ob_child_skating").checked,
       interest_hockey: document.getElementById("ob_child_hockey").checked,
+      amka: document.getElementById("ob_child_amka")?.value.trim() || null,
+      afm: document.getElementById("ob_child_afm")?.value.trim() || null,
     };
 
     setLoading(true);
@@ -325,6 +589,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return false;
       }
 
+      // 4. Ενημέρωση UI με τον νέο αθλητή
       athletesAdded++;
       const container = document.getElementById("ob-athletes-added");
       const div = document.createElement("div");
@@ -339,7 +604,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .replace(":max", MAX_ATHLETES);
       document.getElementById("ob-athlete-count").textContent = countTpl;
 
-      // Καθαρισμός φόρμας για 2ο παιδί
+      // 5. Καθαρισμός Φόρμας
       [
         "ob_child_first_name",
         "ob_child_last_name",
@@ -353,26 +618,27 @@ document.addEventListener("DOMContentLoaded", () => {
         "ob_child_ski",
         "ob_child_skating",
         "ob_child_hockey",
+        "ob_child_amka",
+        "ob_child_afm",
       ].forEach((id) => {
         const el = document.getElementById(id);
-        if (el.type === "checkbox") el.checked = false;
-        else el.value = "";
+        if (el) {
+          if (el.type === "checkbox") el.checked = false;
+          else el.value = "";
+        }
       });
 
-      if (athletesAdded >= MAX_ATHLETES) {
-        document.getElementById("parent-athlete-form").style.display = "none";
-        btnNext.textContent = (S.btn_finish || "Ολοκλήρωση") + " →";
-      } else {
-        btnNext.textContent = S.btn_add_another || "Προσθήκη ακόμα ενός +";
-        if (!document.getElementById("ob-btn-finish")) {
-          const finishBtn = document.createElement("button");
-          finishBtn.id = "ob-btn-finish";
-          finishBtn.className = "ob-btn-skip";
-          finishBtn.textContent =
-            S.btn_finish_without || "Ολοκλήρωση χωρίς άλλη προσθήκη";
-          footer.insertBefore(finishBtn, btnNext);
-          finishBtn.addEventListener("click", goToSuccess);
-        }
+      goToStep3Parent();
+
+      // 6. Απόκρυψη Φόρμας & Αλλαγή Κουμπιού σε "Finish / Ολοκλήρωση"
+      document.getElementById("parent-athlete-form").style.display = "none";
+      btnNext.textContent = S.btn_finish || "Finish";
+
+      // 7. Εμφάνιση του κουμπιού "+ Add another" αν δεν έχουμε φτάσει το MAX
+      const showSecondBtn = document.getElementById("ob-btn-show-second-child");
+      if (showSecondBtn) {
+        showSecondBtn.style.display =
+          athletesAdded < MAX_ATHLETES ? "block" : "none";
       }
 
       return true;
@@ -387,16 +653,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Listener για το κουμπί "+ Add another"
+  const showSecondBtn = document.getElementById("ob-btn-show-second-child");
+  if (showSecondBtn) {
+    showSecondBtn.addEventListener("click", () => {
+      document.getElementById("parent-athlete-form").style.display = "block";
+      showSecondBtn.style.display = "none";
+      btnNext.textContent = S.btn_save_continue || S.btn_next || "Next";
+    });
+  }
+
   // ── Navigation ───────────────────────────────────────────
 
   function goToSuccess() {
     currentStep = "success";
     updateUI("success");
+    // Mark onboarding as completed in DB
+    fetch(`${BASE_URL}api/complete_onboarding.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    }).catch(() => {}); // fire-and-forget, non-blocking
   }
 
   async function handleNext() {
     if (currentStep === "success") {
-      window.location.href = BASE_URL;
+      window.location.href = `${BASE_URL}user/profile`;
       return;
     }
 
@@ -415,9 +696,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (selectedRole === "athlete") {
         currentStep = "3-athlete";
         updateUI("3-athlete");
+        goToStep3Athlete();
       } else if (selectedRole === "parent") {
         currentStep = "3-parent";
         updateUI("3-parent");
+        goToStep3Parent();
       } else {
         goToSuccess();
       }
@@ -432,11 +715,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (currentStep === "3-parent") {
-      if (athletesAdded >= MAX_ATHLETES) {
-        goToSuccess();
+      // ✨ ΝΕΑ ΛΟΓΙΚΗ HANDLE NEXT ✨
+      const formEl = document.getElementById("parent-athlete-form");
+      const isFormVisible = formEl && formEl.style.display !== "none";
+
+      // Αν η φόρμα είναι ανοιχτή, προσπαθούμε να αποθηκεύσουμε τον αθλητή
+      if (isFormVisible) {
+        const ok = await addChildAthlete();
+        // Αν έχουμε ήδη τουλάχιστον 1 αθλητή και η φόρμα είναι κρυμμένη πλέον, δεν φεύγουμε αμέσως στο success.
+        // Ο χρήστης μπορεί να πατήσει "Ολοκλήρωση" την επόμενη φορά.
         return;
       }
-      await addChildAthlete();
+
+      // Αν η φόρμα είναι κρυμμένη (άρα έχει ήδη προστεθεί τουλάχιστον 1 αθλητής) -> Ολοκλήρωση
+      if (athletesAdded > 0) {
+        goToSuccess();
+      }
       return;
     }
   }

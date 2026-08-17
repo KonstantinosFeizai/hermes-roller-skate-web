@@ -1,199 +1,545 @@
-/* --- Δομή & Layout --- */
+/* GLOBAL SETTINGS */
 .container {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
+.benefits-page {
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+/* HERO SECTION */
+.benefits-hero {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  min-height: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #ffffff;
+  padding: 100px 20px;
+  box-sizing: border-box;
+}
+
+.hero-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  z-index: 2;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(243, 156, 18, 0.2);
+  color: #f39c12;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  margin-bottom: 25px;
+}
+
+.benefits-hero h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.benefits-hero p {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 700px;
+  margin: 0 auto;
+  font-weight: 600;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* LAYOUT STRUCTURE (SPLIT SECTIONS) */
 .lifestyle-section {
-  padding: 80px 0 10px 0;
+  padding: 80px 0;
+}
+
+.split-container {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+}
+
+.text-side {
+  flex: 1;
+  text-align: left;
+}
+
+.image-side {
+  flex: 1.2;
+}
+
+/*  (Zebra effect) */
+.split-layout.reverse .split-container {
+  flex-direction: row-reverse;
+}
+
+/* BADGES & TYPOGRAPHY */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f2eadc;
+  color: #000;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+.text-side h3 {
+  font-size: 2.3rem;
+  color: #0f172a;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+
+.text-side p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #475569;
+  margin-bottom: 16px;
+}
+
+/* MODERN CARDS WITH CAPTIONS BELOW IMAGES */
+.modern-card {
+  margin: 0;
+  background: transparent;
+  border-radius: 16px;
+  overflow: hidden;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 0;
+}
+
+.img-wrapper {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.modern-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.modern-card figcaption {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0f766e;
+  background-color: #ccfbf1;
+  border-radius: 50px;
+  border: none;
   text-align: center;
 }
 
-/* --- Τυπογραφία --- */
-.lifestyle-section h3 {
-  font-size: 2.2rem;
-  color: var(--primary-color);
-  margin-bottom: 25px;
-  font-weight: 700;
-  font-family: var(--font-heading);
+/* GRIDS FOR IMAGES */
+.gallery-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.gallery-grid-2 img {
+  height: 380px;
 }
 
-.lifestyle-section p {
-  font-size: 1.1rem;
-  max-width: 800px;
-  margin: 0 auto 20px auto;
+.single-image .modern-card img {
+  height: 400px;
 }
 
-/* --- Στυλ Εικόνων & Галеρί --- */
-.lifestyle-images {
+/* LEARN MORE: 1 LARGE + 2 SMALL VERTICAL GRID */
+.complex-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+}
+.complex-grid .main-feature img {
+  height: 420px;
+}
+.sub-grid {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
-  margin-top: 40px;
+  gap: 20px;
+}
+.sub-grid img {
+  height: 160px;
 }
 
-.lifestyle-images figure {
-  margin: 0;
-  background-color: transparent;
-  border-radius: var(--border-radius);
-  box-shadow: none;
-  overflow: hidden;
-  flex: 1;
-  min-width: 300px;
-  max-width: 400px;
-  transition: transform 0.3s ease;
+/* COMMUNITIES SECTION */
+#community {
+  text-align: center;
 }
-
-.lifestyle-images figure:hover {
-  transform: translateY(-5px);
+#community .section-badge {
+  margin: 0 auto 16px auto;
 }
-
-.lifestyle-images img {
-  width: 100%;
-  height: 280px;
-  object-fit: cover;
-  display: block;
-  border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
+#community h3 {
+  font-size: 2.3rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: #0f172a;
 }
-
-#family-activity .lifestyle-images figure {
-  max-width: 900px;
+#community p {
+  max-width: 750px;
+  margin: 0 auto 16px auto;
+  color: #475569;
+  font-size: 1.05rem;
 }
-
-#family-activity .lifestyle-images img {
-  height: auto;
-  max-height: 500px;
-}
-
-.lifestyle-images figcaption {
-  display: inline-block;
-  margin-top: 15px;
-  padding: 8px 20px;
-  font-weight: 600;
-  color: #006d77;
-  background-color: #cce8de;
-  border-radius: 50px;
-  font-size: 0.9rem;
-}
-
-/* Button Link */
-.button-link {
-  display: inline-block;
-  background-color: var(--primary-color);
-  color: white;
-  padding: 12px 25px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1rem;
-  margin-top: 20px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.button-link:hover {
-  background-color: #e05a5a;
-  transform: scale(1.05);
-}
-
 
 .microcommunities {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-  margin-top: 50px;
+  gap: 24px;
+  margin-top: 48px;
 }
-
 .community-item {
-  text-align: center;
-  background-color: transparent;
-  box-shadow: none;
-  transition: transform 0.3s ease;
+  padding: 32px 24px;
 }
-
-.community-item:hover {
-  transform: scale(1.05);
-}
-
 .community-item a {
   text-decoration: none;
   color: inherit;
 }
-
 .community-item img {
-  width: 160px;
-  height: 160px;
+  width: 125px;
+  height: 125px;
   border-radius: 50%;
-  object-fit: cover;
   margin-bottom: 20px;
-  border: 1px solid #ddd;
 }
-
 .community-item h3 {
-  font-size: 1.6rem;
-  margin-bottom: 10px;
-  color: var(--text-color);
+  font-size: 1.3rem;
+  margin-bottom: 12px;
 }
-
 .community-item p {
-  padding: 0;
-  font-size: 1rem;
-  min-height: auto;
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.6;
 }
 
+/* Tablet */
+@media (max-width: 1024px) {
+  .split-container {
+    gap: 40px;
+  }
 
-/* --- Responsive Design --- */
+  .text-side h3 {
+    font-size: 2rem;
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .split-container {
+    flex-direction: column !important;
+    gap: 40px;
+  }
+  .text-side,
+  .image-side {
+    width: 100%;
+    flex: none;
+  }
+  .complex-grid {
+    grid-template-columns: 1fr;
+  }
+  .sub-grid {
+    flex-direction: row;
+  }
+  .microcommunities {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 576px) {
+  .sub-grid {
+    flex-direction: column;
+  }
+  .gallery-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .benefits-hero h1 {
+    font-size: 2.3rem;
+  }
+}
+
+/* Tablets */
 @media (max-width: 768px) {
-
-  main {
-    margin-top: 40px;
+  .benefits-hero {
+    min-height: 380px;
+    padding: 80px 20px;
   }
 
-  .lifestyle-section h3 {
-    font-size: 1.9rem;
+  .benefits-hero h1 {
+    font-size: 2.4rem;
   }
 
-  .lifestyle-section p {
+  .benefits-hero p {
+    font-size: 1.1rem;
+  }
+
+  .lifestyle-section {
+    padding: 50px 0;
+  }
+
+  .split-container {
+    flex-direction: column !important;
+    gap: 30px;
+  }
+
+  .text-side,
+  .image-side {
+    width: 100%;
+    flex: none;
+    text-align: center;
+  }
+
+  .section-badge {
+    margin: 0 auto 16px auto;
+  }
+
+  .gallery-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .gallery-grid-2 img {
+    height: auto;
+  }
+
+  .single-image .modern-card img {
+    height: 280px;
+  }
+
+  .complex-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .complex-grid .main-feature img {
+    height: 280px;
+  }
+
+  .sub-grid {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .sub-grid img {
+    height: 360px;
+  }
+
+  /* Communities Grid 2 columns */
+  .microcommunities {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+/* Smartphones  */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .benefits-hero h1 {
+    font-size: 28px;
+  }
+
+  .benefits-hero p {
     font-size: 1rem;
   }
 
-  .lifestyle-images {
-    flex-direction: column;
-    align-items: center;
+  .text-side h3 {
+    font-size: 1.6rem;
+    margin-bottom: 16px;
   }
 
-  .lifestyle-images figure {
-    max-width: 500px;
-    width: 100%;
+  .text-side p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .sub-grid {
+    flex-direction: column;
   }
 
   .microcommunities {
     grid-template-columns: 1fr;
-    gap: 50px;
+  }
+
+  .community-item {
+    padding: 24px 16px;
   }
 }
 
-@media (max-width: 425px) {
-  .lifestyle-section {
-    padding: 40px 0;
-  }
+.button {
+  --main-bg: #1c2d41;
+  --border-radius: 9999px;
+  --border-width: 2px;
+  --transition: 0.3s ease-in-out;
 
-  .lifestyle-section h3 {
-    font-size: 1.6rem;
-  }
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  .lifestyle-section p {
-    font-size: 0.9rem;
-  }
+  padding: 1rem 1.5rem;
+  background-color: transparent;
+  border: none;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  margin-top: 20px;
+  isolation: isolate;
 
-  .community-item img {
-    width: 140px;
-    height: 140px;
-  }
+  transform: scale(calc(1 + (var(--active, 0) * 0.05)));
+  transition: transform var(--transition);
+}
 
-  .community-item h3 {
-    font-size: 1.4rem;
+/* 1. OUTER RING MASK (Exposes only the border width) */
+.button .dots_border {
+  position: absolute;
+  inset: calc(-1 * var(--border-width));
+  border-radius: var(--border-radius);
+  padding: var(--border-width);
+  overflow: hidden;
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+
+  z-index: 1;
+  pointer-events: none;
+
+  /* ADD THIS LINE FOR CONTRAST ON WHITE BACKGROUNDS */
+  box-shadow: 0 4px 20px rgba(28, 45, 65, 0.25);
+}
+
+/* 2. ROTATING CONIC WHITE BEAM */
+.button .dots_border::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  aspect-ratio: 1 / 1;
+
+  /* Bright Cyan / Purple gradient shine (adjust colors to match your theme!) */
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 65%,
+    rgba(147, 51, 234, 0.5) 80%,
+    /* Accent purple */ #38bdf8 100% /* Vibrant cyan tip */
+  );
+
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: orbit 2.5s linear infinite;
+}
+@keyframes orbit {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* 3. BUTTON SOLID BACKGROUND (#1c2d41) */
+.button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--main-bg);
+  border-radius: var(--border-radius);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  transition: background-color var(--transition);
+}
+
+/* 4. HOVER PURPLE/GRADIENT OVERLAY */
+.button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: hsla(260, 97%, 61%, 0.35);
+  background-image:
+    radial-gradient(at 51% 89%, hsla(266, 45%, 74%, 0.5) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(266, 36%, 60%, 0.5) 0px, transparent 50%);
+
+  opacity: var(--active, 0);
+  border-radius: var(--border-radius);
+  transition: opacity var(--transition);
+  z-index: 3;
+}
+
+/* 5. TEXT & FONTAWESOME ICON */
+.button .text_button {
+  position: relative;
+  z-index: 4;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.button .text_button i {
+  font-size: 0.9em;
+  color: #ffffff;
+}
+
+/* HOVER & FOCUS STATES */
+.button:is(:hover, :focus-visible) {
+  --active: 1;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+/* MOBILE TOUCH SCREENS: Keeps hover glow active on touch */
+@media (hover: none) {
+  .button {
+    --active: 0.5;
   }
 }

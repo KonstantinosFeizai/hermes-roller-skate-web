@@ -15,7 +15,19 @@ require_once PROJECT_ROOT . 'partials/header.php';
 ?>
 
 <!-- PRICES & POLICIES PAGE CONTENT -->
-<main>
+<main class="prices-page">
+
+  <!-- HERO SECTION -->
+  <section class="prices-hero" style="background-image: linear-gradient(to top, rgba(10, 25, 47, 0.9), rgba(10, 25, 47, 0.6), rgba(10, 25, 47, 0.4)), url('<?= asset('photo/prices.jpg') ?>');">
+    <div class="hero-container">
+      <div class="hero-badge">
+        <i class="fas fa-tags"></i> <?= htmlspecialchars(t('prices.hero.badge')) ?>
+      </div>
+      <h1><?= htmlspecialchars(t('prices.hero.title')) ?></h1>
+      <p><?= htmlspecialchars(t('prices.hero.description')) ?></p>
+    </div>
+  </section>
+
   <div class="container">
 
     <!-- Card 1: Group Lessons Price List -->
@@ -157,7 +169,9 @@ require_once PROJECT_ROOT . 'partials/header.php';
 
     <!-- Card 4: School Pricing -->
     <div class="card">
-      <h2><?= htmlspecialchars(t('prices.cards.schools.title')) ?></h2>
+      <h2>
+        <?= htmlspecialchars(t('prices.cards.schools.title')) ?>
+      </h2>
       <div class="table table-3-cols">
         <div class="table-header" role="row">
           <span><?= htmlspecialchars(t('prices.cards.schools.head_kids')) ?></span>
@@ -257,22 +271,22 @@ require_once PROJECT_ROOT . 'partials/header.php';
 
     <!-- Card 6: Weather & Cancellations -->
     <div class="card">
-      <h2><i class="fa-solid fa-cloud-moon" style="color: rgb(10, 10, 10);"></i> <?= htmlspecialchars(t('prices.cards.weather.title')) ?><i class="fa-solid fa-ban" style="color: rgb(211, 22, 22);"></i></h2>
+      <h2><i class="fa-solid fa-cloud-moon" style="color: #ecb766"></i> <?= htmlspecialchars(t('prices.cards.weather.title')) ?></h2>
       <div class="cancellation-reasons-container">
         <div class="cancellation-pill">
-          <span class="icon"> <i class="fa-solid fa-cloud-rain" style="color: rgb(0, 0, 0);"></i></span>
+          <span class="icon"> <i class="fa-solid fa-cloud-rain" style="color: #ecb766;"></i></span>
           <span><?= htmlspecialchars(t('prices.cards.weather.rain')) ?></span>
         </div>
         <div class="cancellation-pill">
-          <span class="icon"> <i class="fa-solid fa-snowflake" style="color: rgb(0, 0, 0);"></i></span>
+          <span class="icon"> <i class="fa-solid fa-snowflake" style="color:#ecb766;"></i></span>
           <span><?= htmlspecialchars(t('prices.cards.weather.cold')) ?></span>
         </div>
         <div class="cancellation-pill">
-          <span class="icon"> <i class="fa-solid fa-temperature-high" style="color: rgb(0, 0, 0);"></i></span>
+          <span class="icon"> <i class="fa-solid fa-temperature-high" style="color: #ecb766;"></i></span>
           <span><?= htmlspecialchars(t('prices.cards.weather.hot')) ?></span>
         </div>
         <div class="cancellation-pill">
-          <span class="icon"> <i class="fa-solid fa-user-slash" style="color: rgb(0, 0, 0);"></i></span>
+          <span class="icon"> <i class="fa-solid fa-user-slash" style="color:   #ecb766;"></i></span>
           <span><?= htmlspecialchars(t('prices.cards.weather.coach')) ?></span>
         </div>
       </div>

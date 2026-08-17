@@ -13,7 +13,7 @@ $user_id = $_SESSION['user_id'];
 // Φέρνουμε τα δεδομένα του χρήστη
 try {
     $stmt = $pdo->prepare("
-        SELECT username, email, first_name, last_name, age, phone, region, role_type
+        SELECT username, email, first_name, last_name, age, phone, region, role_type, onboarding_completed
         FROM users WHERE id = ?
     ");
     $stmt->execute([$user_id]);
@@ -24,15 +24,8 @@ try {
         exit;
     }
 
-    // Αν έχει ήδη ολοκληρώσει το onboarding → profile
-    $profile_complete =
-        !empty($user['first_name']) &&
-        !empty($user['last_name']) &&
-        !empty($user['phone']) &&
-        !empty($user['region']) &&
-        $user['role_type'] !== '';
-
-    if ($profile_complete && $user['role_type'] !== '') {
+    // Redirect users who already completed onboarding
+    if (!empty($user['onboarding_completed'])) {
         header('Location: ' . asset('user/profile'));
         exit;
     }
@@ -44,10 +37,10 @@ try {
 }
 
 $role_icons = [
-    'athlete' => asset('photo/rollers.png'),
-    'parent'  => asset('photo/family.png'),
-    'coach'   => asset('photo/coach.png'),
-    'none'    => asset('photo/user.png'),
+    'athlete' => asset('photo/athlete.png'),
+    'parent'  => asset('photo/parents.png'),
+    'coach'   => asset('photo/coach_2.png'),
+    'none'    => asset('photo/user_1.png'),
 ];
 
 $pageTitle = t('onboarding.page_title');
@@ -62,6 +55,8 @@ $pageCss   = ['css/onboarding.css'];
     <title><?= htmlspecialchars($pageTitle) ?></title>
     <link rel="icon" href="<?= asset('photo/hermes_logo.png') ?>">
     <link rel="stylesheet" href="<?= getVersionedAssetUrl('css/onboarding.css') ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> -->
 </head>
 
 <body>
@@ -168,6 +163,10 @@ $pageCss   = ['css/onboarding.css'];
                 <div class="onboarding-step" id="step-3-athlete">
                     <p class="ob-section-title"><?= htmlspecialchars(t('onboarding.section_athlete_info')) ?></p>
 
+                    <!-- Banner shown when an active self-athlete already exists: Edit or reuse -->
+                    <div id="ob-athlete-exists-banner" style="display:none; margin-bottom:12px;"></div>
+                    <input type="hidden" id="ob_athlete_id" value="">
+
                     <div class="ob-field-row">
                         <div class="ob-field">
                             <label for="ob_birth_date"><?= htmlspecialchars(t('onboarding.birth_date')) ?></label>
@@ -213,35 +212,30 @@ $pageCss   = ['css/onboarding.css'];
                         <label class="ob-interest-item">
                             <input type="checkbox" id="ob_interest_rides">
                             <div class="ob-interest-inner">
-                                <span class="ob-interest-emoji">🛼</span>
                                 <span class="ob-interest-label"><?= htmlspecialchars(t('onboarding.interest_rides')) ?></span>
                             </div>
                         </label>
                         <label class="ob-interest-item">
                             <input type="checkbox" id="ob_interest_races">
                             <div class="ob-interest-inner">
-                                <span class="ob-interest-emoji">🏁</span>
                                 <span class="ob-interest-label"><?= htmlspecialchars(t('onboarding.interest_races')) ?></span>
                             </div>
                         </label>
                         <label class="ob-interest-item">
                             <input type="checkbox" id="ob_interest_ski">
                             <div class="ob-interest-inner">
-                                <span class="ob-interest-emoji">⛷️</span>
                                 <span class="ob-interest-label"><?= htmlspecialchars(t('onboarding.interest_ski')) ?></span>
                             </div>
                         </label>
                         <label class="ob-interest-item">
                             <input type="checkbox" id="ob_interest_skating">
                             <div class="ob-interest-inner">
-                                <span class="ob-interest-emoji">⛸️</span>
                                 <span class="ob-interest-label"><?= htmlspecialchars(t('onboarding.interest_skating')) ?></span>
                             </div>
                         </label>
                         <label class="ob-interest-item">
                             <input type="checkbox" id="ob_interest_hockey">
                             <div class="ob-interest-inner">
-                                <span class="ob-interest-emoji">🏒</span>
                                 <span class="ob-interest-label"><?= htmlspecialchars(t('onboarding.interest_hockey')) ?></span>
                             </div>
                         </label>
@@ -266,6 +260,15 @@ $pageCss   = ['css/onboarding.css'];
                     <p style="color:#6b7280; font-size:0.9rem; margin-bottom:16px;">
                         <?= t('onboarding.parent_hint') ?>
                     </p>
+
+                    <!-- Προστεθέντες αθλητές (Badges) -->
+                    <div id="ob-athletes-added"></div>
+                    <div class="ob-athlete-count" id="ob-athlete-count"></div>
+
+                    <!-- Κουμπί για εμφάνιση φόρμας 2ου παιδιού (αρχικά κρυφό) -->
+                    <button type="button" id="ob-btn-show-second-child" class="ob-btn ob-btn-ghost" style="display:none; margin: 15px auto; border: 1px dashed #e5e7eb; width: 100%;">
+                        <i class="fa-solid fa-plus"></i> <?= htmlspecialchars(t('onboarding.btn_add_another')) ?>
+                    </button>
 
                     <!-- Φόρμα παιδιού -->
                     <div id="parent-athlete-form">
@@ -321,44 +324,48 @@ $pageCss   = ['css/onboarding.css'];
                             <label class="ob-interest-item">
                                 <input type="checkbox" id="ob_child_rides">
                                 <div class="ob-interest-inner">
-                                    <span class="ob-interest-emoji">🛼</span>
                                     <span class="ob-interest-label"><?= htmlspecialchars(t('onboarding.interest_rides')) ?></span>
                                 </div>
                             </label>
                             <label class="ob-interest-item">
                                 <input type="checkbox" id="ob_child_races">
                                 <div class="ob-interest-inner">
-                                    <span class="ob-interest-emoji">🏁</span>
                                     <span class="ob-interest-label"><?= htmlspecialchars(t('onboarding.interest_races')) ?></span>
                                 </div>
                             </label>
                             <label class="ob-interest-item">
                                 <input type="checkbox" id="ob_child_ski">
                                 <div class="ob-interest-inner">
-                                    <span class="ob-interest-emoji">⛷️</span>
                                     <span class="ob-interest-label"><?= htmlspecialchars(t('onboarding.interest_ski')) ?></span>
                                 </div>
                             </label>
                             <label class="ob-interest-item">
                                 <input type="checkbox" id="ob_child_skating">
                                 <div class="ob-interest-inner">
-                                    <span class="ob-interest-emoji">⛸️</span>
                                     <span class="ob-interest-label"><?= htmlspecialchars(t('onboarding.interest_skating')) ?></span>
                                 </div>
                             </label>
                             <label class="ob-interest-item">
                                 <input type="checkbox" id="ob_child_hockey">
                                 <div class="ob-interest-inner">
-                                    <span class="ob-interest-emoji">🏒</span>
                                     <span class="ob-interest-label"><?= htmlspecialchars(t('onboarding.interest_hockey')) ?></span>
                                 </div>
                             </label>
                         </div>
+
+                        <p class="ob-section-title" style="margin-top: 16px;"><?= htmlspecialchars(t('onboarding.section_optional')) ?></p>
+                        <div class="ob-field-row">
+                            <div class="ob-field">
+                                <label for="ob_child_amka"><?= htmlspecialchars(t('onboarding.amka')) ?></label>
+                                <input type="text" id="ob_child_amka" placeholder="<?= htmlspecialchars(t('onboarding.amka_placeholder')) ?>" maxlength="11">
+                            </div>
+                            <div class="ob-field">
+                                <label for="ob_child_afm"><?= htmlspecialchars(t('onboarding.afm')) ?></label>
+                                <input type="text" id="ob_child_afm" placeholder="<?= htmlspecialchars(t('onboarding.afm_placeholder')) ?>" maxlength="9">
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Προστεθέντες αθλητές -->
-                    <div id="ob-athletes-added"></div>
-                    <div class="ob-athlete-count" id="ob-athlete-count"></div>
                     <div class="ob-error" id="step3b-error"></div>
                 </div>
 
@@ -375,8 +382,8 @@ $pageCss   = ['css/onboarding.css'];
 
             <!-- Footer / Buttons -->
             <div class="onboarding-footer" id="onboarding-footer">
-                <button class="ob-btn ob-btn-ghost" id="ob-btn-back" style="display:none"><?= htmlspecialchars(t('onboarding.btn_back')) ?></button>
-                <button class="ob-btn ob-btn-primary" id="ob-btn-next"><?= htmlspecialchars(t('onboarding.btn_next')) ?></button>
+                <button class="ob-btn ob-btn-ghost" id="ob-btn-back" style="display:none"><i class="fa-solid fa-arrow-left"></i> <?= htmlspecialchars(t('onboarding.btn_back')) ?></button>
+                <button class="ob-btn ob-btn-primary" id="ob-btn-next"><?= htmlspecialchars(t('onboarding.btn_next')) ?> <i class="fa-solid fa-arrow-right"></i></button>
             </div>
 
         </div><!-- /onboarding-card -->
@@ -411,12 +418,17 @@ $pageCss   = ['css/onboarding.css'];
             btn_add_another: <?= json_encode(t('onboarding.btn_add_another')) ?>,
             btn_finish_without: <?= json_encode(t('onboarding.btn_finish_without')) ?>,
             loading: <?= json_encode(t('onboarding.loading')) ?>,
+            pinfo_invalid_phone: <?= json_encode(t('profile.labels.pinfo_invalid_phone')) ?>,
+            pinfo_invalid_data: <?= json_encode(t('profile.labels.pinfo_invalid_data')) ?>,
             error_required_step1: <?= json_encode(t('onboarding.error_required_step1')) ?>,
             error_required_role: <?= json_encode(t('onboarding.error_required_role')) ?>,
             error_required_child: <?= json_encode(t('onboarding.error_required_child')) ?>,
             error_connection: <?= json_encode(t('onboarding.error_connection')) ?>,
             error_save: <?= json_encode(t('onboarding.error_save')) ?>,
             athletes_added_count: <?= json_encode(t('onboarding.athletes_added_count')) ?>,
+            error_required_location: <?= json_encode(t('onboarding.error_required_location')) ?>,
+            error_invalid_phone: <?= json_encode(t('onboarding.error_invalid_phone')) ?>,
+            error_required_phone: <?= json_encode(t('onboarding.error_required_phone')) ?>,
         };
     </script>
     <script src="<?= getVersionedAssetUrl('js/onboarding.js') ?>"></script>

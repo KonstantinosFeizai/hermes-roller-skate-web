@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../access_control.php';
+require_once PROJECT_ROOT . 'includes/createNotification.php';
 
 header('Content-Type: application/json');
 restrict_access('admin');
@@ -72,8 +73,16 @@ try {
 
         // Ακύρωση → μηδενισμός παρουσιών ώστε να μην αφαιρεθούν μαθήματα
         if ($status === 'cancelled') {
+            $stmtAthletes = $pdo->prepare("SELECT athlete_id FROM lesson_athletes WHERE lesson_id = ?");
+            $stmtAthletes->execute([$lesson_id]);
+            $athleteIds = $stmtAthletes->fetchAll(PDO::FETCH_COLUMN);
+
             $pdo->prepare("UPDATE lesson_athletes SET attended = 0 WHERE lesson_id = ?")
                 ->execute([$lesson_id]);
+
+            foreach ($athleteIds as $athleteId) {
+                syncNegativeBalanceNotifications($pdo, (int)$athleteId);
+            }
         }
 
         echo json_encode(['status' => 'success', 'message' => 'Η προπόνηση ενημερώθηκε!']);

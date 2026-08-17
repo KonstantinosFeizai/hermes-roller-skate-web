@@ -15,6 +15,20 @@ $supportedLangs = ['en', 'el'];
 $langParam = $_GET['lang'] ?? null;
 if ($langParam && in_array($langParam, $supportedLangs, true)) {
     $_SESSION['lang'] = $langParam;
+
+    // Sync to database if user is logged in
+    if (!empty($_SESSION['user_id'])) {
+        try {
+            // Use existing $pdo from config.php if available, otherwise skip DB update
+            if (isset($GLOBALS['pdo'])) {
+                $stmt = $GLOBALS['pdo']->prepare("UPDATE users SET lang = ? WHERE id = ?");
+                $stmt->execute([$langParam, $_SESSION['user_id']]);
+            }
+        } catch (Exception $e) {
+            // Silently fail - language change will still work in session
+            error_log('Failed to sync language to database: ' . $e->getMessage());
+        }
+    }
 }
 
 // Read current language from session

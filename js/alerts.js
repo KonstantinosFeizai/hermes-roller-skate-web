@@ -19,3 +19,24 @@ document.addEventListener("click", (event) => {
     alertEl.remove();
   }, 160);
 });
+
+function closeAlertModal() {
+  const modal = document.getElementById("alertModalOverlay");
+  if (!modal) return;
+
+  // Fade out animation
+  modal.style.transition = "opacity 0.2s ease, transform 0.2s ease";
+  modal.style.opacity = "0";
+
+  setTimeout(() => {
+    modal.remove();
+  }, 200);
+}
+
+// Κλείσιμο αν ο χρήστης κάνει κλικ έξω από την κάρτα (στο overlay)
+document.addEventListener("click", (event) => {
+  const modal = document.getElementById("alertModalOverlay");
+  if (modal && event.target === modal) {
+    closeAlertModal();
+  }
+});

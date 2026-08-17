@@ -19,7 +19,7 @@ try {
 
     $result = [];
     foreach ($athletes as $a) {
-        $bal = $pdo->prepare("SELECT * FROM athlete_balance WHERE athlete_id = ?");
+        $bal = $pdo->prepare("SELECT * FROM athlete_balance WHERE athlete_id = ? AND is_active = 1");
         $bal->execute([$a['id']]);
         $balance = $bal->fetch(PDO::FETCH_ASSOC) ?: [
             'lessons_purchased' => 0,
@@ -30,7 +30,8 @@ try {
 
         $stmt = $pdo->prepare("
             SELECT id, receipt_number, payment_date, payment_type,
-                   payment_method, lessons_purchased, amount, notes
+                   payment_method, lessons_purchased, amount, notes,
+                   receipt_file_path, receipt_uploaded_at
             FROM payments
             WHERE athlete_id = ?
             ORDER BY payment_date DESC

@@ -1,42 +1,63 @@
 <?php
 // personal_info_handler.php
-// Purpose: API endpoint to update a logged-in user's personal information.
-
-// Core config
 require_once __DIR__ . '/../config.php';
-// Start session
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 
-// Return JSON responses
 header('Content-Type: application/json');
 
-// Require authentication
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['status' => 'error', 'message' => 'Μη εξουσιοδοτημένη πρόσβαση.']);
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['status' => 'error', 'code' => 'METHOD_NOT_ALLOWED']);
     exit;
 }
 
-// Read request payload
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'code' => 'UNAUTHORIZED']);
+    exit;
+}
+
 $data = json_decode(file_get_contents("php://input"), true);
 $user_id = $_SESSION['user_id'];
 
-// Sanitize and normalize input
-$first_name = trim($data['first_name'] ?? '');
-$last_name  = trim($data['last_name'] ?? '');
-$age        = !empty($data['age']) ? intval($data['age']) : null;
-$phone      = trim($data['phone'] ?? '');
-$region     = trim($data['region'] ?? '');
+$first_name  = trim($data['first_name'] ?? '');
+$last_name   = trim($data['last_name'] ?? '');
+$age         = !empty($data['age']) ? intval($data['age']) : null;
+$phone       = trim($data['phone'] ?? '');
+$region      = trim($data['region'] ?? '');
+$location_id = !empty($data['location_id']) ? intval($data['location_id']) : null;
+
+if ($region === '') {
+    $region = null;
+}
+
+// 1. Validation: Απαιτούμενα πεδία (ΜΟΝΟ Όνομα, Επώνυμο, Τηλέφωνο)
+if ($first_name === '' || $last_name === '' || $phone === '') {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'code' => 'REQUIRED_FIELDS_MISSING']);
+    exit;
+}
+
+// 2. Validation: Έγκυρη Ηλικία 
+if ($age !== null && ($age < 13 || $age > 120)) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'code' => 'INVALID_DATA']);
+    exit;
+}
+
+// 3. Validation: Έγκυρος Αριθμός Τηλεφώνου
+if (!preg_match('/^[0-9+\s\-]{7,20}$/', $phone)) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'code' => 'INVALID_PHONE']);
+    exit;
+}
 
 try {
-    // Update user record in the database
-    $stmt = $pdo->prepare("UPDATE users SET first_name = ?, last_name = ?, age = ?, phone = ?, region = ? WHERE id = ?");
-    $stmt->execute([$first_name, $last_name, $age, $phone, $region, $user_id]);
+    $stmt = $pdo->prepare("UPDATE users SET first_name = ?, last_name = ?, age = ?, phone = ?, region = ?, location_id = ? WHERE id = ?");
+    $stmt->execute([$first_name, $last_name, $age, $phone, $region, $location_id, $user_id]);
 
-    // Success response
-    echo json_encode(['status' => 'success', 'message' => 'Τα προσωπικά στοιχεία ενημερώθηκαν επιτυχώς!']);
+    echo json_encode(['status' => 'success', 'code' => 'SUCCESS']);
 } catch (PDOException $e) {
-    // Database error
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'Σφάλμα βάσης δεδομένων κατά την αποθήκευση.']);
+    echo json_encode(['status' => 'error', 'code' => 'DB_ERROR']);
 }

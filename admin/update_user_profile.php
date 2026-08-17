@@ -15,12 +15,12 @@ if (!$userId) {
     exit;
 }
 
-$firstName = trim($data['first_name'] ?? '');
-$lastName  = trim($data['last_name'] ?? '');
-$email     = trim($data['email'] ?? '');
-$phone     = trim($data['phone'] ?? '');
-$region    = trim($data['region'] ?? '');
-$age       = isset($data['age']) && $data['age'] !== '' ? (int)$data['age'] : null;
+$firstName  = trim($data['first_name'] ?? '');
+$lastName   = trim($data['last_name'] ?? '');
+$email      = trim($data['email'] ?? '');
+$phone      = trim($data['phone'] ?? '');
+$locationId = !empty($data['location_id']) ? (int)$data['location_id'] : null;
+$age        = isset($data['age']) && $data['age'] !== '' ? (int)$data['age'] : null;
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(400);
@@ -40,10 +40,10 @@ if ($stmtCheck->fetch()) {
 try {
     $stmt = $pdo->prepare("
         UPDATE users
-        SET first_name = ?, last_name = ?, email = ?, phone = ?, region = ?, age = ?
+        SET first_name = ?, last_name = ?, email = ?, phone = ?, location_id = ?, age = ?
         WHERE id = ?
     ");
-    $stmt->execute([$firstName, $lastName, $email, $phone ?: null, $region ?: null, $age, $userId]);
+    $stmt->execute([$firstName, $lastName, $email, $phone ?: null, $locationId, $age, $userId]);
     echo json_encode(['success' => true]);
 } catch (PDOException $e) {
     http_response_code(500);

@@ -1,0 +1,365 @@
+/* css/thread.css
+   Styles για το private reply thread (admin <-> χρήστης) 
+   Χρησιμοποιείται στο profile.php (inbox) και admin_dashboard.php (modal)
+*/
+
+.thread-container {
+  width: 100%;
+}
+
+.thread-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.thread-empty {
+  color: #9ca3af;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 12px 0;
+}
+
+/* ── Bubbles ──────────────────────────────────────────────── */
+.thread-bubbles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 2px;
+}
+
+.thread-bubble {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.thread-bubble--other {
+  align-self: flex-start;
+  background: #f1f3f5;
+  color: #1a1a2e;
+  border-bottom-left-radius: 4px;
+}
+
+.thread-bubble--mine {
+  align-self: flex-end;
+  background: #e63946;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.thread-bubble-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.72rem;
+  opacity: 0.75;
+  margin-bottom: 4px;
+}
+
+.thread-bubble--mine .thread-bubble-meta {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.thread-bubble-body {
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* ── Reply Toggle Button ───────────────────────────────── */
+.thread-reply-toggle-btn {
+  background: #f59e0b;
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+  position: sticky;
+  bottom: 0;
+  background: #f59e0b;
+  z-index: 10;
+}
+
+.thread-reply-toggle-btn:hover {
+  background: #d97706;
+  box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+  transform: translateY(-1px);
+}
+
+.thread-reply-toggle-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Reply box (now collapsible) ─────────────────────────── */
+.thread-reply-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 14px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1.5px solid #e5e7eb;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+.thread-reply-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.thread-reply-input {
+  resize: vertical;
+  min-height: 60px;
+  max-height: 150px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+
+.thread-reply-input:focus {
+  outline: none;
+  border-color: #e63946;
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+}
+
+.thread-reply-send-btn {
+  background: #e63946;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 22px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.thread-reply-send-btn:hover {
+  background: #c1121f;
+  transform: translateY(-1px);
+}
+
+.thread-reply-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.thread-reply-cancel-btn {
+  background: transparent;
+  color: #6b7280;
+  border: 1.5px solid #d1d5db;
+  border-radius: 10px;
+  padding: 10px 22px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.thread-reply-cancel-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+.thread-reply-status {
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .thread-bubble {
+    max-width: 92%;
+  }
+
+  .thread-reply-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .thread-reply-send-btn,
+  .thread-reply-cancel-btn {
+    width: 100%;
+  }
+
+  .thread-reply-toggle-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ── Threads Modal (admin side) ──────────────────────────────── */
+.threads-modal-body {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 16px;
+  height: 460px; /* fixed height so flex children can scroll */
+}
+
+.threads-recipients-col h4,
+.threads-active-col h4 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  margin: 0 0 10px;
+}
+
+.threads-recipients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.threads-recipient-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.threads-recipient-item:hover {
+  background: #f1f3f5;
+}
+
+.threads-recipient-item.has-replies {
+  background: #fff5f5;
+  font-weight: 600;
+}
+
+.threads-recipient-item.is-active {
+  border-color: #e63946;
+  background: #fff0f1;
+}
+
+.threads-recipient-badge {
+  background: #e63946;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 7px;
+}
+
+.threads-active-col {
+  border-left: 1px solid #e5e7eb;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.threads-active-messages {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* ── Admin Modal Reply Bar ───────────────────────── */
+.threads-reply-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+.threads-reply-input {
+  flex: 1;
+  resize: none;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 9px 13px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  line-height: 1.4;
+  max-height: 90px;
+  overflow-y: auto;
+  background: #f8f9fa;
+  transition: border-color 0.2s;
+}
+
+.threads-reply-input:focus {
+  outline: none;
+  border-color: #f59e0b;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.threads-reply-input--error {
+  border-color: #e63946 !important;
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1) !important;
+}
+
+.threads-reply-send-btn {
+  background: #f59e0b;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.threads-reply-send-btn:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+}
+
+.threads-reply-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 700px) {
+  .threads-modal-body {
+    grid-template-columns: 1fr;
+  }
+  .threads-active-col {
+    border-left: none;
+    border-top: 1px solid #e5e7eb;
+    padding-left: 0;
+    padding-top: 16px;
+  }
+}

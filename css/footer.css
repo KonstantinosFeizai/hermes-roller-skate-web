@@ -29,6 +29,29 @@ footer h3 {
   font-size: 1.5rem;
 }
 
+/* Heading links (Contact, Policies, Locations titles) */
+.heading-link {
+  color: var(--secondary-color);
+  text-decoration: none;
+  transition:
+    color 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.heading-link:hover {
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* Locations column — compact list */
+.footer-column.locations-forum ul {
+  columns: 1;
+}
+
+.footer-column.locations-forum li {
+  margin-bottom: 6px;
+}
+
 footer p,
 footer li,
 footer a {

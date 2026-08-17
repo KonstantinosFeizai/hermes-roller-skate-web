@@ -64,21 +64,38 @@ try {
         define('MAX_ATHLETES_PARENT',  2);
         define('MAX_ATHLETES_ATHLETE', 1);
 
-        $stmtCount = $pdo->prepare("
-            SELECT COUNT(*) FROM athletes
-            WHERE user_id = ? AND is_active = 1
-        ");
-        $stmtCount->execute([$userId]);
-        $count = (int)$stmtCount->fetchColumn();
+        // Role-aware counting to avoid conflating parent children with self-athlete
+        if ($roleType === 'athlete') {
+            // Count only self-athletes (parent_id IS NULL)
+            $stmtCount = $pdo->prepare("SELECT COUNT(*) FROM athletes WHERE user_id = ? AND parent_id IS NULL AND is_active = 1");
+            $stmtCount->execute([$userId]);
+            $count = (int)$stmtCount->fetchColumn();
+            $max = MAX_ATHLETES_ATHLETE;
+        } else {
+            // For parent (and other roles) count children where parent_id = userId
+            $stmtCount = $pdo->prepare("SELECT COUNT(*) FROM athletes WHERE parent_id = ? AND is_active = 1");
+            $stmtCount->execute([$userId]);
+            $count = (int)$stmtCount->fetchColumn();
+            $max = $roleType === 'parent' ? MAX_ATHLETES_PARENT : MAX_ATHLETES_ATHLETE;
+        }
 
-        $max = $roleType === 'parent' ? MAX_ATHLETES_PARENT : MAX_ATHLETES_ATHLETE;
+        // If athlete role and an active self-athlete already exists, return 'exists' so frontend can reuse/edit
+        if ($roleType === 'athlete' && $count >= $max) {
+            $stmtActive = $pdo->prepare("SELECT id FROM athletes WHERE user_id = ? AND parent_id IS NULL AND is_active = 1 LIMIT 1");
+            $stmtActive->execute([$userId]);
+            $activeId = $stmtActive->fetchColumn() ?: null;
+            if ($activeId) {
+                echo json_encode([
+                    'status'     => 'exists',
+                    'athlete_id' => (int)$activeId,
+                    'message'    => 'Υπάρχει ήδη ενεργή κάρτα αθλητή για αυτόν τον λογαριασμό.'
+                ]);
+                exit;
+            }
 
-        if ($count >= $max) {
+            // Fallback generic error
             http_response_code(400);
-            $msg = $roleType === 'parent'
-                ? 'Μπορείτε να προσθέσετε έως ' . MAX_ATHLETES_PARENT . ' αθλητές.'
-                : 'Έχετε ήδη καταχωρήσει τον εαυτό σας ως αθλητή.';
-            echo json_encode(['status' => 'error', 'message' => $msg]);
+            echo json_encode(['status' => 'error', 'message' => 'Έχετε ήδη καταχωρήσει τον εαυτό σας ως αθλητή.']);
             exit;
         }
 
@@ -86,20 +103,21 @@ try {
         $parentId = $roleType === 'parent' ? $userId : null;
 
         // Για αθλητή (parent_id IS NULL): ψάχνουμε για υπάρχον soft-deleted record
-        // ώστε να μην δημιουργηθεί duplicate αν ο χρήστης αλλάξει ρόλο και επιστρέψει
+        // Για γονέα: ψάχνουμε αν υπάρχει ήδη ενεργός αθλητής με τα ίδια στοιχεία
         $existingId = null;
         if ($roleType === 'athlete') {
-            $stmtExisting = $pdo->prepare("
-                SELECT id FROM athletes
-                WHERE user_id = ? AND parent_id IS NULL AND is_active = 0
-                ORDER BY id ASC LIMIT 1
-            ");
+            $stmtExisting = $pdo->prepare("SELECT id FROM athletes WHERE user_id = ? AND parent_id IS NULL AND is_active = 0 ORDER BY id ASC LIMIT 1");
             $stmtExisting->execute([$userId]);
+            $existingId = $stmtExisting->fetchColumn() ?: null;
+        } elseif ($roleType === 'parent') {
+            // Ελέγχουμε αν υπάρχει ήδη ενεργός αθλητής με το ίδιο όνομα
+            $stmtExisting = $pdo->prepare("SELECT id FROM athletes WHERE user_id = ? AND parent_id = ? AND is_active = 1 AND first_name = ? AND last_name = ? LIMIT 1");
+            $stmtExisting->execute([$userId, $userId, $first_name, $last_name]);
             $existingId = $stmtExisting->fetchColumn() ?: null;
         }
 
         if ($existingId) {
-            // Reactivate existing soft-deleted record
+            // Reactivate existing soft-deleted record OR return existing active athlete
             $stmt = $pdo->prepare("
                 UPDATE athletes SET
                     first_name = ?, last_name = ?, birth_date = ?, phone = ?,
@@ -130,7 +148,7 @@ try {
 
             echo json_encode([
                 'status'     => 'success',
-                'message'    => 'Ο αθλητής προστέθηκε επιτυχώς!',
+                'message'    => 'Ο αθλητής υπάρχει ήδη και ενημερώθηκε!',
                 'athlete_id' => $existingId,
             ]);
         } else {

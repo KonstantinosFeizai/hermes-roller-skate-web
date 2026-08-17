@@ -124,6 +124,13 @@ async function manageClass(lessonId) {
   document.getElementById("enrolledAthletesList").innerHTML =
     '<p class="loading-msg">Φόρτωση αθλητών…</p>';
   document.getElementById("athleteSearchInput").value = "";
+  if (document.getElementById("clearAthleteSearch")) {
+    document.getElementById("clearAthleteSearch").style.display = "none";
+  }
+
+  if (document.getElementById("athleteSearchLocation")) {
+    document.getElementById("athleteSearchLocation").value = ""; // Reset τοποθεσίας
+  }
   document.getElementById("athleteSearchResults").innerHTML = "";
   document.getElementById("manageClassModal").style.display = "flex";
 
@@ -222,12 +229,9 @@ function searchAthletesForLesson() {
 
 async function _doSearch() {
   const term = document.getElementById("athleteSearchInput").value.trim();
+  const locationId =
+    document.getElementById("athleteSearchLocation")?.value || "";
   const resultsEl = document.getElementById("athleteSearchResults");
-
-  if (term.length === 1) {
-    resultsEl.innerHTML = "";
-    return;
-  }
 
   resultsEl.innerHTML = '<p class="loading-msg">Αναζήτηση…</p>';
 
@@ -235,7 +239,11 @@ async function _doSearch() {
     const res = await fetch("search_athletes_for_lesson.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ term, lesson_id: _currentLessonId }),
+      body: JSON.stringify({
+        term: term,
+        lesson_id: _currentLessonId,
+        location_id: locationId,
+      }),
     });
     const result = await res.json();
 
@@ -392,3 +400,37 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.target === manageModal) closeManageClassModal();
     });
 });
+
+// 1. Μεταβλητή για το Timer του Debounce
+let searchTimeout = null;
+
+// 2. Συνάρτηση Debounce (περιμένει 250ms αφού σταματήσει η πληκτρολόγηση)
+function debouncedSearch() {
+  const input = document.getElementById("athleteSearchInput");
+  const clearBtn = document.getElementById("clearAthleteSearch");
+
+  // Εμφάνιση / Απόκρυψη του "X" ανάλογα με το αν υπάρχει κείμενο
+  if (clearBtn) {
+    clearBtn.style.display = input.value.length > 0 ? "block" : "none";
+  }
+
+  // Ακύρωση του προηγούμενου timer αν ο χρήστης συνεχίζει να πληκτρολογεί
+  clearTimeout(searchTimeout);
+
+  // Έναρξη νέου timer 250ms
+  searchTimeout = setTimeout(() => {
+    _doSearch();
+  }, 250);
+}
+
+// 3. Συνάρτηση για καθαρισμό του πεδίου με το "X"
+function clearSearchInput() {
+  const input = document.getElementById("athleteSearchInput");
+  const clearBtn = document.getElementById("clearAthleteSearch");
+
+  if (input) {
+    input.value = "";
+    if (clearBtn) clearBtn.style.display = "none";
+    _doSearch(); // Επανεκτέλεση αναζήτησης για να φέρει την αρχική λίστα
+  }
+}

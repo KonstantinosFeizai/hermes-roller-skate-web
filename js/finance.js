@@ -5,15 +5,31 @@
 let _allFinanceData = [];
 let _currentAthleteId = null;
 let _locationFilter = "";
+let _financeCurrentPage = 1;
+let _financeSearchTimeout = null;
+const _financeItemsPerPage = 10;
 
 // ── Load / Refresh ────────────────────────────────────────────
 
 async function refreshFinanceTab() {
-  document.getElementById("financeCardsGrid").innerHTML =
-    '<p class="loading-msg">Φόρτωση...</p>';
+  if (!_allFinanceData.length) {
+    document.getElementById("financeCardsGrid").innerHTML =
+      '<p class="loading-msg">Φόρτωση...</p>';
+  }
+
+  await refreshFinanceSummary();
+}
+
+async function refreshFinanceSummary() {
+  const period =
+    document.getElementById("financePeriodFilter")?.value || "current_month";
+  const start = document.getElementById("finStartDate")?.value || "";
+  const end = document.getElementById("finEndDate")?.value || "";
+  const loc = document.getElementById("financeLocationFilter")?.value || "";
 
   try {
-    const res = await fetch("get_finance_overview.php");
+    const url = `get_finance_overview.php?period=${period}&start_date=${start}&end_date=${end}&location=${encodeURIComponent(loc)}`;
+    const res = await fetch(url);
     const result = await res.json();
     if (result.status !== "success") {
       alert(result.message);
@@ -21,27 +37,51 @@ async function refreshFinanceTab() {
     }
 
     _allFinanceData = result.athletes;
-    _renderSummary(result.summary, result.athletes);
     _populateLocationFilter(result.athletes);
-    _renderCards(_allFinanceData);
-  } catch {
-    document.getElementById("financeCardsGrid").innerHTML =
-      '<p style="color:red">Σφάλμα φόρτωσης.</p>';
+
+    // Εφαρμογή φίλτρων στις κάρτες ΚΑΙ ενημέρωση του summary bar
+    filterFinanceCards(result.summary);
+  } catch (err) {
+    console.error(err);
   }
 }
 
-function _renderSummary(s, athletes) {
-  const debt = athletes.filter((a) => parseInt(a.lessons_remaining) < 0).length;
-  const credit = athletes.filter(
+function onFinancePeriodChange() {
+  const period = document.getElementById("financePeriodFilter").value;
+  const customRange = document.getElementById("finCustomDateRange");
+
+  if (period === "custom") {
+    customRange.style.display = "flex";
+  } else {
+    customRange.style.display = "none";
+    refreshFinanceSummary();
+  }
+}
+
+function _renderSummary(s, filteredAthletes) {
+  // Οι οφειλέτες και τα θετικά υπόλοιπα υπολογίζονται ΔΥΝΑΜΙΚΑ από τους φιλτραρισμένους αθλητές!
+  const debt = filteredAthletes.filter(
+    (a) => parseInt(a.lessons_remaining) < 0,
+  ).length;
+  const credit = filteredAthletes.filter(
     (a) => parseInt(a.lessons_remaining) > 0,
   ).length;
 
-  document.getElementById("finMonthRevenue").textContent =
-    Number(s.month_revenue).toLocaleString("el-GR", {
+  // Εμφάνιση εισπράξεων & τάσης %
+  let revHtml =
+    Number(s.revenue || 0).toLocaleString("el-GR", {
       minimumFractionDigits: 2,
     }) + " €";
+  if (s.trend_percent !== null && s.trend_percent !== undefined) {
+    const isUp = s.trend_percent >= 0;
+    const sign = isUp ? "+" : "";
+    const cls = isUp ? "fin-trend-up" : "fin-trend-down";
+    revHtml += ` <span class="fin-trend-badge ${cls}">${sign}${s.trend_percent}%</span>`;
+  }
+
+  document.getElementById("finMonthRevenue").innerHTML = revHtml;
   document.getElementById("finMonthLessons").textContent =
-    s.month_lessons_sold + " μαθήματα";
+    (s.lessons_sold || 0) + " μαθήματα";
   document.getElementById("finDebtCount").textContent = debt;
   document.getElementById("finCreditCount").textContent = credit;
 }
@@ -52,10 +92,20 @@ function _renderCards(athletes) {
   if (!athletes.length) {
     grid.innerHTML =
       '<p class="empty-state">Δεν υπάρχουν αθλητές με ιστορικό.</p>';
+    _renderPagination([], _financeCurrentPage, _financeItemsPerPage);
     return;
   }
 
-  grid.innerHTML = athletes
+  // Pagination
+  const totalPages = Math.ceil(athletes.length / _financeItemsPerPage);
+  if (_financeCurrentPage > totalPages && totalPages > 0) {
+    _financeCurrentPage = 1;
+  }
+  const start = (_financeCurrentPage - 1) * _financeItemsPerPage;
+  const end = start + _financeItemsPerPage;
+  const pageAthletes = athletes.slice(start, end);
+
+  grid.innerHTML = pageAthletes
     .map((a) => {
       const rem = parseInt(a.lessons_remaining);
       const cls =
@@ -77,9 +127,15 @@ function _renderCards(athletes) {
       });
 
       return `
-      <div class="fin-card" data-athlete-id="${a.athlete_id}">
+      <div class="fin-card${a.is_active == 0 ? " fin-card--inactive" : ""}" data-athlete-id="${a.athlete_id}">
         <div class="fin-card-top">
-          <div class="fin-card-name">${escHtml(a.athlete_name)}</div>
+          <div class="fin-card-header">
+            <div class="fin-card-name">${escHtml(a.athlete_name)}</div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              ${a.is_active == 0 ? '<span class="fin-card-inactive-badge">Ανενεργός</span>' : ""}
+              <span class="fin-card-id">ID: ${a.athlete_id}</span>
+            </div>
+          </div>
           ${a.location_name ? `<div class="fin-card-location">📍 ${escHtml(a.location_name)}</div>` : ""}
         </div>
 
@@ -98,7 +154,7 @@ function _renderCards(athletes) {
         </div>
 
         <div class="fin-card-actions">
-          <button class="action-btn btn-success"
+          <button class="action-btn btn-success" ${a.is_active == 0 ? 'disabled title="Ανενεργός αθλητής"' : ""}
                   onclick="openPaymentModal(${a.athlete_id}, '${escAttr(a.athlete_name)}')">
             + Πληρωμή
           </button>
@@ -111,20 +167,153 @@ function _renderCards(athletes) {
     `;
     })
     .join("");
+
+  // Render pagination controls
+  _renderPagination(athletes, _financeCurrentPage, _financeItemsPerPage);
 }
 
-// ── Search / Filter ───────────────────────────────────────────
+function _renderPagination(athletes, currentPage, itemsPerPage) {
+  const paginationEl = document.getElementById("financePagination");
+  if (!paginationEl) return;
 
-function filterFinanceCards() {
-  _locationFilter = document.getElementById("financeLocationFilter").value;
+  if (!athletes.length) {
+    paginationEl.innerHTML = "";
+    return;
+  }
+
+  const totalPages = Math.ceil(athletes.length / itemsPerPage);
+  if (totalPages <= 1) {
+    paginationEl.innerHTML = "";
+    return;
+  }
+
+  let html =
+    '<div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:20px;">';
+
+  // Previous button
+  if (currentPage > 1) {
+    html += `<button class="action-btn btn-secondary" onclick="_financeGoToPage(${currentPage - 1})">← Προηγ.</button>`;
+  }
+
+  // Page numbers
+  const startPage = Math.max(1, currentPage - 2);
+  const endPage = Math.min(totalPages, currentPage + 2);
+
+  if (startPage > 1) {
+    html += `<button class="action-btn" onclick="_financeGoToPage(1)">1</button>`;
+    if (startPage > 2) html += '<span style="padding: 8px;">...</span>';
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    if (i === currentPage) {
+      html += `<button class="action-btn btn-primary" style="background:#f39c12;color:white;">${i}</button>`;
+    } else {
+      html += `<button class="action-btn" onclick="_financeGoToPage(${i})">${i}</button>`;
+    }
+  }
+
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1)
+      html += '<span style="padding: 8px;">...</span>';
+    html += `<button class="action-btn" onclick="_financeGoToPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  // Next button
+  if (currentPage < totalPages) {
+    html += `<button class="action-btn btn-secondary" onclick="_financeGoToPage(${currentPage + 1})">Επόμ. →</button>`;
+  }
+
+  html += "</div>";
+  paginationEl.innerHTML = html;
+}
+
+function _financeGoToPage(page) {
+  _financeCurrentPage = page;
   const filtered = _locationFilter
     ? _allFinanceData.filter((a) => (a.location_name || "") === _locationFilter)
     : _allFinanceData;
   _renderCards(filtered);
 }
 
+// ── Search / Filter ───────────────────────────────────────────
+
+// 1. Debounce για την αναζήτηση ονόματος (250ms)
+function debouncedFinanceSearch() {
+  const input = document.getElementById("financeNameSearch");
+  const clearBtn = document.getElementById("clearFinanceSearch");
+
+  // Εμφάνιση / Απόκρυψη του "X"
+  if (clearBtn) {
+    clearBtn.style.display = input.value.length > 0 ? "block" : "none";
+  }
+
+  // Ακύρωση του προηγούμενου timer
+  clearTimeout(_financeSearchTimeout);
+
+  // Έναρξη νέου timer 250ms
+  _financeSearchTimeout = setTimeout(() => {
+    filterFinanceCards();
+  }, 250);
+}
+
+// 2. Συνάρτηση για καθαρισμό του πεδίου με το "X"
+function clearFinanceSearchInput() {
+  const input = document.getElementById("financeNameSearch");
+  const clearBtn = document.getElementById("clearFinanceSearch");
+
+  if (input) {
+    input.value = "";
+    if (clearBtn) clearBtn.style.display = "none";
+    filterFinanceCards(); // Επαναφορά της πλήρους λίστας
+  }
+}
+
+// 3. Η βασική συνάρτηση φιλτραρίσματος
+function filterFinanceCards(latestSummary = null) {
+  _locationFilter = document.getElementById("financeLocationFilter").value;
+  const nameSearch = document
+    .getElementById("financeNameSearch")
+    .value.toLowerCase()
+    .trim();
+
+  let filtered = _allFinanceData;
+
+  // Apply location filter
+  if (_locationFilter) {
+    filtered = filtered.filter(
+      (a) => (a.location_name || "") === _locationFilter,
+    );
+  }
+
+  // Apply name OR ID filter
+  if (nameSearch) {
+    filtered = filtered.filter((a) => {
+      const athleteName = (a.athlete_name || "").toLowerCase();
+      const athleteId = String(a.athlete_id || "");
+
+      // Ψάχνει είτε στο όνομα είτε αν ταιριάζει με το ID!
+      return athleteName.includes(nameSearch) || athleteId.includes(nameSearch);
+    });
+  }
+
+  _renderCards(filtered);
+
+  // Ενημέρωση του summary bar δυναμικά
+  if (latestSummary) {
+    _lastSummary = latestSummary;
+  }
+  if (_lastSummary) {
+    _renderSummary(_lastSummary, filtered);
+  }
+}
+
+// Κρατάμε το τελευταίο summary στη μνήμη
+let _lastSummary = null;
+
 function _populateLocationFilter(athletes) {
   const sel = document.getElementById("financeLocationFilter");
+  if (!sel) return;
+
   const current = sel.value;
   const locations = [
     ...new Set(athletes.map((a) => a.location_name).filter(Boolean)),
@@ -136,9 +325,15 @@ function _populateLocationFilter(athletes) {
       .map((l) => `<option value="${escAttr(l)}">${escHtml(l)}</option>`)
       .join("");
 
-  if (locations.includes(current)) sel.value = current;
-}
+  if (current && locations.includes(current)) {
+    sel.value = current;
+  }
 
+  // Όταν αλλάζει η τοποθεσία, ξανακαλούμε το backend για να φέρει τα σωστά ποσά εισπράξεων
+  sel.onchange = () => {
+    refreshFinanceSummary();
+  };
+}
 // ── Add Payment Modal ─────────────────────────────────────────
 
 function openPaymentModal(athleteId, name) {
@@ -148,7 +343,7 @@ function openPaymentModal(athleteId, name) {
   document.getElementById("pf_type").value = "prepaid";
   document.getElementById("pf_method").value = "cash";
   document.getElementById("pf_lessons").value = "4";
-  document.getElementById("pf_amount").value = "100";
+  document.getElementById("pf_amount").value = "32";
   document.getElementById("pf_notes").value = "";
   document.getElementById("pf_date").value = new Date()
     .toISOString()
@@ -233,6 +428,12 @@ document.getElementById("paymentForm").addEventListener("submit", async (e) => {
 async function openHistoryModal(athleteId, name) {
   _currentAthleteId = athleteId;
   document.getElementById("historyAthleteName").textContent = name;
+
+  const idBadge = document.getElementById("historyAthleteId");
+  if (idBadge) {
+    idBadge.textContent = `ID: ${athleteId}`;
+  }
+
   document.getElementById("historySummaryLine").textContent = "Φόρτωση...";
   document.getElementById("historyBalanceStrip").innerHTML = "";
   document.getElementById("historyPaymentsList").innerHTML =
@@ -310,6 +511,8 @@ function _renderPaymentsList(payments, athleteId, name) {
       const typeL = typeLabels[p.payment_type] || p.payment_type;
       const methodL = methodLabels[p.payment_method] || p.payment_method;
       const isFree = p.payment_type !== "prepaid";
+      const hasReceipt =
+        p.receipt_file_path && p.receipt_file_path.trim() !== "";
       return `
       <div class="history-pay-row" id="hpr-${p.id}">
         <div class="hpr-top">
@@ -324,8 +527,23 @@ function _renderPaymentsList(payments, athleteId, name) {
         <div class="hpr-actions">
           <button class="hpr-btn hpr-receipt"
                   onclick="window.open('generate_receipt.php?id=${p.id}','_blank')">
-            🧾 Απόδειξη
+            📄 Προεπισκόπηση
           </button>
+          ${
+            hasReceipt
+              ? `
+            <button class="hpr-btn hpr-receipt-official"
+                    onclick="viewOrReplaceReceipt(${p.id})">
+              📑 Προβολή/Αντικατάσταση <span class="receipt-checkmark">✅</span>
+            </button>
+          `
+              : `
+            <button class="hpr-btn hpr-receipt-upload"
+                    onclick="uploadReceipt(${p.id})">
+              📤 Ανέβασμα Επίσημης
+            </button>
+          `
+          }
           <button class="hpr-btn hpr-delete"
                   onclick="deletePayment(${p.id}, ${athleteId}, '${escAttr(name)}')">
             🗑️
@@ -380,6 +598,7 @@ function _renderAttendanceList(attendance) {
 function closeHistoryModal() {
   document.getElementById("athleteHistoryModal").style.display = "none";
   _currentAthleteId = null;
+  refreshFinanceTab();
 }
 
 // ── Delete Payment ────────────────────────────────────────────
@@ -408,6 +627,93 @@ async function deletePayment(paymentId, athleteId, name) {
   } catch {
     if (row) row.style.opacity = "1";
     alert("Σφάλμα επικοινωνίας.");
+  }
+}
+
+// ── Upload Receipt ────────────────────────────────────────────
+
+async function uploadReceipt(paymentId) {
+  // Create file input element
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/pdf";
+
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (file.type !== "application/pdf") {
+      alert("Επιτρέπονται μόνο αρχεία PDF.");
+      return;
+    }
+
+    // Validate file size (10MB)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert("Το αρχείο υπερβαίνει τα 10MB.");
+      return;
+    }
+
+    // Upload the file
+    const formData = new FormData();
+    formData.append("receipt", file);
+    formData.append("payment_id", paymentId);
+
+    try {
+      const res = await fetch("../api/upload_receipt.php", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await res.json();
+
+      if (result.status === "success") {
+        alert("Η απόδειξη ανέβηκε επιτυχώς!");
+        // Reload the modal to show updated button
+        const modal = document.getElementById("athleteHistoryModal");
+        const athleteId = _currentAthleteId;
+        const athleteName =
+          modal.querySelector("h2")?.textContent?.replace("Ιστορικό: ", "") ||
+          "";
+        openHistoryModal(athleteId, athleteName);
+      } else {
+        alert(result.message || "Σφάλμα κατά το ανέβασμα.");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Σφάλμα επικοινωνίας.");
+    }
+  };
+
+  input.click();
+}
+
+// ── View or Replace Receipt ───────────────────────────────────
+
+async function viewOrReplaceReceipt(paymentId) {
+  const actions = [
+    { label: "Προβολή Απόδειξης", action: "view" },
+    { label: "Αντικατάσταση Απόδειξης", action: "replace" },
+    { label: "Ακύρωση", action: "cancel" },
+  ];
+
+  const choice = prompt(
+    "Επιλέξτε ενέργεια:\n" +
+      actions.map((a, i) => `${i + 1}. ${a.label}`).join("\n"),
+  );
+
+  const index = parseInt(choice) - 1;
+  if (index < 0 || index >= actions.length) return;
+
+  const selectedAction = actions[index].action;
+
+  if (selectedAction === "view") {
+    window.open(
+      `../api/download_receipt.php?payment_id=${paymentId}`,
+      "_blank",
+    );
+  } else if (selectedAction === "replace") {
+    uploadReceipt(paymentId);
   }
 }
 

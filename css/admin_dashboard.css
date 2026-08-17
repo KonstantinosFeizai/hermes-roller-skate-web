@@ -87,7 +87,6 @@ body {
 
 .tab-content {
   display: none;
-  /* Κρυφό από προεπιλογή */
 }
 
 .tab-content.active {
@@ -173,15 +172,6 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 8px 14px rgba(2, 6, 23, 0.15);
 }
-
-/* .nav-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s;
-} */
 
 .delete-btn {
   background: #ef4444;
@@ -331,28 +321,6 @@ body {
   gap: 5px;
   align-items: center;
   flex-wrap: wrap;
-}
-
-.pagination-controls--wide {
-  gap: 15px;
-}
-
-.pagination-btn {
-  padding: 6px 12px;
-  cursor: pointer;
-  border-radius: 8px;
-  border: 1px solid var(--admin-border);
-  background: #fff;
-  font-size: 0.85em;
-}
-
-.pagination-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.page-info {
-  font-weight: 600;
 }
 
 .classes-container {
@@ -556,6 +524,16 @@ body {
   color: #666;
   margin: 5px 0 0 0;
   font-size: 0.9em;
+}
+
+.history-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.history-athlete-name {
+  margin: 0;
 }
 
 .icon-edit {
@@ -1013,7 +991,6 @@ body {
     width: 100%;
     position: static;
     height: auto;
-    padding: 10px 0;
   }
 
   .sidebar-header {
@@ -1125,11 +1102,6 @@ body {
     margin-top: 60px;
   }
 
-  /* Sidebar mobile menu */
-  .admin-sidebar {
-    padding: 5px 0;
-  }
-
   .sidebar-header {
     padding: 10px;
   }
@@ -1207,7 +1179,6 @@ body {
     content: attr(data-label);
     font-weight: 600;
     color: var(--admin-muted);
-    flex: 0 0 42%;
     max-width: 42%;
   }
 
@@ -1225,7 +1196,6 @@ body {
   /* Filter controls */
   .admin-actions-bar,
   .table-controls {
-    flex-direction: column;
     gap: 10px;
   }
 
@@ -1964,12 +1934,14 @@ textarea.form-control {
   margin-top: 8px;
 }
 .btn-secondary {
-  background: #f1f5f9;
-  color: #334155;
-  border: 1px solid #e2e8f0;
+  background: #22c55e;
+  color: #fff;
+  border: 2px solid #bfc9d6;
+  border-radius: 16px;
 }
 .btn-secondary:hover {
-  background: #e2e8f0;
+  background: #16a34a;
+  border-color: #94a3b8;
 }
 
 /* ── Modal sizes ─── */
@@ -2227,8 +2199,76 @@ textarea.form-control {
   gap: 10px;
   align-items: center;
 }
-.fin-search-input {
-  max-width: 320px;
+
+.fin-search-input-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+}
+
+.fin-name-search {
+  width: 100%;
+  padding-right: 30px;
+  box-sizing: border-box;
+}
+
+.fin-search-clear-btn {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  display: none;
+  color: #888;
+  font-weight: bold;
+  font-size: 16px;
+  user-select: none;
+}
+
+/* Period Filter & Comparison Styles */
+.fin-period-select,
+.fin-date-input {
+  max-width: 180px;
+}
+
+.fin-date-range-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fin-trend-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: 6px;
+  display: inline-block;
+}
+
+.fin-trend-up {
+  background: rgba(22, 163, 74, 0.15);
+  color: #16a34a;
+}
+
+.fin-trend-down {
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+}
+
+@media (max-width: 700px) {
+  .fin-summary-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .fin-period-select,
+  .fin-date-input {
+    max-width: 100%;
+    width: 100%;
+  }
+  .fin-date-range-container {
+    flex-direction: column;
+    width: 100%;
+  }
 }
 
 /* Cards grid */
@@ -2256,16 +2296,65 @@ textarea.form-control {
   transform: translateY(-2px);
 }
 
+/* Inactive athlete card */
+.fin-card--inactive {
+  opacity: 0.72;
+  border: 1px dashed #d1d5db;
+  background: #f9fafb;
+}
+
+.fin-card--inactive:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.fin-card-inactive-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.fin-card--inactive .action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .fin-card-top {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
+
+/* Flexbox στο header του ονόματος για να μπει το ID δεξιά */
+.fin-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .fin-card-name {
   font-size: 0.97rem;
   font-weight: 700;
   color: var(--admin-text);
 }
+
+.fin-card-id {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--admin-muted);
+  background: var(--admin-border);
+  padding: 2px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
 .fin-card-location {
   font-size: 0.78rem;
   color: var(--admin-muted);
@@ -2427,6 +2516,28 @@ textarea.form-control {
 .hpr-btn:hover {
   background: #e2e8f0;
 }
+.hpr-receipt-upload {
+  background: #ecfdf5 !important;
+  color: #059669 !important;
+  border-color: #6ee7b7 !important;
+}
+.hpr-receipt-upload:hover {
+  background: #d1fae5 !important;
+}
+.hpr-receipt-official {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  border-color: #93c5fd !important;
+  position: relative;
+}
+.hpr-receipt-official:hover {
+  background: #dbeafe !important;
+}
+.receipt-checkmark {
+  color: #10b981;
+  font-size: 0.9em;
+  margin-left: 4px;
+}
 .hpr-delete:hover {
   background: #fff1f2;
   color: #e11d48;
@@ -2479,6 +2590,16 @@ textarea.form-control {
   .fin-search-bar {
     flex-direction: column;
   }
+
+  .fin-search-input-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .fin-name-search {
+    width: 100%;
+  }
+
   .fin-location-filter {
     width: 100%;
   }
@@ -2489,7 +2610,7 @@ textarea.form-control {
   flex: 1 1 auto;
 }
 .fin-location-filter {
-  min-width: 180px;
+  max-width: 200px;
   flex-shrink: 0;
 }
 
@@ -2526,4 +2647,511 @@ textarea.form-control {
 .report-num {
   text-align: right;
   font-variant-numeric: tabular-nums;
+}
+
+/* ===================================================
+   MESSAGES TAB
+   =================================================== */
+
+.messages-compose-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.messages-compose-card {
+  position: sticky;
+  top: 20px;
+}
+
+/* History Card Constraints */
+.messages-history-card {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 100px);
+  min-height: 300px;
+}
+
+#sent-messages-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.messages-filters-fieldset {
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 0;
+}
+
+.messages-filters-fieldset legend {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--admin-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 6px;
+}
+
+.messages-filter-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.messages-filter-sections {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.messages-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.messages-filter-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--admin-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+}
+
+.messages-filter-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.84rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+.messages-preview-box {
+  min-height: 28px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.messages-email-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  color: #374151;
+}
+
+.messages-send-btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .messages-compose-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .messages-compose-card {
+    position: static;
+  }
+
+  .messages-history-card {
+    max-height: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .messages-filter-sections {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .sent-msg-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .sent-msg-toggle {
+    width: 100%;
+    text-align: center;
+  }
+
+  .user-chip {
+    padding: 6px 12px;
+  }
+
+  .user-chip-remove {
+    padding: 0 4px;
+  }
+}
+
+/* ===================================================
+   MESSAGES TAB � User Search & Chips
+   =================================================== */
+
+.manual-users-wrapper {
+  position: relative;
+}
+
+.user-search-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.12);
+  z-index: 200;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.user-search-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 14px;
+  cursor: pointer;
+  gap: 10px;
+  transition: background 0.15s;
+}
+.user-search-item:hover {
+  background: #f1f5f9;
+}
+.user-search-name {
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+.user-search-meta {
+  font-size: 0.76rem;
+  color: var(--admin-muted);
+  white-space: nowrap;
+}
+.user-search-no-results {
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: var(--admin-muted);
+}
+
+.selected-users-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  min-height: 0;
+}
+
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  border-radius: 999px;
+  padding: 3px 10px 3px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.user-chip-remove {
+  background: none;
+  border: none;
+  color: #60a5fa;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  transition: color 0.15s;
+}
+.user-chip-remove:hover {
+  color: #e74c3c;
+}
+
+/* ===================================================
+   MESSAGES TAB � Sent Messages History Cards
+   =================================================== */
+
+.sent-msg-card {
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  background: #fff;
+  transition: box-shadow 0.15s;
+}
+.sent-msg-card:hover {
+  box-shadow: 0 4px 12px rgba(2, 6, 23, 0.07);
+}
+
+.sent-msg-container {
+  flex: 1;
+}
+
+/* Pagination Footer */
+.history-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  margin-top: 10px;
+  border-top: 1px solid var(--admin-border);
+}
+
+.history-pagination button {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+.history-pagination-info {
+  font-size: 0.8rem;
+  color: var(--admin-muted);
+  font-weight: 600;
+}
+
+.sent-msg-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.sent-msg-subject {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #1e293b;
+  line-height: 1.35;
+  flex: 1;
+  word-break: break-word;
+}
+
+.sent-msg-toggle {
+  background: #f8fafc;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.sent-msg-toggle:hover {
+  background: #eff6ff;
+  color: var(--admin-brand);
+  border-color: #bfdbfe;
+}
+
+.sent-msg-meta {
+  font-size: 0.8rem;
+  color: var(--admin-muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.sent-msg-badge {
+  background: #f1f5f9;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+}
+.sent-msg-badge--email {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.sent-msg-filters {
+  font-size: 0.76rem;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.sent-msg-body {
+  margin-top: 10px;
+  background: #f8fafc;
+  border-left: 3px solid var(--admin-brand);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+}
+
+.sent-msg-body-text {
+  font-size: 0.85rem;
+  color: #374151;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.55;
+}
+
+.msg-empty {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* form-message variants */
+.form-message--success {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+.form-message--error {
+  background: #fff1f2;
+  color: #9f1239;
+  border: 1px solid #fecdd3;
+}
+
+/* Container holding all thread bubbles */
+.threads-active-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+/* User Messages (Left Side) */
+.thread-bubble--them {
+  align-self: flex-start;
+  background-color: #f1f3f5;
+  color: #333;
+  border-radius: 12px 12px 12px 2px;
+  padding: 8px 14px;
+  max-width: 75%;
+}
+
+/* Admin Messages (Right Side) */
+.thread-bubble--me {
+  align-self: flex-end;
+  background-color: #ff9800; /* or your preferred primary accent color */
+  color: #fff;
+  border-radius: 12px 12px 2px 12px;
+  padding: 8px 14px;
+  max-width: 75%;
+  text-align: right;
+}
+
+/* Time styling inside bubbles */
+.thread-bubble-time {
+  font-size: 0.7rem;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+@media (max-width: 700px) {
+  .sent-msg-header {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .sent-msg-toggle {
+    align-self: flex-start;
+  }
+}
+
+/* ==========================================================================
+   Athletes Tab Responsive Fixes for 1024px (Tablets / Small Screens)
+   ========================================================================== */
+
+@media screen and (max-width: 1024px) {
+  /* 1. Header & Controls Layout */
+  #athletes-tab .tab-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+  }
+
+  /* Ευθυγράμμιση φίλτρων σε μία σειρά με σωστή αυξομείωση */
+  #athletes-tab .table-controls-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  #athletes-tab .search-input-wrapper {
+    flex: 1 1 240px; /* Παίρνει τον διαθέσιμο χώρο με ελάχιστο 240px */
+  }
+
+  #athletes-tab .search-input-wrapper input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #athletes-tab #regionFilter,
+  #athletes-tab #athleteSort {
+    flex: 1 1 180px; /* Προσαρμογή μεγέθους των dropdowns */
+    min-width: 150px;
+  }
+
+  /* 2. Responsive Πίνακας */
+  #athletes-tab .table-responsive,
+  #athletes-tab table.user-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto; /* Προσθήκη ομαλού scroll αν χρειαστεί */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #athletes-tab table.user-table th,
+  #athletes-tab table.user-table td {
+    padding: 8px 10px; /* Ελαφρώς πιο συμπαγές padding */
+    font-size: 0.9rem; /* Μικρότερο μέγεθος γραμματοσειράς για εξοικονόμηση χώρου */
+    white-space: nowrap; /* Αποφυγή ανεπιθύμητων σπασιμάτων γραμμής */
+  }
+
+  /* 3. Βελτιστοποίηση Στηλών */
+  /* Στήλη ID */
+  #athletes-tab table.user-table th:nth-child(1),
+  #athletes-tab table.user-table td:nth-child(1) {
+    width: 60px;
+    text-align: center;
+  }
+
+  /* Στήλη Ενεργειών (Κουμπιά) */
+  #athletes-tab table.user-table td:last-child {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+
+  #athletes-tab table.user-table .action-btn {
+    padding: 5px 8px;
+    font-size: 0.82rem;
+    margin: 0;
+  }
+
+  /* 4. Badges & Status */
+  #athletes-tab .badge-region,
+  #athletes-tab .status-confirmed,
+  #athletes-tab .status-pending {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+  }
 }

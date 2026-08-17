@@ -116,7 +116,6 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
     <link rel="icon" href="<?= asset('photo/hermes_logo.png') ?>">
 
     <?php if ($activePage === 'Home'): ?>
-        <link rel="preload" as="image" href="<?= asset('photo/welcome-intro.jpg') ?>" fetchpriority="high">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chewy&display=swap">
     <?php endif; ?>
 

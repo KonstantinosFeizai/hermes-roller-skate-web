@@ -73,28 +73,25 @@ require_once __DIR__ . '/../includes/lang.php';
             <h3><a href="<?= asset('contact.php') ?>" class="heading-link"><?= t('footer.contact_title') ?></a></h3>
             <p><strong><?= t('footer.email_label') ?></strong><a
                     href="mailto:hermesrollerskate@gmail.com?subject=Inquiry">hermesrollerskate@gmail.com</a></p>
-            <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/WW9z9DtAkKdPqenU7" target="_blank"
-                    rel="noopener noreferrer"> <?= t('footer.locations.zografou,panepistimioupoli') ?></a></p>
-            <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/QbrQcmkWropaxx1H6" target="_blank"
-                    rel="noopener noreferrer"> <?= t('footer.locations.zografou,polutexneioupoli') ?></a>
-            </p>
-            <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/Hdjvv418PZGE3nQU8" target="_blank"
-                    rel="noopener noreferrer"> <?= t('footer.locations.gerakas') ?>
-                </a></p>
-            <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/tRQuJB6Mh5TqeL8k9" target="_blank"
-                    rel="noopener noreferrer"> <?= t('footer.locations.oaka') ?></a></p>
-            <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/4EZwXij5o2mXq1Lc8" target="_blank"
-                    rel="noopener noreferrer"> <?= t('footer.locations.egaleo') ?></a></p>
-            <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/iaxSuiDQV3zieoQV7" target="_blank"
-                    rel="noopener noreferrer"> <?= t('footer.locations.vrilissia') ?></a></p>
-            <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/gyHxkCWqP5NURGv78" target="_blank"
-                    rel="noopener noreferrer"> <?= t('footer.locations.megalopoli') ?></a></p>
-            <p><strong><?= t('footer.location_label') ?></strong><a href="https://maps.app.goo.gl/AbqNkvtueDurwayW8" target="_blank"
-                    rel="noopener noreferrer"> <?= t('footer.locations.kalamata') ?></a></p>
+            <p><strong><?= t('footer.phone_label') ?></strong><a href="tel:+306955655189"> +30 6955655189</a></p>
             <p><a href="https://invite.viber.com/?g2=AQBS3PE%2F4oOrfFYZRJaZ8xfa0fLzCwLaS2hFFNNrB9pbkKMaWDQInXOHLHcN50Dc" target="_blank"
                     rel="noopener noreferrer"> <?= t('footer.group_icon') ?></a></p>
-            <p><strong><?= t('footer.phone_label') ?></strong><a href="tel:+306955655189"> +30 6955655189</a></p>
+        </div>
 
+        <!-- Locations -->
+        <div class="footer-column locations-forum">
+            <h3><a href="<?= asset('contact.php') ?>" class="heading-link"><?= t('footer.locations_title') ?></a></h3>
+            <ul>
+                <li><a href="https://maps.app.goo.gl/WW9z9DtAkKdPqenU7" target="_blank" rel="noopener noreferrer"><?= t('footer.locations.zografou,panepistimioupoli') ?></a></li>
+                <li><a href="https://maps.app.goo.gl/QbrQcmkWropaxx1H6" target="_blank" rel="noopener noreferrer"><?= t('footer.locations.zografou,polutexneioupoli') ?></a></li>
+                <li><a href="https://maps.app.goo.gl/tRQuJB6Mh5TqeL8k9" target="_blank" rel="noopener noreferrer"><?= t('footer.locations.oaka') ?></a></li>
+                <li><a href="https://maps.app.goo.gl/4EZwXij5o2mXq1Lc8" target="_blank" rel="noopener noreferrer"><?= t('footer.locations.egaleo') ?></a></li>
+                <li><a href="https://maps.app.goo.gl/FvLo2X3Bf121Y9yC8" target="_blank" rel="noopener noreferrer"><?= t('footer.locations.vrilissia') ?></a></li>
+                <li><a href="https://maps.app.goo.gl/52wSVP8WkWSHaFph6" target="_blank" rel="noopener noreferrer"><?= t('footer.locations.ilioupoli') ?></a></li>
+                <li><a href="https://maps.app.goo.gl/HysYd6MPLr1UevieA" target="_blank" rel="noopener noreferrer"><?= t('footer.locations.halandri') ?></a></li>
+                <li><a href="https://maps.app.goo.gl/gyHxkCWqP5NURGv78" target="_blank" rel="noopener noreferrer"><?= t('footer.locations.megalopoli') ?></a></li>
+                <li><a href="https://maps.app.goo.gl/AbqNkvtueDurwayW8" target="_blank" rel="noopener noreferrer"><?= t('footer.locations.kalamata') ?></a></li>
+            </ul>
         </div>
 
         <!-- Partners Carousel -->
@@ -122,16 +119,6 @@ require_once __DIR__ . '/../includes/lang.php';
                         </a>
                     </div>
                     <div class="carousel-item">
-                        <a href="https://www.futureskate.gr/el/" target="_blank" rel="noopener noreferrer">
-                            <img src="<?= asset('photo/futureskate.jpg') ?>" alt="<?= t('footer.partner_alts.futureskate') ?>">
-                        </a>
-                    </div>
-                    <div class="carousel-item">
-                        <a href="https://kidot.gr/" target="_blank" rel="noopener noreferrer">
-                            <img src="<?= asset('photo/kidot.webp') ?>" alt="<?= t('footer.partner_alts.kidot') ?>">
-                        </a>
-                    </div>
-                    <div class="carousel-item">
                         <a href="https://www.inaction.gr/el" target="_blank" rel="noopener noreferrer">
                             <img src="<?= asset('photo/inaction.png') ?>" alt="<?= t('footer.partner_alts.inaction') ?>">
                         </a>
@@ -149,18 +136,19 @@ require_once __DIR__ . '/../includes/lang.php';
 
         <hr class="footer-separator">
 
-        <!-- Copyright -->
-        <div class="footer-bottom">
-            <p>
-                <?= t('footer.payments') ?>
-            </p>
-            <p>
-                <?= t('footer.payments2') ?>
-            </p>
-            <p>
-                <?= t('footer.copyright') ?>
-            </p>
-        </div>
+    </div>
+    <!-- Copyright -->
+    <div class="footer-bottom">
+        <p>
+            <?= t('footer.payments') ?>
+        </p>
+        <p>
+            <?= t('footer.payments2') ?>
+        </p>
+        <p>
+            <?= t('footer.copyright') ?>
+        </p>
+    </div>
 </footer>
 
 </body>

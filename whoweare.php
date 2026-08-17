@@ -18,13 +18,18 @@ require_once PROJECT_ROOT . 'partials/header.php';
 
 <!-- WHO WE ARE PAGE CONTENT -->
 <main>
-  <!-- Intro / Mission -->
+
+  <!-- HERO SECTION -->
+  <section class="inner-hero" style="background-image: linear-gradient(to top, rgba(10, 25, 47, 0.9), rgba(10, 25, 47, 0.6), rgba(10, 25, 47, 0.4)), url('photo/whoweare.jpg');">
+    <div class="container hero-container">
+      <h1 class="hero-title"><?= htmlspecialchars(t('whoweare.hero.title')) ?></h1>
+      <p class="hero-subtitle"><?= htmlspecialchars(t('whoweare.hero.intro')) ?></p>
+    </div>
+  </section>
+
+  <!-- Main Content Section -->
   <section id="who-we-are" class="who-we-are section">
     <div class="container">
-      <h2 class="section-title"><?= htmlspecialchars(t('whoweare.hero.title')) ?></h2>
-      <p class="section-intro">
-        <?= htmlspecialchars(t('whoweare.hero.intro')) ?>
-      </p>
 
       <div class="about-content">
         <div class="about-text">

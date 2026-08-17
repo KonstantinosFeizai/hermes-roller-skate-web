@@ -17,25 +17,32 @@ require_once PROJECT_ROOT . 'partials/header.php';
 ?>
 
 <!-- EQUIPMENT PAGE CONTENT -->
-<!-- Hero Section -->
+
+<!-- Classic Hero Section -->
 <section class="eq-hero">
     <div class="eq-hero-bg">
-        <div class="eq-hero-blob eq-hero-blob--1"></div>
-        <div class="eq-hero-blob eq-hero-blob--2"></div>
+        <img src="<?= asset(path: 'photo/equipment_bg.jpg') ?>" alt="Equipment Hero Background" class="eq-hero-img">
+        <div class="eq-hero-overlay"></div>
     </div>
-    <div class="container">
+    <div class="container eq-hero-container">
         <h1 class="eq-hero-title"><?= htmlspecialchars(t('equipment.hero.title')) ?></h1>
         <p class="eq-hero-subtitle"><?= htmlspecialchars(t('equipment.hero.subtitle')) ?></p>
     </div>
 </section>
 
-<!-- Intro Card -->
+<!-- Intro Section (Text Left, Image Right) -->
 <section class="eq-section">
-    <div class="container eq-container-sm">
-        <div class="eq-intro-card">
-            <p>
-                <?= htmlspecialchars(t('equipment.intro.text')) ?>
-            </p>
+    <div class="container eq-container">
+        <div class="eq-intro-grid">
+            <div class="eq-intro-content">
+                <h2 class="eq-section-title"><?= htmlspecialchars(t('equipment.intro.title')) ?></h2>
+                <p class="eq-intro-text">
+                    <?= htmlspecialchars(t('equipment.intro.text')) ?>
+                </p>
+            </div>
+            <div class="eq-intro-image-wrap">
+                <img src="<?= asset(path: 'photo/eq_section.jpg') ?>" alt="Equipment Section Image" class="eq-intro-img">
+            </div>
         </div>
     </div>
 </section>
@@ -103,30 +110,25 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     </div>
                 </div>
             </div>
+
+            <!-- Firefly ILS C70 J -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
-                    <img src="<?= asset(path: 'photo/firefly_50.webp') ?>" alt="Firefly ILS C70 J" id="product-firefly-c70-img">
+                    <img src="<?= asset(path: 'photo/firefly_50.png') ?>" alt="Firefly ILS C70 J" id="product-firefly-c70-img">
                 </div>
                 <div class="eq-product-body">
                     <div class="eq-product-icon"></div>
                     <h3 class="eq-product-name">Firefly ILS C70 J</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.firefly_c70.subtitle')) ?></p>
                     <span class="eq-product-price">€49.99</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--lightblue active"
-                            data-image="<?= asset(path: 'photo/firefly_50.webp') ?>"
-                            data-target="product-firefly-c70-img"
-                            title="<?= htmlspecialchars(t('equipment.products.firefly_c70.color_blue')) ?>">
-                        </button>
-                        <button class="eq-color-btn eq-color-btn--red"
-                            data-image="<?= asset(path: 'photo/firefly_50_red.webp') ?>"
-                            data-target="product-firefly-c70-img"
-                            title="<?= htmlspecialchars(t('equipment.products.firefly_c70.color_red')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--lightblue active" data-image="<?= asset(path: 'photo/firefly_50.webp') ?>" data-target="product-firefly-c70-img" title="<?= htmlspecialchars(t('equipment.products.firefly_c70.color_blue')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--red" data-image="<?= asset(path: 'photo/firefly_50_red.webp') ?>" data-target="product-firefly-c70-img" title="<?= htmlspecialchars(t('equipment.products.firefly_c70.color_red')) ?>"></button>
                     </div>
                 </div>
             </div>
+
+            <!-- Tempish Gokid -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/gokid_blue.webp') ?>" alt="Tempish Gokid" id="product-gokid-img">
@@ -136,22 +138,13 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">Tempish Gokid</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.gokid.subtitle')) ?></p>
                     <span class="eq-product-price">€50</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--gokid-blue active"
-                            data-image="<?= asset(path: 'photo/gokid_blue.webp') ?>"
-                            data-target="product-gokid-img"
-                            title="<?= htmlspecialchars(t('equipment.products.gokid.color_blue')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--gokid-pink"
-                            data-image="<?= asset(path: 'photo/gokid_pink.webp') ?>"
-                            data-target="product-gokid-img"
-                            title="<?= htmlspecialchars(t('equipment.products.gokid.color_pink')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--gokid-blue active" data-image="<?= asset(path: 'photo/gokid_blue.webp') ?>" data-target="product-gokid-img" title="<?= htmlspecialchars(t('equipment.products.gokid.color_blue')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--gokid-pink" data-image="<?= asset(path: 'photo/gokid_pink.webp') ?>" data-target="product-gokid-img" title="<?= htmlspecialchars(t('equipment.products.gokid.color_pink')) ?>"></button>
                     </div>
                 </div>
             </div>
+
             <!-- OXELO FIT100 -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
@@ -167,6 +160,8 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     </div>
                 </div>
             </div>
+
+            <!-- Funactio Skado 84 -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/skado_84_koleckove_brusle.webp') ?>" alt="Funactio Skado 84" id="product-skado-img">
@@ -176,23 +171,12 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">Funactio Skado 84</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.skado_84.subtitle')) ?></p>
                     <span class="eq-product-price">€60</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--skado-blue active"
-                            data-image="<?= asset(path: 'photo/skado_84_koleckove_brusle.webp') ?>"
-                            data-target="product-skado-img"
-                            title="<?= htmlspecialchars(t('equipment.products.skado_84.color_blue')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--skado-pink"
-                            data-image="<?= asset(path: 'photo/skado_84_lady_koleckove_brusle.webp') ?>"
-                            data-target="product-skado-img"
-                            title="<?= htmlspecialchars(t('equipment.products.skado_84.color_pink')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--skado-blue active" data-image="<?= asset(path: 'photo/skado_84_koleckove_brusle.webp') ?>" data-target="product-skado-img" title="<?= htmlspecialchars(t('equipment.products.skado_84.color_blue')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--skado-pink" data-image="<?= asset(path: 'photo/skado_84_lady_koleckove_brusle.webp') ?>" data-target="product-skado-img" title="<?= htmlspecialchars(t('equipment.products.skado_84.color_pink')) ?>"></button>
                     </div>
                 </div>
             </div>
-
 
         </div>
     </div>
@@ -226,6 +210,8 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     </div>
                 </div>
             </div>
+
+            <!-- Tempish S.R.PRO -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/srpro.webp') ?>" alt="Tempish S.R.PRO" id="product-srpro-img">
@@ -235,17 +221,13 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">Tempish S.R.PRO</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.sr_pro.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€85</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--srpro-wb active"
-                            data-image="<?= asset(path: 'photo/srpro.webp') ?>"
-                            data-target="product-srpro-img"
-                            title="<?= htmlspecialchars(t('equipment.products.sr_pro.color_white')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--srpro-wb active" data-image="<?= asset(path: 'photo/srpro.webp') ?>" data-target="product-srpro-img" title="<?= htmlspecialchars(t('equipment.products.sr_pro.color_white')) ?>"></button>
                     </div>
                 </div>
             </div>
 
+            <!-- TEMPISH Exon -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/exon_black.webp') ?>" alt="Tempish Exon" id="product-exon-img">
@@ -255,17 +237,13 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">TEMPISH Exon</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.exon.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€85</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--exon-black active"
-                            data-image="<?= asset(path: 'photo/exon_black.jpg') ?>"
-                            data-target="product-exon-img"
-                            title="<?= htmlspecialchars(t('equipment.products.exon.color_black')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--exon-black active" data-image="<?= asset(path: 'photo/exon_black.jpg') ?>" data-target="product-exon-img" title="<?= htmlspecialchars(t('equipment.products.exon.color_black')) ?>"></button>
                     </div>
                 </div>
             </div>
 
+            <!-- FLYING EAGLE NT2/S3 -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/flyeagle_mavro.webp') ?>" alt="FLYING EAGLE NT2" id="product-fe-nt2-img">
@@ -275,31 +253,16 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">FLYING EAGLE NT2/S3</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.fe_nt2.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€85-€90</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--black active"
-                            data-image="<?= asset(path: 'photo/flyeagle_mavro.webp') ?>"
-                            data-target="product-fe-nt2-img"
-                            title="<?= htmlspecialchars(t('equipment.products.fe_nt2.color_black')) ?>">
-                        </button>
-                        <button class="eq-color-btn eq-color-btn--blue"
-                            data-image="<?= asset(path: 'photo/flyeagly_mple.webp') ?>"
-                            data-target="product-fe-nt2-img"
-                            title="<?= htmlspecialchars(t('equipment.products.fe_nt2.color_blue')) ?>">
-                        </button>
-                        <button class="eq-color-btn eq-color-btn--pink"
-                            data-image="<?= asset(path: 'photo/flyeagle_roz.webp') ?>"
-                            data-target="product-fe-nt2-img"
-                            title="<?= htmlspecialchars(t('equipment.products.fe_nt2.color_pink')) ?>">
-                        </button>
-                        <button class="eq-color-btn eq-color-btn--pinkpurple"
-                            data-image="<?= asset(path: 'photo/flyeagle_roz_kai_kati.webp') ?>"
-                            data-target="product-fe-nt2-img"
-                            title="<?= htmlspecialchars(t('equipment.products.fe_nt2.color_pink_purple')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--black active" data-image="<?= asset(path: 'photo/flyeagle_mavro.webp') ?>" data-target="product-fe-nt2-img" title="<?= htmlspecialchars(t('equipment.products.fe_nt2.color_black')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--blue" data-image="<?= asset(path: 'photo/flyeagly_mple.webp') ?>" data-target="product-fe-nt2-img" title="<?= htmlspecialchars(t('equipment.products.fe_nt2.color_blue')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--pink" data-image="<?= asset(path: 'photo/flyeagle_roz.webp') ?>" data-target="product-fe-nt2-img" title="<?= htmlspecialchars(t('equipment.products.fe_nt2.color_pink')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--pinkpurple" data-image="<?= asset(path: 'photo/flyeagle_roz_kai_kati.webp') ?>" data-target="product-fe-nt2-img" title="<?= htmlspecialchars(t('equipment.products.fe_nt2.color_pink_purple')) ?>"></button>
                     </div>
                 </div>
             </div>
+
+            <!-- POWERSLIDE Khaan Junior / Magic -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/powerslide_khaan_junior_black.webp') ?>" alt="Powerslide Khaan Junior" id="product-khaan-img">
@@ -309,25 +272,10 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">POWERSLIDE Khaan Junior / Magic</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.khaan_junior.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€90-€100</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--black active"
-                            data-image="<?= asset(path: 'photo/powerslide_khaan_junior_black.webp') ?>"
-                            data-target="product-khaan-img"
-                            title="<?= htmlspecialchars(t('equipment.products.khaan_junior.color_black')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--pink"
-                            data-image="<?= asset(path: 'photo/powersldde_khaan_junior.webp') ?>"
-                            data-target="product-khaan-img"
-                            title="<?= htmlspecialchars(t('equipment.products.khaan_junior.color_pink')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--magic"
-                            data-image="<?= asset(path: 'photo/powerslide_khaan_magic.jpg') ?>"
-                            data-target="product-khaan-img"
-                            title="<?= htmlspecialchars(t('equipment.products.khaan_junior.color_magic')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--black active" data-image="<?= asset(path: 'photo/powerslide_khaan_junior_black.webp') ?>" data-target="product-khaan-img" title="<?= htmlspecialchars(t('equipment.products.khaan_junior.color_black')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--pink" data-image="<?= asset(path: 'photo/powersldde_khaan_junior.webp') ?>" data-target="product-khaan-img" title="<?= htmlspecialchars(t('equipment.products.khaan_junior.color_pink')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--magic" data-image="<?= asset(path: 'photo/powerslide_khaan_magic.jpg') ?>" data-target="product-khaan-img" title="<?= htmlspecialchars(t('equipment.products.khaan_junior.color_magic')) ?>"></button>
                     </div>
                 </div>
             </div>
@@ -349,6 +297,8 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     </div>
                 </div>
             </div>
+
+            <!-- POWERSLIDE Stargaze -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/powerslide_stargaze_aqua_galazio.webp') ?>" alt="Powerslide Stargaze" id="product-stargaze-img">
@@ -358,35 +308,16 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">POWERSLIDE Stargaze</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.stargaze.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€100-€110</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--stargaze-aqua active"
-                            data-image="<?= asset(path: 'photo/powerslide_stargaze_aqua_galazio.webp') ?>"
-                            data-target="product-stargaze-img"
-                            title="<?= htmlspecialchars(t('equipment.products.stargaze.color_aqua')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--stargaze-pink"
-                            data-image="<?= asset(path: 'photo/powerslide_stargaze_pink.webp') ?>"
-                            data-target="product-stargaze-img"
-                            title="<?= htmlspecialchars(t('equipment.products.stargaze.color_pink')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--stargaze-blackblue"
-                            data-image="<?= asset(path: 'photo/powerslide_stargaze_black_blue.webp') ?>"
-                            data-target="product-stargaze-img"
-                            title="<?= htmlspecialchars(t('equipment.products.stargaze.color_black_blue')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--stargaze-dusk"
-                            data-image="<?= asset(path: 'photo/powerslide_stargaze_dusk_mavro.webp') ?>"
-                            data-target="product-stargaze-img"
-                            title="<?= htmlspecialchars(t('equipment.products.stargaze.color_dusk')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--stargaze-aqua active" data-image="<?= asset(path: 'photo/powerslide_stargaze_aqua_galazio.webp') ?>" data-target="product-stargaze-img" title="<?= htmlspecialchars(t('equipment.products.stargaze.color_aqua')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--stargaze-pink" data-image="<?= asset(path: 'photo/powerslide_stargaze_pink.webp') ?>" data-target="product-stargaze-img" title="<?= htmlspecialchars(t('equipment.products.stargaze.color_pink')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--stargaze-blackblue" data-image="<?= asset(path: 'photo/powerslide_stargaze_black_blue.webp') ?>" data-target="product-stargaze-img" title="<?= htmlspecialchars(t('equipment.products.stargaze.color_black_blue')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--stargaze-dusk" data-image="<?= asset(path: 'photo/powerslide_stargaze_dusk_mavro.webp') ?>" data-target="product-stargaze-img" title="<?= htmlspecialchars(t('equipment.products.stargaze.color_dusk')) ?>"></button>
                     </div>
                 </div>
             </div>
 
+            <!-- Tempish Viber 90 -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/VIBER_90.webp') ?>" alt="Tempish Viber 90" id="product-viber90-img">
@@ -396,17 +327,13 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">Tempish Viber 90</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.viber_90.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€105</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--viber90-bw active"
-                            data-image="<?= asset(path: 'photo/VIBER_90.webp') ?>"
-                            data-target="product-viber90-img"
-                            title="<?= htmlspecialchars(t('equipment.products.viber_90.color_black_white')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--viber90-bw active" data-image="<?= asset(path: 'photo/VIBER_90.webp') ?>" data-target="product-viber90-img" title="<?= htmlspecialchars(t('equipment.products.viber_90.color_black_white')) ?>"></button>
                     </div>
                 </div>
             </div>
 
+            <!-- POWERSLIDE Jet -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/powerslide_jet_black.webp') ?>" alt="Powerslide Jet" id="product-jet-img">
@@ -416,23 +343,14 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">POWERSLIDE Jet</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.jet.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€110</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--jet-blackred active"
-                            data-image="<?= asset(path: 'photo/powerslide_jet_black.webp') ?>"
-                            data-target="product-jet-img"
-                            title="<?= htmlspecialchars(t('equipment.products.jet.color_black_red')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--jet-lavender"
-                            data-image="<?= asset(path: 'photo/powerslide_jet_lavender.webp') ?>"
-                            data-target="product-jet-img"
-                            title="<?= htmlspecialchars(t('equipment.products.jet.color_lavender')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--jet-blackred active" data-image="<?= asset(path: 'photo/powerslide_jet_black.webp') ?>" data-target="product-jet-img" title="<?= htmlspecialchars(t('equipment.products.jet.color_black_red')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--jet-lavender" data-image="<?= asset(path: 'photo/powerslide_jet_lavender.webp') ?>" data-target="product-jet-img" title="<?= htmlspecialchars(t('equipment.products.jet.color_lavender')) ?>"></button>
                     </div>
                 </div>
             </div>
 
+            <!-- MICRO Discovery -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/micro_discovery_black.jpg') ?>" alt="MICRO Discovery Inline Skates" id="product-discovery-img">
@@ -442,27 +360,15 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">MICRO Discovery</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.discovery.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€120</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--black active"
-                            data-image="<?= asset(path: 'photo/micro_discovery_black.jpg') ?>"
-                            data-target="product-discovery-img"
-                            title="<?= htmlspecialchars(t('equipment.products.discovery.color_black')) ?>">
-                        </button>
-                        <button class="eq-color-btn eq-color-btn--blueblack"
-                            data-image="<?= asset(path: 'photo/micro_discovery_blueblack.jpg') ?>"
-                            data-target="product-discovery-img"
-                            title="<?= htmlspecialchars(t('equipment.products.discovery.color_blue_black')) ?>">
-                        </button>
-                        <button class="eq-color-btn eq-color-btn--pink"
-                            data-image="<?= asset(path: 'photo/micro_discovery_pink.jpg') ?>"
-                            data-target="product-discovery-img"
-                            title="<?= htmlspecialchars(t('equipment.products.discovery.color_pink')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--black active" data-image="<?= asset(path: 'photo/micro_discovery_black.jpg') ?>" data-target="product-discovery-img" title="<?= htmlspecialchars(t('equipment.products.discovery.color_black')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--blueblack" data-image="<?= asset(path: 'photo/micro_discovery_blueblack.jpg') ?>" data-target="product-discovery-img" title="<?= htmlspecialchars(t('equipment.products.discovery.color_blue_black')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--pink" data-image="<?= asset(path: 'photo/micro_discovery_pink.jpg') ?>" data-target="product-discovery-img" title="<?= htmlspecialchars(t('equipment.products.discovery.color_pink')) ?>"></button>
                     </div>
                 </div>
             </div>
 
+            <!-- MICRO Cosmo ID -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/micro_cosmo.webp') ?>" alt="Micro Cosmo ID" id="product-micro-cosmo-img">
@@ -472,41 +378,17 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">MICRO Cosmo ID</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.micro_cosmo_id.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€100-€110</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--white active"
-                            data-image="<?= asset(path: 'photo/micro_cosmo.webp') ?>"
-                            data-target="product-micro-cosmo-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_cosmo_id.color_white')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--blackwhite"
-                            data-image="<?= asset(path: 'photo/micro_cosmo_black.webp') ?>"
-                            data-target="product-micro-cosmo-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_cosmo_id.color_black_white')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--pinkwhite"
-                            data-image="<?= asset(path: 'photo/micro_cosmo_white_pink.webp') ?>"
-                            data-target="product-micro-cosmo-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_cosmo_id.color_pink_white')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--beigebrown"
-                            data-image="<?= asset(path: 'photo/micro_cosmo_Beige_Brown.webp') ?>"
-                            data-target="product-micro-cosmo-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_cosmo_id.color_beige_brown')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--bluepink"
-                            data-image="<?= asset(path: 'photo/micro_cosmo_bluepink.webp') ?>"
-                            data-target="product-micro-cosmo-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_cosmo_id.color_blue_pink')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--white active" data-image="<?= asset(path: 'photo/micro_cosmo.webp') ?>" data-target="product-micro-cosmo-img" title="<?= htmlspecialchars(t('equipment.products.micro_cosmo_id.color_white')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--blackwhite" data-image="<?= asset(path: 'photo/micro_cosmo_black.webp') ?>" data-target="product-micro-cosmo-img" title="<?= htmlspecialchars(t('equipment.products.micro_cosmo_id.color_black_white')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--pinkwhite" data-image="<?= asset(path: 'photo/micro_cosmo_white_pink.webp') ?>" data-target="product-micro-cosmo-img" title="<?= htmlspecialchars(t('equipment.products.micro_cosmo_id.color_pink_white')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--beigebrown" data-image="<?= asset(path: 'photo/micro_cosmo_Beige_Brown.webp') ?>" data-target="product-micro-cosmo-img" title="<?= htmlspecialchars(t('equipment.products.micro_cosmo_id.color_beige_brown')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--bluepink" data-image="<?= asset(path: 'photo/micro_cosmo_bluepink.webp') ?>" data-target="product-micro-cosmo-img" title="<?= htmlspecialchars(t('equipment.products.micro_cosmo_id.color_blue_pink')) ?>"></button>
                     </div>
                 </div>
             </div>
 
+            <!-- Tempish Ezza 90 -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/ezza_90.webp') ?>" alt="Tempish Ezza 90" id="product-ezza-img">
@@ -516,22 +398,14 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">Tempish Ezza 90</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.ezza_90.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€120</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--ezza-black"
-                            data-image="<?= asset(path: 'photo/ezza_90.webp') ?>"
-                            data-target="product-ezza-img"
-                            title="<?= htmlspecialchars(t('equipment.products.ezza_90.color_black_red')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--ezza-white"
-                            data-image="<?= asset(path: 'photo/EZZA_UNI_90.webp') ?>"
-                            data-target="product-ezza-img"
-                            title="<?= htmlspecialchars(t('equipment.products.ezza_90.color_white_red')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--ezza-black" data-image="<?= asset(path: 'photo/ezza_90.webp') ?>" data-target="product-ezza-img" title="<?= htmlspecialchars(t('equipment.products.ezza_90.color_black_red')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--ezza-white" data-image="<?= asset(path: 'photo/EZZA_UNI_90.webp') ?>" data-target="product-ezza-img" title="<?= htmlspecialchars(t('equipment.products.ezza_90.color_white_red')) ?>"></button>
                     </div>
                 </div>
             </div>
+
+            <!-- POWERSLIDE Zoom 80 -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/powerslide_zoom_cotton_candy_pink.webp') ?>" alt="Powerslide Zoom" id="product-zoom-img">
@@ -541,29 +415,15 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">POWERSLIDE Zoom 80</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.zoom.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€140</span>
-
                     <div class="eq-color-buttons">
-
-                        <button class="eq-color-btn eq-color-btn--zoom-pink"
-                            data-image="<?= asset(path: 'photo/powerslide_zoom_cotton_candy_pink.webp') ?>"
-                            data-target="product-zoom-img"
-                            title="<?= htmlspecialchars(t('equipment.products.zoom.color_pink')) ?>">
-                        </button>
-                        <button class="eq-color-btn eq-color-btn--zoom-black active"
-                            data-image="<?= asset(path: 'photo/powerslide_zoomblack_80.webp') ?>"
-                            data-target="product-zoom-img"
-                            title="<?= htmlspecialchars(t('equipment.products.zoom.color_black')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--zoom-yellow"
-                            data-image="<?= asset(path: 'photo/powerslide_zoom_neon_yellow_80.webp') ?>"
-                            data-target="product-zoom-img"
-                            title="<?= htmlspecialchars(t('equipment.products.zoom.color_yellow')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--zoom-pink" data-image="<?= asset(path: 'photo/powerslide_zoom_cotton_candy_pink.webp') ?>" data-target="product-zoom-img" title="<?= htmlspecialchars(t('equipment.products.zoom.color_pink')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--zoom-black active" data-image="<?= asset(path: 'photo/powerslide_zoomblack_80.webp') ?>" data-target="product-zoom-img" title="<?= htmlspecialchars(t('equipment.products.zoom.color_black')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--zoom-yellow" data-image="<?= asset(path: 'photo/powerslide_zoom_neon_yellow_80.webp') ?>" data-target="product-zoom-img" title="<?= htmlspecialchars(t('equipment.products.zoom.color_yellow')) ?>"></button>
                     </div>
                 </div>
             </div>
 
+            <!-- Micro MT4 Firefly / MT Plus -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/MICRO_MT_BLACK.webp') ?>" alt="Micro MT4 / MT Plus" id="product-mt4-img">
@@ -573,58 +433,20 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">Micro MT4 Firefly / MT Plus</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.micro_mt4.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€160</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--black active"
-                            data-image="<?= asset(path: 'photo/MICRO_MT_BLACK.webp') ?>"
-                            data-target="product-mt4-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_black')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--firefly-yellow"
-                            data-image="<?= asset(path: 'photo/MICRO_MT_YELLOWAND.webp') ?>"
-                            data-target="product-mt4-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_yellow_blue')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--firefly-blue"
-                            data-image="<?= asset(path: 'photo/MICRO_MT_BLUEAND.webp') ?>"
-                            data-target="product-mt4-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_blue_white')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--red"
-                            data-image="<?= asset(path: 'photo/MICRO_MT_RED.webp') ?>"
-                            data-target="product-mt4-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_red')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--blue"
-                            data-image="<?= asset(path: 'photo/MICRO_MT_BLUE.webp') ?>"
-                            data-target="product-mt4-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_blue')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--emerald"
-                            data-image="<?= asset(path: 'photo/MICRO_MT_EMERALD.webp') ?>"
-                            data-target="product-mt4-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_emerald')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--sand"
-                            data-image="<?= asset(path: 'photo/MICRO_MT_SAND_WHITE.webp') ?>"
-                            data-target="product-mt4-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_sand')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--cherry"
-                            data-image="<?= asset(path: 'photo/MICRO_MT_CHERRY.webp') ?>"
-                            data-target="product-mt4-img"
-                            title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_cherry')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--black active" data-image="<?= asset(path: 'photo/MICRO_MT_BLACK.webp') ?>" data-target="product-mt4-img" title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_black')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--firefly-yellow" data-image="<?= asset(path: 'photo/MICRO_MT_YELLOWAND.webp') ?>" data-target="product-mt4-img" title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_yellow_blue')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--firefly-blue" data-image="<?= asset(path: 'photo/MICRO_MT_BLUEAND.webp') ?>" data-target="product-mt4-img" title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_blue_white')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--red" data-image="<?= asset(path: 'photo/MICRO_MT_RED.webp') ?>" data-target="product-mt4-img" title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_red')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--blue" data-image="<?= asset(path: 'photo/MICRO_MT_BLUE.webp') ?>" data-target="product-mt4-img" title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_blue')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--emerald" data-image="<?= asset(path: 'photo/MICRO_MT_EMERALD.webp') ?>" data-target="product-mt4-img" title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_emerald')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--sand" data-image="<?= asset(path: 'photo/MICRO_MT_SAND_WHITE.webp') ?>" data-target="product-mt4-img" title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_sand')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--cherry" data-image="<?= asset(path: 'photo/MICRO_MT_CHERRY.webp') ?>" data-target="product-mt4-img" title="<?= htmlspecialchars(t('equipment.products.micro_mt4.color_cherry')) ?>"></button>
                     </div>
                 </div>
             </div>
+
+            <!-- Tempish Viber L.E. -->
             <div class="eq-product-card">
                 <div class="eq-product-image">
                     <img src="<?= asset(path: 'photo/viber_le_80_inline_skates.webp') ?>" alt="Tempish Viber L.E." id="product-viber-img">
@@ -634,202 +456,201 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <h3 class="eq-product-name">Tempish Viber L.E.</h3>
                     <p class="eq-product-subtitle"><?= htmlspecialchars(t('equipment.products.viber_le.subtitle')) ?></p>
                     <span class="eq-product-price eq-product-price--premium">€160</span>
-
                     <div class="eq-color-buttons">
-                        <button class="eq-color-btn eq-color-btn--viber-blackgold active"
-                            data-image="<?= asset(path: 'photo/viber_le_80_inline_skates.webp') ?>"
-                            data-target="product-viber-img"
-                            title="<?= htmlspecialchars(t('equipment.products.viber_le.color_black_gold_80')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--viber-whitebeige"
-                            data-image="<?= asset(path: 'photo/VIBER_L.E._90_LADY.webp') ?>"
-                            data-target="product-viber-img"
-                            title="<?= htmlspecialchars(t('equipment.products.viber_le.color_white_beige')) ?>">
-                        </button>
-
-                        <button class="eq-color-btn eq-color-btn--viber-blackgold-90"
-                            data-image="<?= asset(path: 'photo/VIBER_L.E._90.webp') ?>"
-                            data-target="product-viber-img"
-                            title="<?= htmlspecialchars(t('equipment.products.viber_le.color_black_gold_90')) ?>">
-                        </button>
+                        <button class="eq-color-btn eq-color-btn--viber-blackgold active" data-image="<?= asset(path: 'photo/viber_le_80_inline_skates.webp') ?>" data-target="product-viber-img" title="<?= htmlspecialchars(t('equipment.products.viber_le.color_black_gold_80')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--viber-whitebeige" data-image="<?= asset(path: 'photo/VIBER_L.E._90_LADY.webp') ?>" data-target="product-viber-img" title="<?= htmlspecialchars(t('equipment.products.viber_le.color_white_beige')) ?>"></button>
+                        <button class="eq-color-btn eq-color-btn--viber-blackgold-90" data-image="<?= asset(path: 'photo/VIBER_L.E._90.webp') ?>" data-target="product-viber-img" title="<?= htmlspecialchars(t('equipment.products.viber_le.color_black_gold_90')) ?>"></button>
                     </div>
                 </div>
             </div>
-
 
         </div>
 
         <!-- Discount Alert -->
         <div class="eq-discount-alert">
-            <p><?= t('equipment.discount.text') ?></p>
+            <p>
+                <i class="fa-regular fa-comment-dots eq-discount-icon" aria-hidden="true"></i>
+                <strong><?= t('equipment.discount.title') ?>:</strong>
+                <?= t('equipment.discount.text') ?>
+            </p>
         </div>
     </div>
 </section>
 
-<!-- FAQ Sections -->
+<!-- Technical Resources Section -->
 <section class="eq-section eq-section--muted">
     <div class="container eq-container-sm">
         <h2 class="eq-section-title text-center"><?= htmlspecialchars(t('equipment.faq.title')) ?></h2>
+        <p class="eq-tech-subtitle text-center"><?= htmlspecialchars(t('equipment.faq.subtitle')) ?></p>
 
-        <div class="eq-faq-container">
+        <div class="eq-tech-accordion">
 
-            <!-- Protection FAQ -->
-            <div class="eq-faq-item">
-                <button class="eq-faq-trigger" onclick="toggleFaq(this)">
-                    <span class="eq-faq-title">
-                        <span class="eq-faq-icon"><i class="fa-solid fa-shield-halved" style="color: #eb0f0f;"></i></span>
-                        <?= htmlspecialchars(t('equipment.faq.protection.title')) ?>
+            <!-- Protection Gear & Fitment -->
+            <div class="eq-tech-item" id="eq-tech-protection">
+                <button class="eq-tech-trigger" onclick="toggleTech(this)" aria-expanded="false">
+                    <span class="eq-tech-header">
+                        <span class="eq-tech-icon-box eq-tech-icon-box--purple">
+                            <img src="<?= asset(path: 'photo/engineer.png') ?>" alt="engineer">
+                        </span>
+                        <span class="eq-tech-label"><?= htmlspecialchars(t('equipment.faq.protection.title')) ?></span>
                     </span>
-                    <span class="eq-faq-plus">+</span>
+                    <svg class="eq-tech-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
                 </button>
-                <div class="eq-faq-content">
-                    <p><?= htmlspecialchars(t('equipment.faq.protection.intro')) ?></p>
-
-                    <div class="eq-protection-grid">
-                        <div class="eq-protection-item">
-                            <div class="eq-protection-emoji">🖐️</div>
-                            <div class="eq-protection-name"><?= htmlspecialchars(t('equipment.faq.protection.wrist')) ?></div>
-                        </div>
-                        <div class="eq-protection-item">
-                            <div class="eq-protection-emoji">💪</div>
-                            <div class="eq-protection-name"><?= htmlspecialchars(t('equipment.faq.protection.elbow')) ?></div>
-                        </div>
-                        <div class="eq-protection-item">
-                            <div class="eq-protection-emoji">🦵</div>
-                            <div class="eq-protection-name"><?= htmlspecialchars(t('equipment.faq.protection.knee')) ?></div>
-                        </div>
-                    </div>
-
-                    <p><?= t('equipment.faq.protection.types_intro') ?></p>
-
-                    <div class="eq-protection-types">
-                        <div class="eq-protection-type eq-protection-type--primary">
-                            <div class="eq-protection-type-container">
-                                <h4><?= htmlspecialchars(t('equipment.faq.protection.slip_title')) ?></h4>
-                                <p><?= htmlspecialchars(t('equipment.faq.protection.slip_desc')) ?></p>
-                                <p class="eq-pros"><?= htmlspecialchars(t('equipment.faq.protection.slip_pros')) ?></p>
-                                <p class="eq-cons"><?= htmlspecialchars(t('equipment.faq.protection.slip_cons')) ?></p>
+                <div class="eq-tech-content">
+                    <div class="eq-tech-content-inner">
+                        <div class="eq-tech-gear-grid">
+                            <div class="eq-tech-gear-item">
+                                <div class="eq-tech-gear-icon"><img src="<?= asset(path: 'photo/wrist_guard.png') ?>" alt="wrist guard"></div>
+                                <div class="eq-tech-gear-name"><?= htmlspecialchars(t('equipment.faq.protection.wrist')) ?></div>
+                                <div class="eq-tech-gear-desc"><?= htmlspecialchars(t('equipment.faq.protection.wrist_desc')) ?></div>
                             </div>
-                            <div class="eq-protection-image">
-                                <img src="<?= asset(path: 'photo/sleeve.png') ?>" alt="sleeve protection">
+                            <div class="eq-tech-gear-item">
+                                <div class="eq-tech-gear-icon"><img src="<?= asset(path: 'photo/knee-pad.png') ?>" alt="knee pad"></div>
+                                <div class="eq-tech-gear-name"><?= htmlspecialchars(t('equipment.faq.protection.knee')) ?></div>
+                                <div class="eq-tech-gear-desc"><?= htmlspecialchars(t('equipment.faq.protection.knee_desc')) ?></div>
+                            </div>
+                            <div class="eq-tech-gear-item">
+                                <div class="eq-tech-gear-icon"><img src="<?= asset(path: 'photo/elbow-pads.png') ?>" alt="elbow pads"></div>
+                                <div class="eq-tech-gear-name"><?= htmlspecialchars(t('equipment.faq.protection.elbow')) ?></div>
+                                <div class="eq-tech-gear-desc"><?= htmlspecialchars(t('equipment.faq.protection.elbow_desc')) ?></div>
+                            </div>
+                            <div class="eq-tech-gear-item">
+                                <div class="eq-tech-gear-icon"><img src="<?= asset(path: 'photo/helmet.png') ?>" alt="helmet"></div>
+                                <div class="eq-tech-gear-name"><?= htmlspecialchars(t('equipment.faq.protection.helmet')) ?></div>
+                                <div class="eq-tech-gear-desc"><?= htmlspecialchars(t('equipment.faq.protection.helmet_desc')) ?></div>
                             </div>
                         </div>
-                        <div class="eq-protection-type eq-protection-type--secondary">
-                            <div class="eq-protection-type-container">
-                                <h4><?= htmlspecialchars(t('equipment.faq.protection.velcro_title')) ?></h4>
-                                <p><?= htmlspecialchars(t('equipment.faq.protection.velcro_desc')) ?></p>
-                                <p class="eq-pros"><?= htmlspecialchars(t('equipment.faq.protection.velcro_pros')) ?></p>
-                                <p class="eq-cons"><?= htmlspecialchars(t('equipment.faq.protection.velcro_cons')) ?></p>
+                        <div class="eq-tech-featured-grid">
+                            <div class="eq-tech-featured-card">
+                                <img src="<?= asset(path: 'photo/slip_on_pads.png') ?>" alt="sleeve protection" class="eq-tech-featured-img">
+                                <div class="eq-tech-featured-body">
+                                    <span class="eq-tech-badge eq-tech-badge--premium"><?= htmlspecialchars(t('equipment.faq.protection.slip_badge')) ?></span>
+                                    <h4><?= htmlspecialchars(t('equipment.faq.protection.slip_title')) ?></h4>
+                                    <p><?= nl2br(str_replace(['✅', '❌'], ['<img src="' . asset(path: 'photo/accept.png') . '" alt="yes" class="eq-inline-icon">', '<img src="' . asset(path: 'photo/delete.png') . '" alt="no" class="eq-inline-icon">'], htmlspecialchars(t('equipment.faq.protection.slip_desc')))) ?></p>
+                                </div>
                             </div>
-                            <div class="eq-protection-image">
-                                <img src="<?= asset(path: 'photo/velco.png') ?>" alt="velco protection">
+                            <div class="eq-tech-featured-card">
+                                <img src="<?= asset(path: 'photo/velco_pads.png') ?>" alt="velcro protection" class="eq-tech-featured-img">
+                                <div class="eq-tech-featured-body">
+                                    <span class="eq-tech-badge eq-tech-badge--standard"><?= htmlspecialchars(t('equipment.faq.protection.velcro_badge')) ?></span>
+                                    <h4><?= htmlspecialchars(t('equipment.faq.protection.velcro_title')) ?></h4>
+                                    <p><?= nl2br(str_replace(['✅', '❌'], ['<img src="' . asset(path: 'photo/accept.png') . '" alt="yes" class="eq-inline-icon">', '<img src="' . asset(path: 'photo/delete.png') . '" alt="no" class="eq-inline-icon">'], htmlspecialchars(t('equipment.faq.protection.velcro_desc')))) ?></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="eq-helmet-box">
-                        <h4><?= htmlspecialchars(t('equipment.faq.protection.helmet_title')) ?></h4>
-                        <p><?= t('equipment.faq.protection.helmet_text') ?></p>
                     </div>
                 </div>
             </div>
 
-            <!-- Skate Types FAQ -->
-            <div class="eq-faq-item">
-                <button class="eq-faq-trigger" onclick="toggleFaq(this)">
-                    <span class="eq-faq-title">
-                        <span class="eq-faq-icon"><i class="fas fa-skating " style="color: #FFD43B;"></i></span>
-                        <?= htmlspecialchars(t('equipment.faq.skates.title')) ?>
+            <!-- Skate Disciplines & Selection -->
+            <div class="eq-tech-item" id="eq-tech-disciplines">
+                <button class="eq-tech-trigger" onclick="toggleTech(this)" aria-expanded="false">
+                    <span class="eq-tech-header">
+                        <span class="eq-tech-icon-box eq-tech-icon-box--orange">
+                            <img src="<?= asset(path: 'photo/rollers.png') ?>" alt="rollers">
+                        </span>
+                        <span class="eq-tech-label"><?= htmlspecialchars(t('equipment.faq.skates.title')) ?></span>
                     </span>
-                    <span class="eq-faq-plus">+</span>
+                    <svg class="eq-tech-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
                 </button>
-                <div class="eq-faq-content">
-                    <h4 class="eq-type-badge eq-type-badge--primary"><?= htmlspecialchars(t('equipment.faq.skates.inline_title')) ?></h4>
-                    <p><?= t('equipment.faq.skates.inline_desc') ?></p>
-
-                    <div class="eq-types-grid">
-                        <div class="eq-type-item eq-type-item--recommended">
-                            <div class="eq-type-name"><?= htmlspecialchars(t('equipment.faq.skates.type_fitness')) ?></div>
-                            <div class="eq-type-desc"><?= htmlspecialchars(t('equipment.faq.skates.type_fitness_desc')) ?></div>
-                            <div class="eq-type-rec"><?= htmlspecialchars(t('equipment.faq.skates.type_fitness_rec')) ?></div>
+                <div class="eq-tech-content">
+                    <div class="eq-tech-content-inner">
+                        <span class="eq-disc-pill"><?= htmlspecialchars(t('equipment.faq.skates.inline_title')) ?></span>
+                        <p class="eq-disc-intro"><?= t('equipment.faq.skates.inline_desc') ?></p>
+                        <div class="eq-disc-grid">
+                            <div class="eq-disc-card eq-disc-card--highlighted">
+                                <div class="eq-disc-card-title"><?= htmlspecialchars(t('equipment.faq.skates.type_fitness')) ?></div>
+                                <div class="eq-disc-card-desc"><?= htmlspecialchars(t('equipment.faq.skates.type_fitness_desc')) ?></div>
+                                <div class="eq-disc-card-rec"><?= htmlspecialchars(t('equipment.faq.skates.type_fitness_rec')) ?></div>
+                            </div>
+                            <div class="eq-disc-card">
+                                <div class="eq-disc-card-title"><?= htmlspecialchars(t('equipment.faq.skates.type_freestyle')) ?></div>
+                                <div class="eq-disc-card-desc"><?= htmlspecialchars(t('equipment.faq.skates.type_freestyle_desc')) ?></div>
+                            </div>
+                            <div class="eq-disc-card">
+                                <div class="eq-disc-card-title"><?= htmlspecialchars(t('equipment.faq.skates.type_speed')) ?></div>
+                                <div class="eq-disc-card-desc"><?= htmlspecialchars(t('equipment.faq.skates.type_speed_desc')) ?></div>
+                            </div>
+                            <div class="eq-disc-card">
+                                <div class="eq-disc-card-title"><?= htmlspecialchars(t('equipment.faq.skates.type_aggressive')) ?></div>
+                                <div class="eq-disc-card-desc"><?= htmlspecialchars(t('equipment.faq.skates.type_aggressive_desc')) ?></div>
+                            </div>
+                            <div class="eq-disc-card">
+                                <div class="eq-disc-card-title"><?= htmlspecialchars(t('equipment.faq.skates.type_urban')) ?></div>
+                                <div class="eq-disc-card-desc"><?= htmlspecialchars(t('equipment.faq.skates.type_urban_desc')) ?></div>
+                            </div>
                         </div>
-                        <div class="eq-type-item">
-                            <div class="eq-type-name"><?= htmlspecialchars(t('equipment.faq.skates.type_freestyle')) ?></div>
-                            <div class="eq-type-desc"><?= htmlspecialchars(t('equipment.faq.skates.type_freestyle_desc')) ?></div>
+                        <div class="eq-disc-grid eq-disc-grid--quad">
+                            <div class="eq-disc-card">
+                                <div class="eq-disc-card-title">
+                                    <img src="<?= asset(path: 'photo/dance.png') ?>" alt="quad skates" class="eq-inline-icon"> <?= htmlspecialchars(t('equipment.faq.skates.quad_title')) ?>
+                                </div>
+                                <div class="eq-disc-card-desc"><?= t('equipment.faq.skates.quad_desc') ?></div>
+                            </div>
                         </div>
-                        <div class="eq-type-item">
-                            <div class="eq-type-name"><?= htmlspecialchars(t('equipment.faq.skates.type_speed')) ?></div>
-                            <div class="eq-type-desc"><?= htmlspecialchars(t('equipment.faq.skates.type_speed_desc')) ?></div>
-                        </div>
-                        <div class="eq-type-item">
-                            <div class="eq-type-name"><?= htmlspecialchars(t('equipment.faq.skates.type_aggressive')) ?></div>
-                            <div class="eq-type-desc"><?= htmlspecialchars(t('equipment.faq.skates.type_aggressive_desc')) ?></div>
-                        </div>
-                        <div class="eq-type-item">
-                            <div class="eq-type-name"><?= htmlspecialchars(t('equipment.faq.skates.type_urban')) ?></div>
-                            <div class="eq-type-desc"><?= htmlspecialchars(t('equipment.faq.skates.type_urban_desc')) ?></div>
-                        </div>
-                    </div>
-
-                    <div class="eq-quad-box">
-                        <h4><?= htmlspecialchars(t('equipment.faq.skates.quad_title')) ?></h4>
-                        <p><?= t('equipment.faq.skates.quad_desc') ?></p>
                     </div>
                 </div>
             </div>
 
-            <!-- Components FAQ -->
-            <div class="eq-faq-item">
-                <button class="eq-faq-trigger" onclick="toggleFaq(this)">
-                    <span class="eq-faq-title">
-                        <span class="eq-faq-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-                        <?= htmlspecialchars(t('equipment.faq.components.title')) ?>
+            <!-- Anatomy & Components -->
+            <div class="eq-tech-item" id="eq-tech-components">
+                <button class="eq-tech-trigger" onclick="toggleTech(this)" aria-expanded="false">
+                    <span class="eq-tech-header">
+                        <span class="eq-tech-icon-box eq-tech-icon-box--green">
+                            <img src="<?= asset(path: 'photo/search.png') ?>" alt="search">
+                        </span>
+                        <span class="eq-tech-label"><?= htmlspecialchars(t('equipment.faq.components.title')) ?></span>
                     </span>
-                    <span class="eq-faq-plus">+</span>
+                    <svg class="eq-tech-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
                 </button>
-                <div class="eq-faq-content">
-                    <p><?= htmlspecialchars(t('equipment.faq.components.intro')) ?></p>
-
-                    <div class="eq-components-overview">
-                        <div class="eq-component-icon-item">
-                            <div class="eq-component-emoji">🥾</div>
-                            <div class="eq-component-name"><?= htmlspecialchars(t('equipment.faq.components.boot')) ?></div>
+                <div class="eq-tech-content">
+                    <div class="eq-tech-content-inner">
+                        <p class="eq-anat-intro"><?= htmlspecialchars(t('equipment.faq.components.intro')) ?></p>
+                        <div class="eq-anat-card-row">
+                            <div class="eq-anat-card">
+                                <div class="eq-anat-card-icon"><img src="<?= asset(path: 'photo/game.png') ?>" alt="boot"></div>
+                                <div class="eq-anat-card-label"><?= htmlspecialchars(t('equipment.faq.components.boot')) ?></div>
+                            </div>
+                            <div class="eq-anat-card">
+                                <div class="eq-anat-card-icon"><img src="<?= asset(path: 'photo/car.png') ?>" alt="frame"></div>
+                                <div class="eq-anat-card-label"><?= htmlspecialchars(t('equipment.faq.components.frame')) ?></div>
+                            </div>
+                            <div class="eq-anat-card">
+                                <div class="eq-anat-card-icon"><img src="<?= asset(path: 'photo/wheels.png') ?>" alt="wheels"></div>
+                                <div class="eq-anat-card-label"><?= htmlspecialchars(t('equipment.faq.components.wheels')) ?></div>
+                            </div>
+                            <div class="eq-anat-card">
+                                <div class="eq-anat-card-icon"><img src="<?= asset(path: 'photo/bearing.png') ?>" alt="bearings"></div>
+                                <div class="eq-anat-card-label"><?= htmlspecialchars(t('equipment.faq.components.bearings')) ?></div>
+                            </div>
+                            <div class="eq-anat-card">
+                                <div class="eq-anat-card-icon"><img src="<?= asset(path: 'photo/size.png') ?>" alt="sizing"></div>
+                                <div class="eq-anat-card-label"><?= htmlspecialchars(t('equipment.faq.components.sizing')) ?></div>
+                            </div>
                         </div>
-                        <div class="eq-component-icon-item">
-                            <div class="eq-component-emoji">🔩</div>
-                            <div class="eq-component-name"><?= htmlspecialchars(t('equipment.faq.components.frame')) ?></div>
-                        </div>
-                        <div class="eq-component-icon-item">
-                            <div class="eq-component-emoji">🛞</div>
-                            <div class="eq-component-name"><?= htmlspecialchars(t('equipment.faq.components.wheels')) ?></div>
-                        </div>
-                        <div class="eq-component-icon-item">
-                            <div class="eq-component-emoji">⚙️</div>
-                            <div class="eq-component-name"><?= htmlspecialchars(t('equipment.faq.components.bearings')) ?></div>
-                        </div>
-                        <div class="eq-component-icon-item">
-                            <div class="eq-component-emoji">📏</div>
-                            <div class="eq-component-name"><?= htmlspecialchars(t('equipment.faq.components.sizing')) ?></div>
-                        </div>
-                    </div>
-
-                    <div class="eq-component-details">
-                        <div class="eq-component-detail eq-component-detail--primary">
-                            <h5><?= htmlspecialchars(t('equipment.faq.components.boot_title')) ?></h5>
-                            <p><?= htmlspecialchars(t('equipment.faq.components.boot_text')) ?></p>
-                        </div>
-                        <div class="eq-component-detail eq-component-detail--secondary">
-                            <h5><?= htmlspecialchars(t('equipment.faq.components.frame_title')) ?></h5>
-                            <p><?= htmlspecialchars(t('equipment.faq.components.frame_text')) ?></p>
-                        </div>
-                        <div class="eq-component-detail eq-component-detail--accent">
-                            <h5><?= htmlspecialchars(t('equipment.faq.components.wheels_title')) ?></h5>
-                            <p><?= htmlspecialchars(t('equipment.faq.components.wheels_text')) ?></p>
-                        </div>
-                        <div class="eq-component-detail eq-component-detail--muted">
-                            <h5><?= htmlspecialchars(t('equipment.faq.components.sizing_title')) ?></h5>
-                            <p><?= htmlspecialchars(t('equipment.faq.components.sizing_text')) ?></p>
+                        <div class="eq-anat-details">
+                            <div class="eq-anat-entry">
+                                <div class="eq-anat-entry-title"><img src="<?= asset(path: 'photo/game.png') ?>" alt="boot" class="eq-anat-entry-icon"> <?= htmlspecialchars(t('equipment.faq.components.boot')) ?></div>
+                                <div class="eq-anat-entry-text"><?= htmlspecialchars(t('equipment.faq.components.boot_text')) ?></div>
+                            </div>
+                            <div class="eq-anat-entry">
+                                <div class="eq-anat-entry-title"><img src="<?= asset(path: 'photo/car.png') ?>" alt="frame" class="eq-anat-entry-icon"> <?= htmlspecialchars(t('equipment.faq.components.frame')) ?></div>
+                                <div class="eq-anat-entry-text"><?= htmlspecialchars(t('equipment.faq.components.frame_text')) ?></div>
+                            </div>
+                            <div class="eq-anat-entry">
+                                <div class="eq-anat-entry-title"><img src="<?= asset(path: 'photo/wheels.png') ?>" alt="wheels" class="eq-anat-entry-icon"> <?= htmlspecialchars(t('equipment.faq.components.wheels')) ?></div>
+                                <div class="eq-anat-entry-text"><?= htmlspecialchars(t('equipment.faq.components.wheels_text')) ?></div>
+                            </div>
+                            <div class="eq-anat-entry">
+                                <div class="eq-anat-entry-title"><img src="<?= asset(path: 'photo/size.png') ?>" alt="sizing" class="eq-anat-entry-icon"> <?= htmlspecialchars(t('equipment.faq.components.sizing_title')) ?></div>
+                                <div class="eq-anat-entry-text"><?= htmlspecialchars(t('equipment.faq.components.sizing_text')) ?></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -867,22 +688,16 @@ require_once PROJECT_ROOT . 'partials/header.php';
         });
     });
 
-    /* FAQ toggle */
-    function toggleFaq(trigger) {
-        const item = trigger.parentElement;
-        const content = item.querySelector('.eq-faq-content');
+    /* Technical Resources accordion toggle */
+    function toggleTech(button) {
+        const item = button.closest('.eq-tech-item');
         const isOpen = item.classList.contains('open');
 
-        // Close others
-        document.querySelectorAll('.eq-faq-item').forEach(i => {
-            i.classList.remove('open');
-            i.querySelector('.eq-faq-trigger').setAttribute('aria-expanded', 'false');
-        });
+        // Ενημέρωση aria-expanded για προσβασιμότητα
+        button.setAttribute('aria-expanded', !isOpen);
 
-        if (!isOpen) {
-            item.classList.add('open');
-            trigger.setAttribute('aria-expanded', 'true');
-        }
+        // Toggle της κλάσης open
+        item.classList.toggle('open');
     }
 </script>
 

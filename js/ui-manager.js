@@ -41,4 +41,26 @@ function showTab(event, tabId) {
       })
       .catch(() => {});
   }
+
+  // 7. If finance tab, auto-load data and start auto-refresh
+  if (tabId === "finance-tab") {
+    if (typeof refreshFinanceTab === "function") {
+      refreshFinanceTab();
+      if (typeof startFinanceAutoRefresh === "function") {
+        startFinanceAutoRefresh();
+      }
+    }
+  } else {
+    // Stop auto-refresh when leaving finance tab
+    if (typeof stopFinanceAutoRefresh === "function") {
+      stopFinanceAutoRefresh();
+    }
+  }
+
+  // 8. If messages tab, load sent messages history
+  if (tabId === "messages-tab") {
+    if (typeof loadSentMessages === "function") {
+      loadSentMessages();
+    }
+  }
 }

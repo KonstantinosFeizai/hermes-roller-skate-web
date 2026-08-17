@@ -26,6 +26,10 @@ try {
         throw new Exception("Λείπουν δεδομένα.");
     }
 
+    if (strlen($new_password) < 8) {
+        throw new Exception("Ο κωδικός πρέπει να έχει τουλάχιστον 8 χαρακτήρες.");
+    }
+
     // Hash the raw token for lookup
     $token_hash = hash('sha256', $raw_token);
 

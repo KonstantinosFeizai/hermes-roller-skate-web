@@ -1,5 +1,58 @@
-main {
-  padding: 2rem 1rem;
+main.prices-page {
+  padding: 0;
+  margin-top: 0;
+}
+
+/* HERO SECTION */
+.prices-hero {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  padding: 100px 24px;
+  background-size: cover;
+  background-position: center 62%;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+.prices-hero .hero-container {
+  max-width: 800px;
+}
+
+.prices-hero .hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(243, 156, 18, 0.2);
+  color: #f39c12;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.prices-hero h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #ffffff;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.prices-hero p {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 600;
 }
 
 /* Container for all cards */
@@ -15,14 +68,17 @@ main {
 .card {
   background-color: #fff;
   padding: 2rem;
-  border-radius: var(--border-radius);
+  border-radius: 30px;
   box-shadow: var(--card-shadow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform: scale(1);
+  transition:
+    transform 0.6s cubic-bezier(0.25, 1, 0.5, 1),
+    box-shadow 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transform: scale(1.02);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
 }
 
 h2 {
@@ -31,7 +87,7 @@ h2 {
   margin-top: 0;
   margin-bottom: 1.5rem;
   text-align: center;
-  border-bottom: 2px solid var(--secondary-color);
+  border-bottom: 1px solid var(--secondary-color);
   padding-bottom: 0.5rem;
 }
 
@@ -84,7 +140,7 @@ h2 {
 }
 
 .note {
-  background-color: #f9f9e2;
+  background-color: #fdf4eb;
   padding: 1rem;
   border-radius: var(--border-radius);
   margin-top: 1.5rem;
@@ -104,24 +160,27 @@ h2 {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: var(--light-bg);
+  background-color: #eef1f6;
   padding: 5px;
   border-radius: 9999px;
   border: 1px solid #ddd;
   font-size: 1rem;
   font-weight: 500;
   color: #555;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
   width: 350px;
 }
 
 .cancellation-pill:hover {
-  background-color: #e0e0e0;
+  /* background-color: #e0e0e0; */
   transform: translateY(-2px);
 }
 
 .cancellation-pill .icon {
   font-size: 1.25rem;
+  margin-left: 1rem;
 }
 
 /* Desktop media query */
@@ -161,7 +220,6 @@ h2 {
   .table-4-cols .table-row {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     justify-items: center;
-
   }
 
   .table-3-cols .table-header,
@@ -186,10 +244,8 @@ h2 {
   }
 }
 
-
-@media (max-width:425px) {
+@media (max-width: 425px) {
   .cell {
-
     text-align: right;
   }
 
@@ -200,5 +256,29 @@ h2 {
 
   h2 {
     font-size: larger;
+  }
+
+  .prices-hero h1 {
+    font-size: 1.9rem;
+  }
+  .prices-hero p {
+    font-size: 1rem;
+  }
+
+  .container {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .prices-hero {
+    min-height: 320px;
+    padding: 80px 20px;
+  }
+  .prices-hero h1 {
+    font-size: 2.4rem;
+  }
+  .prices-hero p {
+    font-size: 1.1rem;
   }
 }

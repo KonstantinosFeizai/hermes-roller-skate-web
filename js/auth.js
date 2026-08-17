@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginFormContainer = document.getElementById("loginForm");
   const signupFormContainer = document.getElementById("signupForm");
   const signupSuccess = document.getElementById("signupSuccess");
-  const termsAcceptanceForm = document.getElementById("termsAcceptanceForm"); // ← νέο
+  const termsAcceptanceForm = document.getElementById("termsAcceptanceForm");
 
   const openSignupLinks = document.querySelectorAll("#openSignupLink");
   const openLoginLinks = document.querySelectorAll(
@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------
 
   const showModal = () => {
-    modal.style.display = "flex"; // Χρησιμοποιήσατε display: flex στο CSS
-    document.body.classList.add("modal-open"); // Προαιρετικό: για να κλειδώσει το scroll
+    modal.style.display = "flex";
+    document.body.classList.add("modal-open");
     resetModal();
   };
 
@@ -51,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("loginGeneralError").textContent = "";
   };
 
-  // ← νέο: εμφανίζει το terms panel για παλιούς χρήστες
   const showTermsForm = () => {
     loginFormContainer.classList.add("hidden");
     signupFormContainer.classList.add("hidden");
@@ -60,10 +59,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const resetModal = () => {
-    // Καθαρισμός όλων των φορμών και μηνυμάτων
     loginFormContainer.reset();
     signupFormContainer.reset();
-    showLoginForm(); // Εμφάνιση της φόρμας Login ως default
+    showLoginForm();
     document
       .querySelectorAll(".error-msg")
       .forEach((el) => (el.textContent = ""));
@@ -77,14 +75,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (closeBtn) closeBtn.addEventListener("click", closeModal);
   if (closeSuccessBtn) closeSuccessBtn.addEventListener("click", closeModal);
 
-  // Κλείσιμο όταν πατηθεί έξω από το Modal Content
   window.addEventListener("click", (event) => {
     if (event.target === modal) {
       closeModal();
     }
   });
 
-  // Εναλλαγή Φορμών
   openSignupLinks.forEach((link) =>
     link.addEventListener("click", (e) => {
       e.preventDefault();
@@ -98,150 +94,144 @@ document.addEventListener("DOMContentLoaded", () => {
     }),
   );
 
-  // Βοηθητική συνάρτηση για την εμφάνιση σφαλμάτων
-  const displayError = (formId, fieldName, message) => {
-    const errorElement = document.getElementById(formId + "GeneralError");
-    if (errorElement) {
-      errorElement.textContent = message;
-      errorElement.style.display = "block";
-    }
-    // Προαιρετικά: Μπορείτε να προσθέσετε λογική για να δείχνει σφάλμα σε συγκεκριμένα πεδία
-  };
-
   // ----------------------------------------------------
   // 4. SIGNUP LOGIC
   // ----------------------------------------------------
   const BASE_URL = window.BASE_URL || "/";
   const i18n = window.AUTH_I18N || {};
 
-  signupFormContainer.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+  if (signupFormContainer) {
+    signupFormContainer.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    // ← νέο: προσθήκη accepted_terms ως boolean
-    data.accepted_terms =
-      document.getElementById("acceptTerms")?.checked ?? false;
-
-    // ← νέο: client-side validation για το checkbox
-    const termsError = document.getElementById("signupTermsError");
-    if (!data.accepted_terms) {
-      if (termsError) {
-        termsError.textContent =
-          i18n.terms_required || "You must accept the Terms of Use.";
-        termsError.style.display = "block";
-      }
-      return;
-    }
-    if (termsError) termsError.style.display = "none";
-
-    // Απενεργοποίηση κουμπιού και εμφάνιση loading (προαιρετικά)
-    document.getElementById("signupBtn").disabled = true;
-    document.getElementById("signupGeneralError").style.display = "none";
-
-    try {
-      const response = await fetch(BASE_URL + "auth/signup_handler.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+      // Καθαρισμός προηγούμενων σφαλμάτων
+      document.querySelectorAll("#signupForm .error-msg").forEach((el) => {
+        el.textContent = "";
+        el.style.display = "none";
       });
 
-      const result = await response.json();
+      document.getElementById("signupBtn").disabled = true;
 
-      if (response.ok) {
-        // Επιτυχής εγγραφή (Status 201 Created)
-        document.getElementById("successEmail").textContent = data.email;
-        signupFormContainer.classList.add("hidden");
-        signupSuccess.classList.remove("hidden");
-        document.getElementById("loginBtn").disabled = false;
-      } else {
-        // Αποτυχία εγγραφής (Status 400, 409, 429, 500)
+      // Συλλογή δεδομένων φόρμας & pre-v
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      data.accepted_terms =
+        document.getElementById("acceptTerms")?.checked ?? false;
+
+      const htmlLang = (document.documentElement.lang || "").toLowerCase();
+      data.lang = htmlLang.startsWith("el") ? "el" : "en";
+
+      const termsError = document.getElementById("signupTermsError");
+      if (!data.accepted_terms) {
+        if (termsError) {
+          termsError.textContent =
+            i18n.terms_required || "You must accept the Terms of Use.";
+          termsError.style.display = "block";
+        }
+        return;
+      }
+      if (termsError) termsError.style.display = "none";
+
+      document.getElementById("signupBtn").disabled = true;
+      document.getElementById("signupGeneralError").style.display = "none";
+
+      try {
+        const response = await fetch(BASE_URL + "auth/signup_handler.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          document.getElementById("successEmail").textContent = data.email;
+          signupFormContainer.classList.add("hidden");
+          signupSuccess.classList.remove("hidden");
+          document.getElementById("loginBtn").disabled = false;
+        } else {
+          const errEl = document.getElementById("signupGeneralError");
+          if (errEl) {
+            errEl.textContent = result.message || i18n.signup_unknown;
+            errEl.style.display = "block";
+          }
+        }
+      } catch (error) {
         const errEl = document.getElementById("signupGeneralError");
         if (errEl) {
-          errEl.textContent = result.message || i18n.signup_unknown;
+          errEl.textContent = i18n.signup_network;
           errEl.style.display = "block";
         }
+      } finally {
+        document.getElementById("signupBtn").disabled = false;
       }
-    } catch (error) {
-      const errEl = document.getElementById("signupGeneralError");
-      if (errEl) {
-        errEl.textContent = i18n.signup_network;
-        errEl.style.display = "block";
-      }
-    } finally {
-      document.getElementById("signupBtn").disabled = false;
-    }
-  });
+    });
+  }
 
   // ----------------------------------------------------
   // 5. LOGIN LOGIC
   // ----------------------------------------------------
-  loginFormContainer.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+  if (loginFormContainer) {
+    loginFormContainer.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
 
-    document.getElementById("loginBtn").disabled = true;
-    document.getElementById("loginGeneralError").style.display = "none";
-    document.getElementById("loginGeneralError").textContent = "";
+      document.getElementById("loginBtn").disabled = true;
+      document.getElementById("loginGeneralError").style.display = "none";
+      document.getElementById("loginGeneralError").textContent = "";
 
-    try {
-      const response = await fetch(BASE_URL + "auth/login_handler.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      try {
+        const response = await fetch(BASE_URL + "auth/login_handler.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
 
-      const result = await response.json();
+        const result = await response.json();
 
-      if (response.ok) {
-        // Επιτυχής σύνδεση
-        // ← νέο: αν παλιός χρήστης χωρίς αποδοχή όρων
-        if (result.needs_terms_acceptance) {
-          showTermsForm();
-          return;
-        }
+        if (response.ok) {
+          if (result.needs_terms_acceptance) {
+            showTermsForm();
+            return;
+          }
 
-        closeModal();
+          closeModal();
 
-        if (result.redirect) {
-          window.location.href = result.redirect;
+          if (result.redirect) {
+            window.location.href = result.redirect;
+          } else {
+            window.location.reload();
+          }
         } else {
-          window.location.reload();
+          const errEl = document.getElementById("loginGeneralError");
+          if (errEl) {
+            errEl.textContent = result.message || i18n.login_unknown;
+            errEl.style.display = "block";
+          }
         }
-      } else {
-        // Αποτυχία σύνδεσης (Status 401, 429)
+      } catch (error) {
         const errEl = document.getElementById("loginGeneralError");
         if (errEl) {
-          errEl.textContent = result.message || i18n.login_unknown;
+          errEl.textContent = i18n.login_network;
           errEl.style.display = "block";
         }
+      } finally {
+        document.getElementById("loginBtn").disabled = false;
       }
-    } catch (error) {
-      const errEl = document.getElementById("loginGeneralError");
-      if (errEl) {
-        errEl.textContent = i18n.login_network;
-        errEl.style.display = "block";
-      }
-    } finally {
-      document.getElementById("loginBtn").disabled = false;
-    }
-  });
+    });
+  }
 
-  // ── Terms acceptance για παλιούς χρήστες ← νέο ──────────
+  // ── Terms acceptance ──────────────────
   const acceptTermsBtn = document.getElementById("acceptTermsBtn");
   if (acceptTermsBtn) {
     acceptTermsBtn.addEventListener("click", async () => {
       const checkbox = document.getElementById("existingUserTerms");
       const termsError = document.getElementById("existingTermsError");
 
-      // Client-side validation
       if (!checkbox?.checked) {
         if (termsError) {
           termsError.textContent = "Πρέπει να αποδεχτείς τους Όρους Χρήσης.";
@@ -280,10 +270,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ----------------------------------------------------
-  // 6. LOGOUT LOGIC (Στο κουμπί του Navbar)
+  // 6. LOGOUT LOGIC
   // ----------------------------------------------------
   const logoutButton = document.getElementById("logout-button");
-
   if (logoutButton) {
     logoutButton.addEventListener("click", () => {
       const i18n = window.AUTH_I18N || {};
@@ -329,23 +318,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // 7. FORGOT PASSWORD LOGIC
   // ----------------------------------------------------
   const forgotPasswordForm = document.getElementById("forgotPasswordForm");
-
   if (forgotPasswordForm) {
     forgotPasswordForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const form = e.target;
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
 
-      const submitButton = form.querySelector('button[type="submit"]');
-      submitButton.disabled = true;
+      const submitBtn = document.getElementById("forgotSubmitBtn");
+      const btnText = document.getElementById("forgotBtnText");
+      const btnSpinner = document.getElementById("forgotBtnSpinner");
+      const alertDiv = document.getElementById("forgotPasswordAlert");
 
-      // Καθαρισμός προηγούμενου σφάλματος
-      const errorDiv = document.getElementById("forgotPasswordGeneralError");
-      if (errorDiv) {
-        errorDiv.style.display = "none";
-      }
+      if (alertDiv) alertDiv.style.display = "none";
+      if (submitBtn) submitBtn.disabled = true;
+      if (btnText) btnText.style.display = "none";
+      if (btnSpinner) btnSpinner.style.display = "inline";
 
       try {
         const response = await fetch(
@@ -360,30 +348,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await response.json();
 
         if (response.ok) {
-          // Επιτυχία: Εμφάνιση μηνύματος επιτυχίας (όχι alert, αλλά μέσα στη φόρμα)
-          if (errorDiv) {
-            errorDiv.style.color = "green";
-            errorDiv.textContent = result.message; // Περιμένουμε μήνυμα επιτυχίας
-            errorDiv.style.display = "block";
-          }
+          const formPanel = document.getElementById("forgotFormPanel");
+          const successPanel = document.getElementById("forgotSuccessPanel");
+          if (formPanel) formPanel.style.display = "none";
+          if (successPanel) successPanel.style.display = "block";
         } else {
-          // Αποτυχία: Εμφάνιση μηνύματος σφάλματος
-          if (errorDiv) {
-            errorDiv.style.color = "red";
-            errorDiv.textContent =
+          if (alertDiv) {
+            alertDiv.className = "alert alert-error";
+            alertDiv.textContent =
               result.message || "Προέκυψε σφάλμα κατά την αποστολή.";
-            errorDiv.style.display = "block";
+            alertDiv.style.display = "block";
           }
         }
       } catch (error) {
-        console.error("Error:", error);
-        if (errorDiv) {
-          errorDiv.style.color = "red";
-          errorDiv.textContent = "Αδυναμία επικοινωνίας με τον server.";
-          errorDiv.style.display = "block";
+        if (alertDiv) {
+          alertDiv.className = "alert alert-error";
+          alertDiv.textContent = "Αδυναμία επικοινωνίας με τον server.";
+          alertDiv.style.display = "block";
         }
       } finally {
-        submitButton.disabled = false;
+        if (submitBtn) submitBtn.disabled = false;
+        if (btnText) btnText.style.display = "inline";
+        if (btnSpinner) btnSpinner.style.display = "none";
       }
     });
   }
@@ -392,33 +378,42 @@ document.addEventListener("DOMContentLoaded", () => {
   // 8. RESET PASSWORD LOGIC
   // ----------------------------------------------------
   const resetPasswordForm = document.getElementById("resetPasswordForm");
-
   if (resetPasswordForm) {
     resetPasswordForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const form = e.target;
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
 
-      const submitButton = form.querySelector('button[type="submit"]');
-      submitButton.disabled = true;
+      const submitBtn = document.getElementById("resetSubmitBtn");
+      const btnText = document.getElementById("resetBtnText");
+      const btnSpinner = document.getElementById("resetBtnSpinner");
+      const alertDiv = document.getElementById("resetPasswordAlert");
 
-      const errorDiv = document.getElementById("resetPasswordGeneralError");
-      if (errorDiv) {
-        errorDiv.style.display = "none";
-      }
+      if (alertDiv) alertDiv.style.display = "none";
 
-      // 1. Έλεγχος αν οι κωδικοί ταιριάζουν
       if (data.password !== data.confirm_password) {
-        if (errorDiv) {
-          errorDiv.style.color = "red";
-          errorDiv.textContent = "Οι κωδικοί πρόσβασης δεν ταιριάζουν.";
-          errorDiv.style.display = "block";
+        if (alertDiv) {
+          alertDiv.className = "alert alert-error";
+          alertDiv.textContent = "Οι κωδικοί πρόσβασης δεν ταιριάζουν.";
+          alertDiv.style.display = "block";
         }
-        submitButton.disabled = false;
         return;
       }
+
+      if (data.password.length < 8) {
+        if (alertDiv) {
+          alertDiv.className = "alert alert-error";
+          alertDiv.textContent =
+            "Ο κωδικός πρέπει να έχει τουλάχιστον 8 χαρακτήρες.";
+          alertDiv.style.display = "block";
+        }
+        return;
+      }
+
+      if (submitBtn) submitBtn.disabled = true;
+      if (btnText) btnText.style.display = "none";
+      if (btnSpinner) btnSpinner.style.display = "inline";
 
       try {
         const response = await fetch(
@@ -433,138 +428,35 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await response.json();
 
         if (response.ok) {
-          // 2. Επιτυχία: Εμφάνιση styled success modal
           const overlay = document.getElementById("resetSuccessOverlay");
-          const msg = document.getElementById("resetSuccessMsg");
           const btn = document.getElementById("resetSuccessBtn");
-          if (overlay && msg && btn) {
-            msg.textContent = result.message;
-            overlay.style.display = "flex";
+          if (overlay) overlay.style.display = "flex";
+          if (btn)
             btn.onclick = () => {
               window.location.href = BASE_URL;
             };
-          } else {
-            window.location.href = BASE_URL;
-          }
         } else {
-          // 3. Αποτυχία: Εμφάνιση σφάλματος από το backend
-          if (errorDiv) {
-            errorDiv.style.color = "red";
-            errorDiv.textContent =
+          if (alertDiv) {
+            alertDiv.className = "alert alert-error";
+            alertDiv.textContent =
               result.message || "Σφάλμα κατά την αλλαγή κωδικού.";
-            errorDiv.style.display = "block";
+            alertDiv.style.display = "block";
           }
         }
       } catch (error) {
-        console.error("Error:", error);
-        if (errorDiv) {
-          errorDiv.style.color = "red";
-          errorDiv.textContent = "Αδυναμία επικοινωνίας με τον server.";
-          errorDiv.style.display = "block";
+        if (alertDiv) {
+          alertDiv.className = "alert alert-error";
+          alertDiv.textContent = "Αδυναμία επικοινωνίας με τον server.";
+          alertDiv.style.display = "block";
         }
       } finally {
-        submitButton.disabled = false;
+        if (submitBtn) submitBtn.disabled = false;
+        if (btnText) btnText.style.display = "inline";
+        if (btnSpinner) btnSpinner.style.display = "none";
       }
     });
   }
 
-  // 9. PROFILE UPDATE LOGIC
-  const profileUpdateForm = document.getElementById("profileUpdateForm");
-  if (profileUpdateForm) {
-    profileUpdateForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(profileUpdateForm);
-      const data = Object.fromEntries(formData.entries());
-      const messageDiv = document.getElementById("profileUpdateMessage");
-
-      try {
-        const response = await fetch(
-          BASE_URL + "user/profile_update_handler.php",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          },
-        );
-        const result = await response.json();
-
-        messageDiv.style.display = "block";
-        messageDiv.textContent = result.message;
-        messageDiv.style.color = response.ok ? "green" : "red";
-
-        if (response.ok) {
-          // Προαιρετικά: ανανέωση σελίδας μετά από 1.5 δευτερόλεπτο για να δει ο χρήστης την αλλαγή στο Navbar
-          setTimeout(() => location.reload(), 1500);
-        }
-      } catch (error) {
-        messageDiv.style.display = "block";
-        messageDiv.textContent = "Σφάλμα επικοινωνίας.";
-        messageDiv.style.color = "red";
-      }
-    });
-  }
-
-  // 10. CHANGE PASSWORD LOGIC
-  const changePasswordForm = document.getElementById("changePasswordForm");
-  if (changePasswordForm) {
-    changePasswordForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(changePasswordForm);
-      const data = Object.fromEntries(formData.entries());
-      const messageDiv = document.getElementById("passwordChangeMessage");
-
-      try {
-        const response = await fetch(
-          BASE_URL + "user/change_password_handler.php",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          },
-        );
-        const result = await response.json();
-
-        messageDiv.style.display = "block";
-        messageDiv.textContent = result.message;
-        messageDiv.style.color = response.ok ? "green" : "red";
-
-        if (response.ok) changePasswordForm.reset(); // Καθαρισμός φόρμας
-      } catch (error) {
-        messageDiv.style.display = "block";
-        messageDiv.textContent = "Σφάλμα επικοινωνίας.";
-        messageDiv.style.color = "red";
-      }
-    });
-  }
-
-  // 15. PERSONAL INFO UPDATE LOGIC
-  const personalInfoForm = document.getElementById("personalInfoForm");
-  if (personalInfoForm) {
-    personalInfoForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(personalInfoForm);
-      const data = Object.fromEntries(formData.entries());
-      const messageDiv = document.getElementById("personalInfoMessage");
-
-      try {
-        const response = await fetch(
-          BASE_URL + "user/personal_info_handler.php",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          },
-        );
-        const result = await response.json();
-
-        messageDiv.style.display = "block";
-        messageDiv.textContent = result.message;
-        messageDiv.style.color = response.ok ? "green" : "red";
-      } catch (error) {
-        messageDiv.style.display = "block";
-        messageDiv.textContent = "Σφάλμα επικοινωνίας με τον διακομιστή.";
-        messageDiv.style.color = "red";
-      }
-    });
-  }
+  // Expose openLoginModal globally
+  window.openLoginModal = showModal;
 });

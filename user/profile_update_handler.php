@@ -1,23 +1,16 @@
 <?php
 // profile_update_handler.php
-// Purpose: API endpoint to update a logged-in user's username and email.
-
-// Core config
 require_once __DIR__ . '/../config.php';
-// Start session
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 
-// Return JSON responses
 header('Content-Type: application/json');
 
-// Require authentication
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
-    echo json_encode(['status' => 'error', 'message' => 'Μη εξουσιοδοτημένη πρόσβαση.']);
+    echo json_encode(['status' => 'error', 'code' => 'UNAUTHORIZED']);
     exit;
 }
 
-// Read request payload
 $data = json_decode(file_get_contents("php://input"), true);
 $new_username = trim($data['username'] ?? '');
 $new_email = trim($data['email'] ?? '');
@@ -26,27 +19,48 @@ $user_id = $_SESSION['user_id'];
 try {
     // 1. Basic validation
     if (empty($new_username) || empty($new_email)) {
-        throw new Exception("Όλα τα πεδία είναι υποχρεωτικά.");
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'code' => 'REQUIRED_FIELDS_MISSING']);
+        exit;
     }
 
-    // 2. Check if email is already used by another user
+    // 2. Validate Email Format
+    if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'code' => 'INVALID_EMAIL_FORMAT']);
+        exit;
+    }
+
+    // 3. Check if EMAIL is already used by another user
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
     $stmt->execute([$new_email, $user_id]);
     if ($stmt->fetch()) {
-        throw new Exception("Αυτό το email χρησιμοποιείται ήδη από άλλον λογαριασμό.");
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'code' => 'EMAIL_EXISTS']);
+        exit;
     }
 
-    // 3. Update user record in DB
+    // 4. Check if USERNAME is already used by another user
+    $stmtUser = $pdo->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
+    $stmtUser->execute([$new_username, $user_id]);
+    if ($stmtUser->fetch()) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'code' => 'USERNAME_EXISTS']);
+        exit;
+    }
+
+    // 5. Update user record in DB
     $updateStmt = $pdo->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
     $updateStmt->execute([$new_username, $new_email, $user_id]);
 
-    // 4. Update session (so navbar updates immediately)
+    // 6. Update session variables
     $_SESSION['username'] = $new_username;
+    if (isset($_SESSION['email'])) {
+        $_SESSION['email'] = $new_email;
+    }
 
-    // Success response
-    echo json_encode(['status' => 'success', 'message' => 'Το προφίλ ενημερώθηκε επιτυχώς!']);
+    echo json_encode(['status' => 'success', 'code' => 'SUCCESS']);
 } catch (Exception $e) {
-    // Validation or DB error
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'code' => 'DB_ERROR']);
 }

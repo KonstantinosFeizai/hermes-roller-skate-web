@@ -2,15 +2,15 @@
 /* Root Variables & General Styling */
 /* ============================= */
 :root {
-  --primary-color: #2c3e50;
+  --primary-color: #1c2d41;
   --secondary-color: #f39c12;
   --text-color: #333;
-  --light-bg: #ecf0f1;
+  --light-bg: #f4f5f9;
   --dark-bg: #fff;
   --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   --border-radius: 10px;
-  --font-heading: "Playfair Display", serif;
-  --font-body: "Manrope", sans-serif;
+  --font-heading: "Stack Sans Text", sans-serif;
+  --font-body: "system-ui", -apple-system, sans-serif;
   --utility-color: #2d3e50;
 }
 
@@ -25,7 +25,6 @@ body {
   line-height: 1.6;
   color: var(--text-color);
   background-color: var(--light-bg);
-  /* Custom Scrollbar Styling (global) */
   --sb-track-color: #ebcf8c;
   --sb-thumb-color: #2b2914;
   --sb-size: 8px;
@@ -143,6 +142,7 @@ body::-webkit-scrollbar {
   /* Θέτουμε διαφορετικά στυλ για τα κουμπιά */
   border: 2px solid var(--secondary-color);
   background-color: var(--secondary-color);
+  border-radius: 20px;
   color: #fff; /* Λευκό κείμενο */
 }
 
@@ -153,10 +153,8 @@ body::-webkit-scrollbar {
 
 .nav-button.login-button:hover,
 .nav-button.logout-button:hover {
-  background-color: transparent; /* Γίνεται περίγραμμα */
-  color: var(
-    --secondary-color
-  ); /* Το κείμενο παίρνει το χρώμα του περιγράμματος */
+  /* background-color: transparent;  */
+  color: var(--text-color);
 }
 
 .user-greeting {
@@ -186,7 +184,7 @@ body::-webkit-scrollbar {
 .language-dropdown {
   display: none;
   position: absolute;
-  top: 50px;
+  top: 49px;
   left: -65px;
   background-color: var(--primary-color);
   min-width: 120px;
@@ -211,7 +209,8 @@ body::-webkit-scrollbar {
 }
 
 .language-dropdown .lang-option:hover {
-  background-color: #555;
+  background-color: #ef9d14;
+  color: #000;
 }
 
 .fa-check {
@@ -407,7 +406,6 @@ body::-webkit-scrollbar {
 
   .nav-button.login-button:hover,
   .nav-button.user-button:hover {
-    background: rgba(255, 255, 255, 0.1);
     color: var(--secondary-color);
   }
 

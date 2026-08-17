@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../access_control.php';
+require_once PROJECT_ROOT . 'includes/createNotification.php';
 
 header('Content-Type: application/json');
 restrict_access('admin');
@@ -62,6 +63,36 @@ try {
         $_SESSION['user_id'] ?? null,
     ]);
     $payment_id = (int)$pdo->lastInsertId();
+
+    $stmtAthlete = $pdo->prepare("
+        SELECT a.user_id, a.parent_id, CONCAT(a.first_name, ' ', a.last_name) AS athlete_name
+        FROM athletes a
+        WHERE a.id = ?
+    ");
+    $stmtAthlete->execute([$athlete_id]);
+    $athlete = $stmtAthlete->fetch(PDO::FETCH_ASSOC);
+
+    if ($athlete) {
+        $recipientIds = [];
+        if (!empty($athlete['user_id'])) $recipientIds[] = (int)$athlete['user_id'];
+        if (!empty($athlete['parent_id'])) $recipientIds[] = (int)$athlete['parent_id'];
+        $recipientIds = array_values(array_unique(array_filter($recipientIds)));
+
+        foreach ($recipientIds as $recipientId) {
+            createTranslatedNotification(
+                $pdo,
+                $recipientId,
+                'payment_added',
+                [
+                    'athlete_name' => $athlete['athlete_name'] ?: 'your athlete',
+                ],
+                $payment_id,
+                'payments'
+            );
+        }
+    }
+
+    syncNegativeBalanceNotifications($pdo, $athlete_id);
 
     $pdo->commit();
 

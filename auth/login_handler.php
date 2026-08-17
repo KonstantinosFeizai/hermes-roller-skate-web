@@ -69,9 +69,8 @@ try {
                 $profile_incomplete =
                     trim($user['first_name'] ?? '') === '' ||
                     trim($user['last_name'] ?? '') === '' ||
-                    empty($user['age']) ||
-                    trim($user['phone'] ?? '') === '' ||
-                    trim($user['region'] ?? '') === '';
+                    trim($user['phone'] ?? '') === '';
+                // trim($user['region'] ?? '') === '';
             }
 
             // 6. Έλεγχος αποδοχής όρων ← νέο

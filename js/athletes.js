@@ -206,31 +206,37 @@ async function deleteAthlete(id, name) {
 let _activeLocationId = 0; // 0 = all, -1 = no location
 
 function filterByRegion(locationId) {
-  _activeLocationId = locationId;
+  _activeLocationId = parseInt(locationId);
 
-  document.querySelectorAll(".region-chips .chip").forEach((chip) => {
-    chip.classList.remove("active");
-    if (
-      parseInt(chip.getAttribute("onclick")?.match(/-?\d+/)?.[0]) === locationId
-    ) {
-      chip.classList.add("active");
-    }
-  });
+  // Συγχρονισμός του dropdown επιλογής περιοχής
+  const selectEl = document.getElementById("regionFilter");
+  if (selectEl && selectEl.value != _activeLocationId) {
+    selectEl.value = _activeLocationId;
+  }
 
   filterAthletes();
 }
 
 function filterAthletes() {
-  const term = document.getElementById("athleteSearch").value.toLowerCase();
+  const searchInput = document.getElementById("athleteSearch");
+  const clearBtn = document.getElementById("clearSearchBtn");
+  const term = searchInput.value.toLowerCase().trim();
   const locId = _activeLocationId;
+
+  // Εμφάνιση / Απόκρυψη του 'X'
+  if (clearBtn) {
+    clearBtn.style.display = term.length > 0 ? "block" : "none";
+  }
 
   const rows = document.querySelectorAll("#athletes-table-body tr.athlete-row");
   rows.forEach((row) => {
-    const name = row.cells[0].textContent.toLowerCase();
-    const phone = row.cells[1].textContent.toLowerCase();
+    const id = row.cells[0].textContent.toLowerCase();
+    const name = row.cells[1].textContent.toLowerCase();
+    const phone = row.cells[2].textContent.toLowerCase();
     const rowLoc = parseInt(row.getAttribute("data-location-id") || "0");
 
-    const matchSearch = !term || name.includes(term) || phone.includes(term);
+    const matchSearch =
+      !term || id.includes(term) || name.includes(term) || phone.includes(term);
     const matchLoc =
       locId === 0 ||
       (locId === -1 && rowLoc === 0) ||
@@ -262,15 +268,15 @@ function sortAthletes() {
 
   rows.sort((a, b) => {
     if (sortBy === "name_asc" || sortBy === "name_desc") {
-      const va = a.cells[0].textContent.trim();
-      const vb = b.cells[0].textContent.trim();
+      const va = a.cells[1].textContent.trim(); // Index 1 λόγω της προσθήκης του ID
+      const vb = b.cells[1].textContent.trim();
       return sortBy === "name_asc"
         ? va.localeCompare(vb, "el")
         : vb.localeCompare(va, "el");
     }
     if (sortBy === "birth_asc" || sortBy === "birth_desc") {
-      const va = a.cells[2].textContent.trim();
-      const vb = b.cells[2].textContent.trim();
+      const va = a.cells[3].textContent.trim(); // Index 3 λόγω της προσθήκης του ID
+      const vb = b.cells[3].textContent.trim();
       const da = va === "—" ? 0 : new Date(va).getTime();
       const db = vb === "—" ? 0 : new Date(vb).getTime();
       return sortBy === "birth_asc" ? db - da : da - db;
@@ -285,6 +291,13 @@ function sortAthletes() {
 
   rows.forEach((row) => tbody.appendChild(row));
   displayAthletesPage();
+}
+
+function clearAthleteSearch() {
+  const searchInput = document.getElementById("athleteSearch");
+  searchInput.value = "";
+  filterAthletes();
+  searchInput.focus();
 }
 
 // ── Pagination ───────────────────────────────────────────────
