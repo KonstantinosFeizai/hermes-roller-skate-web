@@ -35,7 +35,10 @@ try {
                ON mr.message_id = amr.message_id AND mr.recipient_id = amr.user_id
         WHERE amr.message_id = ?
         GROUP BY amr.user_id, u.first_name, u.username
-        ORDER BY (last_reply_at IS NULL) ASC, last_reply_at DESC, name ASC
+        ORDER BY
+            CASE WHEN MAX(mr.created_at) IS NULL THEN 1 ELSE 0 END ASC,
+            MAX(mr.created_at) DESC,
+            name ASC
     ");
     $stmt->execute([$message_id]);
     $recipients = $stmt->fetchAll();
