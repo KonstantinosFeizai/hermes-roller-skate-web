@@ -326,6 +326,53 @@ require_once PROJECT_ROOT . 'partials/header.php';
                 <button class="action-btn btn-success" onclick="openAddClassModal()">+ Νέα Προπόνηση</button>
             </div>
 
+            <!-- 🔍 SEARCH & FILTERS BAR -->
+            <div class="cls-search-bar">
+                <!-- Αναζήτηση Τίτλου / Σημειώσεων -->
+                <div class="cls-search-input-wrapper">
+                    <input type="text"
+                        id="classesSearchInput"
+                        class="cls-search-input"
+                        placeholder="🔍 Αναζήτηση τίτλου..."
+                        oninput="debouncedClassesSearch()">
+                    <button id="clearClassesSearch"
+                        class="cls-search-clear-btn"
+                        onclick="clearClassesSearchInput()">✕</button>
+                </div>
+
+                <!-- Φίλτρο Τοποθεσίας -->
+                <select id="classesLocationFilter" class="cls-select-filter" onchange="filterClasses()">
+                    <option value="">Όλες οι τοποθεσίες</option>
+                </select>
+
+                <!-- Φίλτρο Αθλήματος -->
+                <select id="classesTypeFilter" class="cls-select-filter" onchange="filterClasses()">
+                    <option value="">Όλα τα αθλήματα</option>
+                    <option value="rollers">🛼 Rollers</option>
+                    <option value="iceskate">⛸️ Ice Skate</option>
+                    <option value="hockey">🏒 Hockey</option>
+                    <option value="ski">⛷️ Ski</option>
+                    <option value="fitness">🏋️ Fitness</option>
+                </select>
+
+                <!-- Φίλτρο Κατάστασης -->
+                <select id="classesStatusFilter" class="cls-select-filter" onchange="filterClasses()">
+                    <option value="">Όλες οι καταστάσεις</option>
+                    <option value="scheduled">📅 Προγραμματισμένες</option>
+                    <option value="completed">✅ Ολοκληρωμένες</option>
+                    <option value="cancelled">❌ Ακυρωμένες</option>
+                </select>
+
+                <!-- Φίλτρο Χρονικής Περιόδου -->
+                <select id="classesTimeFilter" class="cls-select-filter" onchange="filterClasses()">
+                    <option value="">Όλες οι ημερομηνίες</option>
+                    <option value="upcoming">⏳ Προσεχείς</option>
+                    <option value="today">📆 Σήμερα</option>
+                    <option value="past">📜 Παλαιότερες</option>
+                </select>
+            </div>
+
+
             <div id="classes-container" class="classes-container">
                 <?php if (empty($lessons)): ?>
                     <p class="empty-state">Δεν υπάρχουν προγραμματισμένες προπονήσεις.</p>
@@ -428,6 +475,8 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
+
+            <div id="classesPagination"></div>
         </div>
 
         <!-- ── Create / Edit Lesson Modal ─────────────────── -->

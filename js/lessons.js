@@ -434,3 +434,222 @@ function clearSearchInput() {
     _doSearch(); // Επανεκτέλεση αναζήτησης για να φέρει την αρχική λίστα
   }
 }
+
+// ── Search, Filtering & Pagination State ─────────────────────
+let _classesCurrentPage = 1;
+const _classesItemsPerPage = 9;
+let _classesSearchTimeout = null;
+
+// 1. Debounce για την αναζήτηση (250ms)
+function debouncedClassesSearch() {
+  const input = document.getElementById("classesSearchInput");
+  const clearBtn = document.getElementById("clearClassesSearch");
+
+  if (clearBtn) {
+    clearBtn.style.display = input.value.length > 0 ? "block" : "none";
+  }
+
+  clearTimeout(_classesSearchTimeout);
+  _classesSearchTimeout = setTimeout(() => {
+    filterClasses();
+  }, 250);
+}
+
+// 2. Καθαρισμός πεδίου αναζήτησης
+function clearClassesSearchInput() {
+  const input = document.getElementById("classesSearchInput");
+  const clearBtn = document.getElementById("clearClassesSearch");
+
+  if (input) {
+    input.value = "";
+    if (clearBtn) clearBtn.style.display = "none";
+    filterClasses();
+  }
+}
+
+// 3. Επιστρέφει τις φιλτραρισμένες κάρτες
+function _getFilteredClassCards() {
+  const container = document.getElementById("classes-container");
+  if (!container) return [];
+
+  const cards = Array.from(container.querySelectorAll(".class-card"));
+  const searchVal = (document.getElementById("classesSearchInput")?.value || "")
+    .toLowerCase()
+    .trim();
+  const locationVal =
+    document.getElementById("classesLocationFilter")?.value || ""; // 📍 ΝΕΟ
+  const typeVal = document.getElementById("classesTypeFilter")?.value || "";
+  const statusVal = document.getElementById("classesStatusFilter")?.value || "";
+  const timeVal = document.getElementById("classesTimeFilter")?.value || "";
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  return cards.filter((card) => {
+    let l = {};
+    try {
+      l = JSON.parse(card.getAttribute("data-lesson") || "{}");
+    } catch (_) {}
+
+    // 1. Text Search (Τίτλος ή Σημειώσεις)
+    if (searchVal) {
+      const title = (
+        l.title ||
+        card.querySelector(".class-card-title")?.textContent ||
+        ""
+      ).toLowerCase();
+      const notes = (l.notes || "").toLowerCase();
+
+      if (!title.includes(searchVal) && !notes.includes(searchVal)) {
+        return false;
+      }
+    }
+
+    // 2. 📍 Location Filter
+    if (locationVal && (l.location_name || "") !== locationVal) {
+      return false;
+    }
+
+    // 3. Type Filter
+    if (typeVal && l.lesson_type !== typeVal) {
+      return false;
+    }
+
+    // 4. Status Filter
+    if (statusVal && l.status !== statusVal) {
+      return false;
+    }
+
+    // 5. Time Filter
+    if (timeVal && l.lesson_datetime) {
+      const lessonDate = l.lesson_datetime.slice(0, 10);
+      if (timeVal === "today" && lessonDate !== todayStr) return false;
+      if (timeVal === "upcoming" && lessonDate < todayStr) return false;
+      if (timeVal === "past" && lessonDate >= todayStr) return false;
+    }
+
+    return true;
+  });
+}
+
+// 4. Κύρια συνάρτηση φιλτραρίσματος
+function filterClasses() {
+  _classesCurrentPage = 1; // Επαναφορά στην 1η σελίδα
+  _classesGoToPage(1);
+}
+
+// 5. Πλοήγηση σελίδων
+function _classesGoToPage(page) {
+  const container = document.getElementById("classes-container");
+  if (!container) return;
+
+  const allCards = Array.from(container.querySelectorAll(".class-card"));
+  const filteredCards = _getFilteredClassCards();
+
+  // Απόκρυψη όλων των καρτών αρχικά
+  allCards.forEach((card) => (card.style.display = "none"));
+
+  if (!filteredCards.length) {
+    _renderClassesPagination(0, 1, _classesItemsPerPage);
+    return;
+  }
+
+  const totalPages = Math.ceil(filteredCards.length / _classesItemsPerPage);
+  _classesCurrentPage = Math.max(1, Math.min(page, totalPages));
+
+  const startIdx = (_classesCurrentPage - 1) * _classesItemsPerPage;
+  const endIdx = startIdx + _classesItemsPerPage;
+
+  // Εμφάνιση μόνο των φιλτραρισμένων καρτών της τρέχουσας σελίδας
+  filteredCards.slice(startIdx, endIdx).forEach((card) => {
+    card.style.display = "";
+  });
+
+  _renderClassesPagination(
+    filteredCards.length,
+    _classesCurrentPage,
+    _classesItemsPerPage,
+  );
+}
+
+// 6. Render Pagination Controls
+function _renderClassesPagination(totalItems, currentPage, itemsPerPage) {
+  const paginationEl = document.getElementById("classesPagination");
+  if (!paginationEl) return;
+
+  if (totalItems === 0) {
+    paginationEl.innerHTML =
+      '<p class="empty-state" style="text-align:center; margin-top:20px;">Δεν βρέθηκαν προπονήσεις με τα συγκεκριμένα φίλτρα.</p>';
+    return;
+  }
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  if (totalPages <= 1) {
+    paginationEl.innerHTML = "";
+    return;
+  }
+
+  let html =
+    '<div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:20px;">';
+
+  if (currentPage > 1) {
+    html += `<button class="action-btn btn-secondary" onclick="_classesGoToPage(${currentPage - 1})">← Προηγ.</button>`;
+  }
+
+  const startPage = Math.max(1, currentPage - 2);
+  const endPage = Math.min(totalPages, currentPage + 2);
+
+  if (startPage > 1) {
+    html += `<button class="action-btn" onclick="_classesGoToPage(1)">1</button>`;
+    if (startPage > 2) html += '<span style="padding: 8px;">...</span>';
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    if (i === currentPage) {
+      html += `<button class="action-btn btn-primary" style="background:#f39c12;color:white;">${i}</button>`;
+    } else {
+      html += `<button class="action-btn" onclick="_classesGoToPage(${i})">${i}</button>`;
+    }
+  }
+
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1)
+      html += '<span style="padding: 8px;">...</span>';
+    html += `<button class="action-btn" onclick="_classesGoToPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  if (currentPage < totalPages) {
+    html += `<button class="action-btn btn-secondary" onclick="_classesGoToPage(${currentPage + 1})">Επόμ. →</button>`;
+  }
+
+  html += "</div>";
+  paginationEl.innerHTML = html;
+}
+
+function populateClassesLocationFilter() {
+  const sel = document.getElementById("classesLocationFilter");
+  const container = document.getElementById("classes-container");
+  if (!sel || !container) return;
+
+  const cards = Array.from(container.querySelectorAll(".class-card"));
+  const locations = new Set();
+
+  cards.forEach((card) => {
+    try {
+      const l = JSON.parse(card.getAttribute("data-lesson") || "{}");
+      if (l.location_name) locations.add(l.location_name);
+    } catch (_) {}
+  });
+
+  const sortedLocations = Array.from(locations).sort();
+  sel.innerHTML =
+    '<option value="">Όλες οι τοποθεσίες</option>' +
+    sortedLocations
+      .map((loc) => `<option value="${escAttr(loc)}">${escHtml(loc)}</option>`)
+      .join("");
+}
+
+// Αρχικοποίηση κατά τη φόρτωση
+document.addEventListener("DOMContentLoaded", () => {
+  filterClasses();
+  populateClassesLocationFilter();
+});
