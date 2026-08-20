@@ -43,7 +43,7 @@ try {
     }
 
     // 3. Look up user by username or email
-    $stmt = $pdo->prepare("SELECT id, username, password, is_active, role, first_name, last_name, age, phone, region, accepted_terms_at FROM users WHERE username = ? OR email = ?");
+    $stmt = $pdo->prepare("SELECT id, username, email, password, is_active, role, first_name, last_name, age, phone, region, accepted_terms_at FROM users WHERE username = ? OR email = ?");
     $stmt->execute([$username, $username]);
     $user = $stmt->fetch();
 
@@ -59,6 +59,8 @@ try {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['user_role'] = $user['role'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['user_email'] = $user['email'];
 
             // 4b. Συνδέουμε τυχόν anonymous cookie consent με τον χρήστη
             linkConsentToUser($pdo, $user['id']);

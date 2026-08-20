@@ -250,6 +250,8 @@ $greek_url = asset($base_path) . ($greek_query ? '?' . $greek_query : '');
 
                             <?php if ($userRole === 'admin'): ?>
                                 <a href="<?= asset('admin/admin_dashboard') ?>" class="dropdown-item admin-link"><?= t('header.auth.admin_dashboard') ?></a>
+                            <?php elseif ($userRole === 'coach'): ?>
+                                <a href="<?= asset('admin/admin_dashboard') ?>" class="dropdown-item admin-link"><?= t('header.auth.coach_dashboard') ?></a>
                             <?php endif; ?>
 
                             <a href="<?= asset('user/profile') ?>" class="dropdown-item profile-link"><?= t('header.auth.profile') ?></a>

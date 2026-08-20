@@ -13,6 +13,13 @@ restrict_access(['admin']);
 $data = json_decode(file_get_contents("php://input"), true);
 $target_user_id = $data['user_id'] ?? null;
 $new_role = $data['new_role'] ?? '';
+$allowed_roles = ['admin', 'coach', 'user'];
+
+if (!in_array($new_role, $allowed_roles, true)) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Μη έγκυρος ρόλος.']);
+    exit;
+}
 
 // Prevent self role change
 if ($target_user_id == $_SESSION['user_id']) {

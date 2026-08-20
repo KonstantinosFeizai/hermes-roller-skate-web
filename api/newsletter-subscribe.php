@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 
 // Load DB connection and language helper
 require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../includes/lang.php';
+require_once PROJECT_ROOT . 'includes/lang.php';
 require_once PROJECT_ROOT . 'includes/rate_limiter.php';
 
 // Localized response messages

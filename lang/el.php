@@ -47,6 +47,7 @@ return [
             'email' => 'Email:',
             'role' => 'Ρόλος:',
             'role_admin' => 'Διαχειριστής',
+            'role_coach' => 'Προπονητής',
             'role_user' => 'Χρήστης',
             'settings' => 'Ρυθμίσεις Λογαριασμού',
             'settings_hint' => 'Διαχείρηση των ρυθμίσεων του λογαριασμού σας.',
@@ -1478,6 +1479,7 @@ return [
         ],
         'auth' => [
             'admin_dashboard' => 'Πίνακας Διαχείρισης',
+            'coach_dashboard' => 'Πίνακας Προπονητή',
             'profile' => 'Προφίλ / Ρυθμίσεις',
             'logout' => 'Αποσύνδεση',
             'logout_confirm_title'  => 'Αποσύνδεση',

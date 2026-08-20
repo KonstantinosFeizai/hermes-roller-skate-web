@@ -4,13 +4,72 @@
 require_once __DIR__ . '/../config.php';
 require_once PROJECT_ROOT . 'access_control.php';
 
-// Protection: only admins can access
-restrict_access(['admin']);
+// Protection: admins and coaches can access the classes area
+restrict_access(['admin', 'coach']);
+
+$current_user_role = $_SESSION['user_role'] ?? null;
+$is_admin = $current_user_role === 'admin';
+$is_coach = $current_user_role === 'coach';
+
+$users = [];
+$messages = [];
+$posts = [];
+$athletes = [];
+$unread_count = 0;
+$lessons = [];
+$locations = [];
 
 try {
-    // Query: users for Accounts tab
-    $stmt = $pdo->query("SELECT u.id, u.username, u.email, u.role, u.role_type, u.is_active, u.first_name, u.last_name, u.phone, u.region, u.location_id, u.age, u.created_at, loc.name AS location_name FROM users u LEFT JOIN locations loc ON u.location_id = loc.id ORDER BY u.created_at DESC");
-    $users = $stmt->fetchAll();
+    if ($is_admin) {
+        // Query: users for Accounts tab
+        $stmt = $pdo->query("SELECT u.id, u.username, u.email, u.role, u.role_type, u.is_active, u.first_name, u.last_name, u.phone, u.region, u.location_id, u.age, u.created_at, loc.name AS location_name FROM users u LEFT JOIN locations loc ON u.location_id = loc.id ORDER BY u.created_at DESC");
+        $users = $stmt->fetchAll();
+
+        // Query: contact messages for Contact tab
+        $stmt = $pdo->query("SELECT * FROM contact_messages ORDER BY created_at DESC");
+        $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Query: posts for Posts tab
+        $stmt_posts = $pdo->query("
+        SELECT
+            bp.*,
+            u.first_name,
+            u.last_name,
+            GROUP_CONCAT(c.name SEPARATOR ', ') AS category_names
+            FROM blog_posts bp
+            LEFT JOIN users u ON bp.author_id = u.id
+            LEFT JOIN post_categories pc ON bp.id = pc.post_id
+            LEFT JOIN categories c ON pc.category_id = c.id
+            GROUP BY bp.id
+            ORDER BY bp.created_at DESC
+        ");
+        $posts = $stmt_posts->fetchAll(PDO::FETCH_ASSOC);
+
+        // Query: unread count badge
+        $stmt_unread = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_replied = 0");
+        $unread_count = $stmt_unread->fetchColumn();
+
+        // Query: athletes for Athletes tab
+        $stmt_athletes = $pdo->query("
+            SELECT a.id, a.user_id, a.parent_id, a.first_name, a.last_name, a.birth_date, a.phone,
+                   a.location_id, a.shoe_size, a.shirt_size,
+                   a.interest_rides, a.interest_races, a.interest_ski,
+                   a.interest_skating, a.interest_hockey,
+                   a.amka, a.afm,
+                   l.name AS location_name,
+                   u.username AS linked_username,
+                   CONCAT(p.first_name, ' ', p.last_name) AS parent_full_name,
+                   p.phone AS parent_phone,
+                   p.email AS parent_email
+            FROM athletes a
+            LEFT JOIN locations l ON a.location_id = l.id
+            LEFT JOIN users u ON a.user_id = u.id
+            LEFT JOIN users p ON a.parent_id = p.id
+            WHERE a.is_active = 1
+            ORDER BY a.last_name ASC, a.first_name ASC
+        ");
+        $athletes = $stmt_athletes->fetchAll();
+    }
 
     // Query: lessons for Classes tab
     $stmt_lessons = $pdo->query("
@@ -25,48 +84,6 @@ try {
         ORDER BY l.lesson_datetime DESC
     ");
     $lessons = $stmt_lessons->fetchAll();
-    // Query: contact messages for Contact tab
-    $stmt = $pdo->query("SELECT * FROM contact_messages ORDER BY created_at DESC");
-    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // Query: posts for Posts tab 
-    $stmt_posts = $pdo->query("
-    SELECT 
-        bp.*, 
-        u.first_name, 
-        u.last_name,
-        GROUP_CONCAT(c.name SEPARATOR ', ') AS category_names
-        FROM blog_posts bp
-        LEFT JOIN users u ON bp.author_id = u.id
-        LEFT JOIN post_categories pc ON bp.id = pc.post_id
-        LEFT JOIN categories c ON pc.category_id = c.id
-        GROUP BY bp.id
-        ORDER BY bp.created_at DESC
-    ");
-    $posts = $stmt_posts->fetchAll(PDO::FETCH_ASSOC);
-    // Query: unread count badge
-    $stmt_unread = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_replied = 0");
-    $unread_count = $stmt_unread->fetchColumn();
-
-    // Query: athletes for Athletes tab
-    $stmt_athletes = $pdo->query("
-        SELECT a.id, a.user_id, a.parent_id, a.first_name, a.last_name, a.birth_date, a.phone,
-               a.location_id, a.shoe_size, a.shirt_size,
-               a.interest_rides, a.interest_races, a.interest_ski,
-               a.interest_skating, a.interest_hockey,
-               a.amka, a.afm,
-               l.name AS location_name,
-               u.username AS linked_username,
-               CONCAT(p.first_name, ' ', p.last_name) AS parent_full_name,
-               p.phone AS parent_phone,
-               p.email AS parent_email
-        FROM athletes a
-        LEFT JOIN locations l ON a.location_id = l.id
-        LEFT JOIN users u ON a.user_id = u.id
-        LEFT JOIN users p ON a.parent_id = p.id
-        WHERE a.is_active = 1
-        ORDER BY a.last_name ASC, a.first_name ASC
-    ");
-    $athletes = $stmt_athletes->fetchAll();
 
     // Query: locations for filter chips + dropdown
     $stmt_locs = $pdo->query("SELECT id, name FROM locations WHERE is_active = 1 ORDER BY sort_order ASC");
@@ -100,6 +117,30 @@ require_once PROJECT_ROOT . 'partials/header.php';
     window.PT.reply = <?= json_encode(t('profile.labels.reply')) ?>;
     window.PT.send = <?= json_encode(t('profile.labels.send')) ?>;
     window.PT.cancel = <?= json_encode(t('profile.labels.cancel')) ?>;
+    window.ADMIN_ROLE = <?= json_encode($_SESSION['user_role'] ?? null) ?>;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.ADMIN_ROLE === 'coach') {
+            document.querySelectorAll('.sidebar-menu li').forEach(function(item) {
+                const target = item.getAttribute('onclick') || '';
+                if (!target || !target.includes("'classes-tab'")) {
+                    item.style.display = 'none';
+                }
+            });
+
+            document.querySelectorAll('.tab-content').forEach(function(tab) {
+                if (tab.id !== 'classes-tab') {
+                    tab.style.display = 'none';
+                }
+            });
+
+            const classesTab = document.getElementById('classes-tab');
+            if (classesTab) {
+                classesTab.classList.add('active');
+                classesTab.style.display = 'block';
+            }
+        }
+    });
 </script>
 
 <div class="admin-wrapper">
@@ -108,19 +149,23 @@ require_once PROJECT_ROOT . 'partials/header.php';
             <h3>Admin Panel</h3>
         </div>
         <ul class="sidebar-menu">
-            <li class="active" onclick="showTab(event, 'accounts-tab')">Λογαριασμοί</li>
-            <li onclick="showTab(event, 'athletes-tab')">Αθλητές</li>
-            <li onclick="showTab(event, 'classes-tab')">Τμήματα</li>
-            <li onclick="showTab(event, 'posts-tab')">Άρθρα</li>
-            <li onclick="showTab(event, 'finance-tab')">Οικονομικά</li>
-            <li onclick="showTab(event, 'contact-tab')"><a href="#contact-tab" class="contact-link">
-                    Επικοινωνία
-                    <?php if ($unread_count > 0): ?>
-                        <span class="nav-badge"><?php echo $unread_count; ?></span>
-                    <?php endif; ?>
-                </a></li>
-            <li onclick="showTab(event, 'newsletter-tab')" id="newsletter-tab-link">Newsletter</li>
-            <li onclick="showTab(event, 'messages-tab')" id="messages-tab-link">✉️ Μηνύματα</li>
+            <?php if ($is_admin): ?>
+                <li class="active" onclick="showTab(event, 'accounts-tab')">Λογαριασμοί</li>
+                <li onclick="showTab(event, 'athletes-tab')">Αθλητές</li>
+            <?php endif; ?>
+            <li onclick="showTab(event, 'classes-tab')" class="<?= $is_admin ? '' : 'active'; ?>">Τμήματα</li>
+            <?php if ($is_admin): ?>
+                <li onclick="showTab(event, 'posts-tab')">Άρθρα</li>
+                <li onclick="showTab(event, 'finance-tab')">Οικονομικά</li>
+                <li onclick="showTab(event, 'contact-tab')"><a href="#contact-tab" class="contact-link">
+                        Επικοινωνία
+                        <?php if ($unread_count > 0): ?>
+                            <span class="nav-badge"><?php echo $unread_count; ?></span>
+                        <?php endif; ?>
+                    </a></li>
+                <li onclick="showTab(event, 'newsletter-tab')" id="newsletter-tab-link">Newsletter</li>
+                <li onclick="showTab(event, 'messages-tab')" id="messages-tab-link">✉️ Μηνύματα</li>
+            <?php endif; ?>
         </ul>
     </nav>
 
@@ -135,6 +180,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
                 <select id="roleFilter">
                     <option value="all">Όλοι οι Ρόλοι</option>
                     <option value="admin">Admin</option>
+                    <option value="coach">Coach</option>
                     <option value="user">User</option>
                 </select>
                 <select id="statusFilter">
@@ -426,7 +472,9 @@ require_once PROJECT_ROOT . 'partials/header.php';
                                         <?php echo $stInfo['label']; ?>
                                     </span>
                                 </div>
-                                <button class="card-delete-btn" onclick="deleteLesson(<?php echo $lesson['id']; ?>)" title="Διαγραφή">✕</button>
+                                <?php if ($is_admin): ?>
+                                    <button class="card-delete-btn" onclick="deleteLesson(<?php echo $lesson['id']; ?>)" title="Διαγραφή">✕</button>
+                                <?php endif; ?>
                             </div>
 
                             <?php if ($lesson['title']): ?>
@@ -951,29 +999,44 @@ require_once PROJECT_ROOT . 'partials/header.php';
         <div id="newsletter-tab" class="tab-content">
             <div class="tab-header">
                 <h2>Newsletter</h2>
-                <button class="action-btn btn-primary" id="refreshNewsletterBtn">🔄 Ανανέωση</button>
+                <div>
+                    <a href="export_subscribers.php" class="action-btn btn-secondary" style="text-decoration: none;">📥 Εξαγωγή CSV</a>
+                    <button class="action-btn btn-primary" id="refreshNewsletterBtn">🔄 Ανανέωση</button>
+                </div>
             </div>
 
-            <div class="table-controls">
-                <input type="text" id="newsletterSearch" onkeyup="filterNewsletterTable()" placeholder="Αναζήτηση email..."
-                    class="input-compact">
+            <!-- Φίλτρα & Αναζήτηση -->
+            <div class="table-controls" style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+                <input type="text" id="newsletterSearch" onkeyup="filterNewsletterTable()" placeholder="🔍 Αναζήτηση email..." class="input-compact" style="flex: 1;">
+
+                <select id="newsletterStatusFilter" onchange="filterNewsletterTable()" class="cls-select-filter" style="min-width: 150px;">
+                    <option value="">Όλοι οι συνδρομητές</option>
+                    <option value="active">✔ Ενεργοί</option>
+                    <option value="inactive">✘ Unsubscribed</option>
+                </select>
+
                 <span class="status-badge status-replied" id="newsletterCount">Σύνολο: 0</span>
             </div>
 
+            <!-- Πίνακας Συνδρομητών -->
             <table class="user-table" id="newsletterTable">
                 <thead>
                     <tr>
                         <th>Email</th>
                         <th>Status</th>
                         <th>Ημερομηνία Εγγραφής</th>
+                        <th style="text-align: center;">Ενέργειες</th>
                     </tr>
                 </thead>
                 <tbody id="newsletter-table-body"></tbody>
             </table>
 
-            <div class="finance-card" style="margin-top: 20px;">
+            <div id="newsletterPagination" class="pagination-container" style="margin-top: 15px; display: flex; justify-content: center; gap: 5px;"></div>
+
+            <!-- Φόρμα Αποστολής -->
+            <div class="finance-card" style="margin-top: 25px;">
                 <div class="finance-header">
-                    <h2 class="finance-title">Αποστολή Email σε Όλους</h2>
+                    <h2 class="finance-title">✉️ Αποστολή Email στους Ενεργούς Συνδρομητές</h2>
                 </div>
 
                 <form id="newsletterSendForm" class="form-stack">
@@ -983,11 +1046,53 @@ require_once PROJECT_ROOT . 'partials/header.php';
                     </div>
                     <div class="form-group">
                         <label>Μήνυμα:</label>
-                        <textarea name="message" id="newsletterMessage" rows="6" class="form-input" required></textarea>
+                        <textarea name="message" id="newsletterMessage" rows="6" class="form-input" required placeholder="Πληκτρολόγησε το κείμενο του email..."></textarea>
                     </div>
-                    <button type="submit" class="action-btn btn-success" id="newsletterSendBtn">Αποστολή</button>
-                    <div id="newsletterSendStatus" class="form-message" style="display:none;"></div>
+
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                        <button type="submit" class="action-btn btn-success" id="newsletterSendBtn">🚀 Αποστολή σε Όλους</button>
+                        <button type="button" class="action-btn btn-secondary" id="newsletterPreviewBtn">👁️ Προεπισκόπηση</button>
+                        <button type="button" class="action-btn btn-warning" id="newsletterTestSendBtn">🧪 Αποστολή Test στο Email μου</button>
+                    </div>
+
+                    <div id="newsletterSendStatus" class="form-message" style="display:none; margin-top: 15px;"></div>
                 </form>
+            </div>
+
+            <!-- Ιστορικό Αποστολών -->
+            <div class="finance-card" style="margin-top: 25px;">
+                <div class="finance-header">
+                    <h2 class="finance-title">📜 Ιστορικό Καμπανιών</h2>
+                </div>
+                <table class="user-table" id="newsletterLogsTable">
+                    <thead>
+                        <tr>
+                            <th>Θέμα</th>
+                            <th>Επιτυχείς</th>
+                            <th>Αποτυχημένες</th>
+                            <th>Ημερομηνία Αποστολής</th>
+                        </tr>
+                    </thead>
+                    <tbody id="newsletter-logs-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal Προεπισκόπησης (Live Preview) -->
+        <div id="newsletterPreviewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background: #fff; padding: 25px; border-radius: 8px; max-width: 650px; width: 90%; max-height: 85vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">
+                    <h3 style="margin: 0;">👁️ Προεπισκόπηση Email</h3>
+                    <button type="button" onclick="closeNewsletterPreview()" style="border: none; background: transparent; font-size: 20px; cursor: pointer;">✕</button>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <strong>Θέμα:</strong> <span id="previewSubject"></span>
+                </div>
+                <hr style="border: none; border-top: 1px solid #eee; margin: 15px 0;">
+                <div id="previewBody" style="background: #f9f9f9; padding: 20px; border-radius: 6px; border: 1px solid #e0e0e0;"></div>
+                <div style="text-align: right; margin-top: 20px;">
+                    <button type="button" class="action-btn btn-secondary" onclick="closeNewsletterPreview()">Κλείσιμο</button>
+                </div>
             </div>
         </div>
 
@@ -1385,6 +1490,20 @@ require_once PROJECT_ROOT . 'partials/header.php';
                 <button id="profileDeleteBtn" class="action-btn delete-btn" onclick="deleteUserFromProfile()">🗑 Διαγραφή</button>
             </div>
 
+            <div id="profileRoleChangePanel" class="profile-role-change-panel" style="display:none; margin-top:12px; padding:14px; background: rgba(15,23,42,0.03); border:1px solid rgba(148,163,184,0.35); border-radius:12px;">
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <label for="profileRoleSelect" style="font-size:0.82rem; font-weight:700; color:#334155;">Επιλογή ρόλου</label>
+                    <select id="profileRoleSelect" class="form-input form-input--sm" aria-label="Επιλογή ρόλου">
+                        <option value="admin">Admin</option>
+                        <option value="coach">Coach</option>
+                    </select>
+                    <div class="profile-modal-actions" style="justify-content:flex-end; margin-top:4px;">
+                        <button type="button" class="action-btn btn-success" onclick="confirmRoleChangeFromProfile()">✅ Εφαρμογή</button>
+                        <button type="button" class="action-btn btn-muted" onclick="cancelRoleChangeFromProfile()">✗ Άκυρο</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Edit Mode Actions (hidden by default) -->
             <div id="profileEditActions" class="profile-modal-actions" style="display:none">
                 <button class="action-btn btn-success" onclick="saveProfileEdit()">💾 Αποθήκευση</button>
@@ -1433,15 +1552,20 @@ require_once PROJECT_ROOT . 'partials/header.php';
 
 
 <script>
-    window.ADMIN_USERS = <?= json_encode(array_map(function ($u) {
-                                $name = trim(($u['first_name'] ?? '') . ' ' . ($u['last_name'] ?? ''));
-                                return [
-                                    'id'       => (int)$u['id'],
-                                    'name'     => $name ?: $u['username'],
-                                    'username' => $u['username'],
-                                    'email'    => $u['email'],
-                                ];
-                            }, $users), JSON_UNESCAPED_UNICODE) ?>;
+    window.ADMIN_USERS = <?= json_encode(
+                                $is_admin
+                                    ? array_map(function ($u) {
+                                        $name = trim(($u['first_name'] ?? '') . ' ' . ($u['last_name'] ?? ''));
+                                        return [
+                                            'id'       => (int)$u['id'],
+                                            'name'     => $name ?: $u['username'],
+                                            'username' => $u['username'],
+                                            'email'    => $u['email'],
+                                        ];
+                                    }, $users)
+                                    : [],
+                                JSON_UNESCAPED_UNICODE
+                            ) ?>;
 </script>
 
 <script>

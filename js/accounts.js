@@ -10,6 +10,7 @@ function openUserProfile(btn) {
   if (!raw) return;
   const user = JSON.parse(raw);
   _activeProfileUser = user;
+  cancelRoleChangeFromProfile();
   _renderProfileView(user);
   exitProfileEditMode();
   document.getElementById("userProfileModal").style.display = "flex";
@@ -74,10 +75,16 @@ function _refreshProfileStatusUI(isActive) {
 
 function closeUserProfileModal() {
   exitProfileEditMode();
+  cancelRoleChangeFromProfile();
   document.getElementById("userProfileModal").style.display = "none";
   _activeProfileUser = null;
   const listEl = document.getElementById("profileAthletesList");
   if (listEl) listEl.innerHTML = "";
+}
+
+function cancelRoleChangeFromProfile() {
+  const panel = document.getElementById("profileRoleChangePanel");
+  if (panel) panel.style.display = "none";
 }
 
 // ----------------------------------------------------
@@ -249,9 +256,46 @@ async function sendPasswordResetFromProfile() {
 // ROLE CHANGE & DELETE
 // ----------------------------------------------------
 
-async function changeRoleFromProfile() {
+function changeRoleFromProfile() {
   if (!_activeProfileUser) return;
-  await changeRole(_activeProfileUser.id, _activeProfileUser.role);
+
+  const currentRole = (_activeProfileUser.role || "").toLowerCase();
+  const panel = document.getElementById("profileRoleChangePanel");
+  const select = document.getElementById("profileRoleSelect");
+
+  if (!panel || !select) return;
+
+  const fallbackRole = ["admin", "coach"].includes(currentRole)
+    ? currentRole
+    : "admin";
+
+  select.value = fallbackRole;
+  panel.style.display = "block";
+}
+
+async function confirmRoleChangeFromProfile() {
+  if (!_activeProfileUser) return;
+
+  const currentRole = (_activeProfileUser.role || "").toLowerCase();
+  const select = document.getElementById("profileRoleSelect");
+  const panel = document.getElementById("profileRoleChangePanel");
+
+  if (!select || !panel) return;
+
+  const selectedRole = (select.value || "admin").trim().toLowerCase();
+  if (!["admin", "coach"].includes(selectedRole)) {
+    alert("Μη έγκυρος ρόλος. Επιτρέπονται μόνο: admin, coach.");
+    return;
+  }
+
+  if (selectedRole === currentRole) {
+    alert("Ο χρήστης έχει ήδη αυτόν τον ρόλο.");
+    panel.style.display = "none";
+    return;
+  }
+
+  panel.style.display = "none";
+  await changeRole(_activeProfileUser.id, currentRole, selectedRole);
 }
 
 async function deleteUserFromProfile() {
@@ -260,8 +304,14 @@ async function deleteUserFromProfile() {
   await deleteUser(_activeProfileUser.id);
 }
 
-async function changeRole(userId, currentRole) {
-  const newRole = currentRole === "admin" ? "user" : "admin";
+async function changeRole(userId, currentRole, selectedRole = null) {
+  const newRole = selectedRole || (currentRole === "admin" ? "user" : "admin");
+
+  if (newRole === currentRole) {
+    alert("Ο χρήστης έχει ήδη αυτόν τον ρόλο.");
+    return;
+  }
+
   if (!confirm(`Θέλετε να αλλάξετε τον ρόλο σε ${newRole.toUpperCase()};`))
     return;
 

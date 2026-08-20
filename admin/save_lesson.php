@@ -7,7 +7,13 @@ require_once __DIR__ . '/../access_control.php';
 require_once PROJECT_ROOT . 'includes/createNotification.php';
 
 header('Content-Type: application/json');
-restrict_access('admin');
+restrict_access(['admin', 'coach']);
+
+if (!user_can_manage_classes()) {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Δεν έχετε δικαίωμα διαχείρισης προπονήσεων.']);
+    exit;
+}
 
 $data = json_decode(file_get_contents('php://input'), true) ?? [];
 

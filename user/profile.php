@@ -6,7 +6,7 @@ require_once __DIR__ . '/../config.php';
 require_once PROJECT_ROOT . 'access_control.php';
 require_once PROJECT_ROOT . 'includes/lang.php';
 
-restrict_access(['user', 'admin']);
+restrict_access(['user', 'admin', 'coach']);
 
 $user_id = $_SESSION['user_id'];
 
@@ -107,7 +107,7 @@ require_once PROJECT_ROOT . 'partials/header.php';
                         <div class="pset-role-badge-container">
                             <span class="pset-role-badge pset-badge-<?= htmlspecialchars($user_data['role']) ?>">
                                 <i class="fa-solid <?= $user_data['role'] === 'admin' ? 'fa-user-shield' : 'fa-user' ?>"></i>
-                                <?= $user_data['role'] === 'admin' ? t('profile.labels.role_admin') : t('profile.labels.role_user') ?>
+                                <?= $user_data['role'] === 'admin' ? t('profile.labels.role_admin') : ($user_data['role'] === 'coach' ? t('profile.labels.role_coach') : t('profile.labels.role_user')) ?>
                             </span>
                         </div>
                     </div>

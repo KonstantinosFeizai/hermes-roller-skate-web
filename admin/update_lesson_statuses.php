@@ -8,7 +8,13 @@ require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../access_control.php';
 
 header('Content-Type: application/json');
-restrict_access('admin');
+restrict_access(['admin', 'coach']);
+
+if (!user_can_manage_classes()) {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Δεν έχετε δικαίωμα διαχείρισης προπονήσεων.']);
+    exit;
+}
 
 try {
     $now = (new DateTime())->format('Y-m-d H:i:s');

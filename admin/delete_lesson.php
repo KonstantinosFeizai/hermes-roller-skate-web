@@ -9,6 +9,12 @@ require_once PROJECT_ROOT . 'includes/createNotification.php';
 header('Content-Type: application/json');
 restrict_access('admin');
 
+if (!user_is_admin()) {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Δεν έχετε δικαίωμα διαγραφής προπόνησης.']);
+    exit;
+}
+
 $data      = json_decode(file_get_contents('php://input'), true) ?? [];
 $lesson_id = !empty($data['lesson_id']) ? (int)$data['lesson_id'] : 0;
 

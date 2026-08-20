@@ -11,7 +11,29 @@ require_once __DIR__ . '/config.php';
  * @param string|array $required_roles Required role(s) (e.g. 'admin' or ['admin', 'moderator']).
  * @param string $redirect_page Redirect target (e.g. 'index.php' or 'login.php').
  */
-function restrict_access($required_roles, $redirect_page = 'index.php')
+function user_has_role($required_roles)
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    $current_role = $_SESSION['user_role'] ?? null;
+    $roles = is_array($required_roles) ? $required_roles : [$required_roles];
+
+    return $current_role !== null && in_array($current_role, $roles, true);
+}
+
+function user_is_admin(): bool
+{
+    return user_has_role('admin');
+}
+
+function user_can_manage_classes(): bool
+{
+    return user_has_role(['admin', 'coach']);
+}
+
+function restrict_access($required_roles, $redirect_page = '')
 {
     $resolve_redirect = static function (string $target): string {
         if (preg_match('#^https?://#i', $target) === 1 || str_starts_with($target, '/')) {
@@ -35,7 +57,9 @@ function restrict_access($required_roles, $redirect_page = 'index.php')
 
     // 2. Check if user is logged in
     if (!$current_role) {
-        // Not logged in -> redirect
+        // Not logged in -> redirect with access message
+        $_SESSION['alert_message'] = "Δεν έχετε δικαίωμα πρόσβασης σε αυτήν τη σελίδα.";
+        $_SESSION['alert_type'] = "error";
         header("Location: " . $resolve_redirect($redirect_page));
         exit;
     }

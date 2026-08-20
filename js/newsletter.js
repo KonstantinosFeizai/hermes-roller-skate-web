@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const formData = new FormData(form);
 
     // Use the base URL from the header to build the endpoint path
-    fetch(window.BASE_URL + "admin/newsletter-subscribe.php", {
+    fetch(window.BASE_URL + "api/newsletter-subscribe.php", {
       method: "POST",
       body: formData,
     })

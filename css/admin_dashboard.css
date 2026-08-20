@@ -1423,6 +1423,12 @@ textarea:focus {
   border: 1px solid rgba(52, 152, 219, 0.35);
 }
 
+.role-badge.role-coach {
+  background: rgba(5, 150, 105, 0.15);
+  color: #047857;
+  border: 1px solid rgba(5, 150, 105, 0.35);
+}
+
 /* Profile modal */
 .modal--profile {
   display: none;

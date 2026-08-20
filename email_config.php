@@ -21,7 +21,7 @@ function getMailer()
 {
     $mail = new PHPMailer(true);
 
-    // Ρυθμίσεις SMTP (Αυτές θα αλλάξουν όταν ανέβετε στο Plesk/Live)
+    // Ρυθμίσεις SMTP 
     $mail->isSMTP();
     $mail->Host = isset($GLOBALS['env']['SMTP_HOST']) ? $GLOBALS['env']['SMTP_HOST'] : 'smtp.gmail.com'; // Gmail SMTP
     $mail->SMTPAuth = true;
